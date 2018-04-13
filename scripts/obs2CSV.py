@@ -53,7 +53,11 @@ d2 = date(2018, 2, 28) # End investigated period (included)
 
 daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
 
+# For internal check
+plt.figure(figsize = (4, 4))
+
 for j_obs in range(len(obs)):
+    print(obs[j_obs][0])
     # Input file, following CMIP conventions
     filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_20150101-20181231_sh.nc"
     
@@ -95,8 +99,9 @@ for j_obs in range(len(obs)):
     
     # Plot for internal check
     # -----------------------
-    plt.figure(figsize = (4, 4))
-    plt.plot(daterange, areatot)
-    plt.ylim(0.0, 5.0)
-    plt.savefig("../figs/" +  obs[j_obs][0] + "_000.png", dpi = 300)
+    plt.plot(daterange, areatot, label = obs[j_obs][0])
+
+plt.legend()
+plt.ylim(0.0, 17.0)
+plt.savefig("../figs/obs.png", dpi = 300)
     
