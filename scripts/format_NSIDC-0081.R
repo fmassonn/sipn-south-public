@@ -159,7 +159,7 @@ for (hemi in c("north","south")){
   mask[tmp >= 0] <- 100.0
 
   # Save as NetCDF
-  fileout <- paste(outdir,"/siconc_SIday_r1i1p1_",toString(yearb),"0101-",toString(yeare),"1231.nc", sep="") 
+  fileout <- paste(outdir,"/siconc_SIday_NSIDC-0081_r1i1p1_",toString(yearb),"0101-",toString(yeare),"1231_",substr(hemi,1,1),"h.nc", sep="")
   dimt <- ncdim_def('time','',seq(1,nt), unlim = TRUE)
   dimy <- ncdim_def('y'   ,'',seq(1,ny))
   dimx <- ncdim_def('x'   ,'',seq(1,nx))

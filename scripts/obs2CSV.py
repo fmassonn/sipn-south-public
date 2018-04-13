@@ -12,12 +12,12 @@ import numpy as np
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 from datetime import date, timedelta
+import os
 
 # Name of obs to process
-
 #        OBS LABEL      OBS DIRECTORY
-obs = [ ["NSIDC-0081", "/nas02/CLIMDATA/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
-        ["OSI-401-b" , "/nas02/CLIMDATA/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
+obs = [ ["NSIDC-0081", os.environ["TECLIM_CLIMATE_DATA"] + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
+        ["OSI-401-b" , os.environ["TECLIM_CLIMATE_DATA"] + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
       ]
 
 # Function to compute sea ice area from sea ice concentation
@@ -55,7 +55,7 @@ daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
 
 for j_obs in range(len(obs)):
     # Input file, following CMIP conventions
-    filein = obs[j_obs][1] + "siconc_SIday_r1i1p1_20150101-20181231_sh.nc"
+    filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_20150101-20181231_sh.nc"
     
     f = Dataset(filein, mode = "r")
     siconc = f.variables["siconc"][:]
