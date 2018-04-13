@@ -69,4 +69,4 @@ plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
 plt.savefig("../figs/fig1.png", dpi = 500)
-
+print("Figure ../figs/fig1.png printed"
