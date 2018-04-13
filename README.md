@@ -1,10 +1,20 @@
 # sipn-south-public
 Data and scripts to process Sea Ice Prediction Network South (SIPN South) analyses.
 
+data
+  txt
+    contains data of total and regional sea ice areas
+  netcdf
+    empty at initialization, but can be populated by downloading the data from
+    the following link: https://nextcloud.cism.ucl.ac.be/s/oMqpuF3nWvL1O2c
+    (ask FM for password)
 
 scripts
-  retrieve_OSI-401b.bash # Downloads near-real time OSI-SAF 401b product data 
+  contains scripts to retrieve observational data, forecast data, format them in 
+  CMIP-like format. Also contains scripts to produce figures.
 
+figs
+  empty folder aimed at receiving the figures produced
 
 doc
   contains the form with answer of participating groups to the SIPN South forecast
