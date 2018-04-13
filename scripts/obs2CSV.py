@@ -13,6 +13,13 @@ from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 from datetime import date, timedelta
 
+# Name of obs to process
+
+#        OBS LABEL      OBS DIRECTORY
+obs = [ ["NSIDC-0081", "/nas02/CLIMDATA/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
+        ["OSI-401-b" , "/nas02/CLIMDATA/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
+      ]
+
 # Function to compute sea ice area from sea ice concentation
 # -----
 def compute_area(concentration, cellarea, mask = 1):
@@ -46,49 +53,50 @@ d2 = date(2018, 2, 28) # End investigated period (included)
 
 daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
 
-# Input file, following CMIP conventions
-filein = "/nas02/CLIMDATA/obs/ice/siconc/nsidc/nsidc0081/processed/native/siconc_r1i1p1_day_20150101-20181231_sh-pss25.nc"
-
-f = Dataset(filein, mode = "r")
-siconc = f.variables["siconc"][:]
-time   = f.variables["time"][:]
-cellarea = f.variables["areacello"][:]
-sftof    = f.variables["sftof"][:]
-lat      = f.variables["latitude"][:]
-lon      = f.variables["longitude"][:]
-# Re-range longitude to [0, 360.0]
-lon[lon < 0.0] = lon[lon < 0.0] + 360.0
-f.close()
-
-# Subset to the month of February 2018
-# ------------------------------------
-t1 = (d1 - d0).days - time[0]
-t2 = (d2 - d0).days - time[0]
-
-# Compute sea ice area for that period
-# ------------------------------------
-areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
-
-# Save as CSV file
-# ----------------
-# Total area
-with open("./data/txt/obs_" + "000" + "_total-area.txt", "wb") as file:
-    file.write(",".join(["{0:.2f}".format(a) for a in areatot]))  
-    file.write("\n")
-
-# Per longitude
-with open("./data/txt/obs_" + "000" + "_regional-area.txt", "wb") as file:
-    # Per longitude bin
-    for j_bin in np.arange(36):
-      print(j_bin)
-      area = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0) * (sftof == 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
-      file.write(",".join(["{0:.2f}".format(a) for a in area]))  # + 1 as python does not take the last bit
-      file.write("\n")
-
-# Plot for internal check
-# -----------------------
-plt.figure(figsize = (4, 4))
-plt.plot(daterange, areatot)
-plt.ylim(0.0, 5.0)
-plt.savefig("./figs/obs000.png", dpi = 300)
-
+for j_obs in range(len(obs)):
+    # Input file, following CMIP conventions
+    filein = obs[j_obs][1] + "siconc_SIday_r1i1p1_20150101-20181231_sh.nc"
+    
+    f = Dataset(filein, mode = "r")
+    siconc = f.variables["siconc"][:]
+    time   = f.variables["time"][:]
+    cellarea = f.variables["areacello"][:]
+    sftof    = f.variables["sftof"][:]
+    lat      = f.variables["latitude"][:]
+    lon      = f.variables["longitude"][:]
+    # Re-range longitude to [0, 360.0]
+    lon[lon < 0.0] = lon[lon < 0.0] + 360.0
+    f.close()
+    
+    # Subset to the month of February 2018
+    # ------------------------------------
+    t1 = (d1 - d0).days - time[0]
+    t2 = (d2 - d0).days - time[0]
+    
+    # Compute sea ice area for that period
+    # ------------------------------------
+    areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
+    
+    # Save as CSV file
+    # ----------------
+    # Total area
+    with open("../data/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "wb") as file:
+        file.write(",".join(["{0:.2f}".format(a) for a in areatot]))  
+        file.write("\n")
+    
+    # Per longitude
+    with open("../data/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "wb") as file:
+        # Per longitude bin
+        for j_bin in np.arange(36):
+          print(j_bin)
+          area = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0) * (sftof == 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
+          file.write(",".join(["{0:.2f}".format(a) for a in area]))  # + 1 as python does not take the last bit
+          file.write("\n")
+    
+    # Plot for internal check
+    # -----------------------
+    plt.figure(figsize = (4, 4))
+    plt.plot(daterange, areatot)
+    plt.ylim(0.0, 5.0)
+    plt.savefig("../figs/" +  obs[j_obs][0] + "_000.png", dpi = 300)
+    
