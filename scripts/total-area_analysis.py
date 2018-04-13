@@ -65,7 +65,7 @@ plt.plot(np.arange(len(time)) + 1, series, color = [0.1, 0.1, 0.1], lw = 3.0, li
 
 plt.legend(fontsize = 8)
 
-plt.title("Forecast of February 2018 total\nAntarctic sea ice area")
+plt.title("February 2018 total Antarctic sea ice area")
 plt.xticks([1, 5, 10, 15, 20, 25, 28], ["01", "05", "10", "15", "20", "25", "28"])
 plt.xlabel("Day in February 2018")
 plt.ylim(0.0, 5)
@@ -74,4 +74,4 @@ plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
 plt.savefig("../figs/fig1.png", dpi = 500)
-print("Figure ../figs/fig1.png printed"
+print("Figure ../figs/fig1.png printed")
