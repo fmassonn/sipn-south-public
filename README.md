@@ -6,7 +6,7 @@ data
     contains data of total and regional sea ice areas
   netcdf
     empty at initialization, but can be populated by downloading the data from
-    the following link: https://nextcloud.cism.ucl.ac.be/s/oMqpuF3nWvL1O2c
+    the following link: https://nextcloud.cism.ucl.ac.be/s/gTL53xhjp4iQMM8 
     (ask FM for password)
 
 scripts
