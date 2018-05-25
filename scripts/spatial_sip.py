@@ -67,7 +67,7 @@ for j_sub in range(n_sub):
     filein = "../data/netcdf/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration.nc"
 
     if not os.path.exists(filein):
-      sys.exit(filein + "not found")
+      sys.exit(filein + " not found")
 
     # Open file, read geometric parameters if the first one 
     print("  Loading " + filein)
