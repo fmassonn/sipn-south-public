@@ -33,8 +33,12 @@ n_for = [info[j_sub][1] for j_sub in range(n_sub)]
 # Colors
 col = [info[j_sub][2] for j_sub in range(n_sub)]
 
+# Time series
 plt.figure("fig1", figsize = (6, 4))
+# Minimum 
 plt.figure("fig2", figsize = (6, 4))
+# Monthly means
+plt.figure("fig3", figsize = (6, 4))
 
 for j_sub in range(n_sub):
   for j_for in range(n_for[j_sub]):
@@ -65,7 +69,9 @@ for j_sub in range(n_sub):
       plt.scatter(daymin, n_sub - j_sub, color = col[j_sub], label = mylab)
       #plt.text(46, n_sub - j_sub, info[j_sub][0] + " " + info[j_sub][3], color = col[j_sub], ha = "right")
 
- 
+    plt.figure("fig3")
+    plt.scatter(np.mean(series), n_sub - j_sub, color = col[j_sub], label = mylab)
+
 # Plot observations
 # -----------------
 filein = "../data/txt/NSIDC-0081_000_total-area.txt"
@@ -77,6 +83,9 @@ plt.figure("fig2")
 tt = np.arange(0.0, len(series), 0.1)
 daymin = 1 + tt[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
 plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS (NSIDC-0081)")
+plt.figure("fig3")
+plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS (NSIDC-0081)")
+
 
 
 filein = "../data/txt/OSI-401-b_000_total-area.txt"
@@ -89,6 +98,9 @@ plt.figure("fig2")
 tt = np.arange(0.0, len(series), 0.1)
 daymin = 1 + tt[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
 plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS (OSI-401-b)")
+plt.legend(fontsize = 8)
+plt.figure("fig3")
+plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS (OSI-401-b)")
 plt.legend(fontsize = 8)
 
 plt.figure("fig1")
@@ -113,4 +125,15 @@ plt.yticks([],[])
 plt.tight_layout()
 plt.savefig("../figs/fig2.png", dpi = 500)
 print("Figure ../figs/fig2.png printed")
+
+
+plt.figure("fig3")
+plt.title("Monthly mean Antarctic sea ice extent")
+plt.xlim(0.0, 5.0)
+#plt.xticks([1, 5, 10, 15, 20, 25, 28], ["<01", "05", "10", "15", "20", "25", ">28"])
+plt.xlabel("10$^6$ km$^2$")
+plt.yticks([],[])
+plt.tight_layout()
+plt.savefig("../figs/fig3.png", dpi = 500)
+print("Figure ../figs/fig3.png printed")
 
