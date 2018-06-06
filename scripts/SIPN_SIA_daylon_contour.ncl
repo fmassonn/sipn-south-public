@@ -275,6 +275,7 @@ begin
   mpres@mpLandFillColor = "black"
   mpres@mpMaxLatF   = -55.
   mpres@mpMinLatF   = -90.
+  mpres@mpCenterLonF = 180.
 
   ;annotation resources
   ares                     = True
