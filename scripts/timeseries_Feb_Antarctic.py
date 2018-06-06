@@ -11,7 +11,7 @@ sie = f.variables["siextents"][:]
 f.close()
 
 time = np.arange(1979, 2018 + 1)
-sie  = sie[2 + 12::12]
+sie  = sie[1 + 12::12]
 
 # Trend fit
 a = np.polyfit(time, sie, 1)
