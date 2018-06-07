@@ -10,6 +10,6 @@ url=https://nextcloud.cism.ucl.ac.be/s/gTL53xhjp4iQMM8
 
 for file in `cat list_files.txt`
 do
-  wget -N -c ${url}/download?path=%2F2018/netcdf/$file -O $file
+  wget -N -c ${url}/download?path=%2F2018/netcdf/$file -O ../data/netcdf/$file
 done
 
