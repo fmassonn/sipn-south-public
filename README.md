@@ -1,8 +1,7 @@
 # sipn-south-public
-ata and scripts to process Sea Ice Prediction Network South (SIPN South) analyses.
+Data and scripts to process Sea Ice Prediction Network South (SIPN South) analyses.
 
-![alt text](./doc/sipn-south-logo.png | width = 10)
-
+![](./doc/sipn-south-logo.png =250x250)
 # Quick start
 Assuming that Git is installed:
 1. In a terminal, do
