@@ -1,8 +1,15 @@
-#!/usr/bin/bash
-Browse https://nextcloud.cism.ucl.ac.be/s/gTL53xhjp4iQMM8
+#!/bin/bash
+set -o nounset
+set -o errexit
 
-Password: ask Francois Massonnet
+# Downloads the SIPN South 2018 forecast data at the appropriate location
+#
+# F. Massonnet, June 2018
 
-Download the file ./2018/netcdf (it will come as a zip), unzip it in ../data/
+url=https://nextcloud.cism.ucl.ac.be/s/gTL53xhjp4iQMM8
 
-This netcdf folder contains forecast and obs data
+for file in `cat list_files.txt`
+do
+  wget -N -c ${url}/download?path=%2F2018/netcdf/$file -O $file
+done
+
