@@ -1,6 +1,29 @@
 # sipn-south-public
 Data and scripts to process Sea Ice Prediction Network South (SIPN South) analyses.
 
+# Quick start
+Assuming that Git is installed:
+1. In a terminal, do
+```
+git clone https://github.com/fmassonn/sipn-south-public.git
+```
+2. Go to the scripts directory to download the SIPN South forecast data:
+```
+cd sipn-south-public/scripts
+./retrieve_data.bash   # Will fill the folder netcdf with data, takes a few minutes
+```
+
+3. Process the Python and NCL scripts
+
+* Fig. 1 of the report --> `timeseries_Feb_Antarctic.py`
+* Fig. 2 of the report --> Not yet available
+* Figs 3. and 4. of the report --> `total-area_analysis.py`
+* Fig. 5. of the report --> `SIPN_month_stat_bylon.ncl`
+* Fig. 6. of the report --> `SIPN_SIA_daylon_contour.ncl`
+* Fig. 7 and 8. of the report --> `spatial_sip.py` and then `assemble.bash`
+
+
+
 # Structure of the project
 ```
 data
