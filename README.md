@@ -48,7 +48,7 @@ doc
 ```
 # Reference
 F. Massonnet, P. Reid, J. L. Lieser, C. M. Bitz, J. Fyfe, W. Hobbs (2018). Assessment of February 2018 sea-ice forecasts for the Southern Ocean. Technical
-Note, Université catholique de Louvain (2018), available at http://acecrc.org.au/sipnsouth/
+Note, Université catholique de Louvain (2018), available at http://acecrc.org.au/sipn-south/
 
 # Primary Contact
 francois.massonnet@uclouvain.be
