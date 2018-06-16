@@ -128,7 +128,7 @@ print("Figure ../figs/fig2.png printed")
 
 
 plt.figure("fig3")
-plt.title("Monthly mean Antarctic sea ice extent")
+plt.title("Monthly mean Antarctic sea ice area")
 plt.xlim(0.0, 5.0)
 #plt.xticks([1, 5, 10, 15, 20, 25, 28], ["<01", "05", "10", "15", "20", "25", ">28"])
 plt.xlabel("10$^6$ km$^2$")
