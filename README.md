@@ -1,7 +1,7 @@
-# sipn-south-public
-Data and scripts to process Sea Ice Prediction Network South (SIPN South) analyses.
+# SIPN South scripts and data
+Welcome to the public SIPN South directory. Here, you will find the data and scripts necessary to process Sea Ice Prediction Network South (SIPN South) analyses.
 
-![alt text](./doc/sipn-south-logo.png)
+<img src="./doc/sipn-south-logo.png" width="30%">
 
 # Quick start
 Assuming that Git is installed:
@@ -48,7 +48,7 @@ doc
 ```
 # Reference
 F. Massonnet, P. Reid, J. L. Lieser, C. M. Bitz, J. Fyfe, W. Hobbs (2018). Assessment of February 2018 sea-ice forecasts for the Southern Ocean. Technical
-Note, Université catholique de Louvain (2018), available at http://acecrc.org.au/sipnsouth/
+Note, Université catholique de Louvain (2018), available at http://acecrc.org.au/sipn-south/
 
 # Primary Contact
 francois.massonnet@uclouvain.be
