@@ -121,3 +121,42 @@ mymask[:] = sftof
 myarea[:]  = areacello[:]
 
 f.close()
+
+
+
+# Interpolation of areas calculated by X. Yuan herself (text files).
+# ------------------------------------------------------------------
+import pandas as pd
+# Total area
+# ----------
+# Read the CSV file
+filein = "../data/2018-2019/txt/Lamont_001_total-area_orig.txt"
+csv = pd.read_csv(filein, header = None)
+series = csv.iloc[0][:]
+
+D = np.array([[series[0]], [series[1]], [series[2]] ])
+X = np.matmul(Binv, D)
+newseries = X[0] * time ** 2 + X[1] * time + X[2]
+
+# Write
+with open("../data/2018-2019/txt/Lamont_001_total-area.txt", "wb") as file:
+  file.write(",".join(["{0:.4f}".format(a) for a in newseries]))  # + 1 as python does not take the last bit
+  file.write("\n")
+
+
+# Regional areas
+# --------------
+filein = "../data/2018-2019/txt/Lamont_001_regional-area_orig.txt"
+
+csv = pd.read_csv(filein, header = None)
+with open("../data/2018-2019/txt/Lamont_001_regional-area.txt", "wb") as file2:
+  for j in np.arange(36):
+    series = csv.iloc[j][:]
+    D = np.array([[series[0]], [series[1]], [series[2]] ])
+    X = np.matmul(Binv, D)
+    newseries = X[0] * time ** 2 + X[1] * time + X[2]
+  
+    file2.write(",".join(["{0:.4f}".format(a) for a in newseries]))  # + 1 as python does not take the last bit
+    file2.write("\n")
+
+print("hello")
