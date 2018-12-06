@@ -77,8 +77,9 @@ for j_sub in range(n_sub):
     # Record when the minimum of the series occurs
     # --------------------------------------------
     # Fit a quadratic polynomial to filter out weather variability
-    tt = np.arange(0.0, len(series), 0.1)
-    daymin = 1 + tt[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
+    # Time axis subdivided in tenths of days to avoid clustering
+    tt = np.arange(0.0, len(series), 1)
+    daymin = time[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
 
     plt.figure("fig2")
     if info[j_sub][3] != "(monthly)":
@@ -127,9 +128,9 @@ plt.title(period_name + " total Antarctic sea ice area")
 #plt.xlabel("Day in February 2018")
 plt.ylim(0.0, 10)
 
-#"plt.xlim(0.0, 46)
 import matplotlib.dates as mdates
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+plt.legend()
 plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
@@ -137,15 +138,15 @@ plt.savefig("../figs/fig1.png", dpi = 500)
 print("Figure ../figs/fig1.png printed")
   
   
-  #plt.figure("fig2")
-  #plt.title("When did the 2018 minimum of Antarctic sea ice area occur?")
-  #plt.xlim(0.0, 46)
-  #plt.xticks([1, 5, 10, 15, 20, 25, 28], ["<01", "05", "10", "15", "20", "25", ">28"])
-  #plt.xlabel("Day in February 2018")
-  #plt.yticks([],[])
-  #plt.tight_layout()
-  #plt.savefig("../figs/fig2.png", dpi = 500)
-  #print("Figure ../figs/fig2.png printed")
+plt.figure("fig2")
+plt.legend()
+plt.title("When does the minimum of Antarctic sea ice area occur?")
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+plt.grid()
+plt.yticks([],[])
+plt.tight_layout()
+plt.savefig("../figs/fig2.png", dpi = 500)
+print("Figure ../figs/fig2.png printed")
   
   
   #plt.figure("fig3")
