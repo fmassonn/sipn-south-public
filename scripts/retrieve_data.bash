@@ -10,8 +10,8 @@ set -o errexit
 
 url=https://nextcloud.cism.ucl.ac.be/s/gTL53xhjp4iQMM8
 
-for year in `seq 2017 2018`
-  mystring="$year-$((year + 1))"
+for mystring in "2017-2018 2018-2019"
+  do
   for file in `cat list_files_${mystring}.txt`
   do
     wget -N -c ${url}/download?path=%2F${mystring}/netcdf/$file -O ../data/netcdf/${my_string}/$file
