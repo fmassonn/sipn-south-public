@@ -121,6 +121,9 @@ for j_sub in range(n_sub):
     f.close()
 
 
+  # Regularize
+  data[data > 100.0] = 100.0
+  data[data < 0.0  ] = 0.0
   # Do some plots
 
   # Monthly mean for each member
@@ -129,12 +132,12 @@ for j_sub in range(n_sub):
     sic_monmean = np.mean(data[j_for - 1, t1:t2, :, :], axis = 0)
     cl = map.contour(x, y, sic_monmean, [15.0], latlon = False, colors = '#ffcccc', linewidths = 1, linestyles = "-")
     cs = map.contourf(x, y, sic_monmean, clevs, cmap = plt.cm.PuBu_r, latlon = False, extend = "neither")     
-    map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 2.0)
+    map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
     map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
     map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
     cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
     cbar.set_label("%")
-    plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + period_name + "mean")
+    plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + period_name + " mean")
     plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + period_short_name + "mean")
     print("    Monthly mean conc printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
     plt.close("fig")
@@ -175,8 +178,8 @@ for j_sub in range(n_sub):
     if sub_id[j_sub] == "ucl":
       cs = map.contourf(x[0:-1,0:-1], y[0:-1,0:-1], prob[0:-1,0:-1], clevs, cmap = plt.cm.RdYlGn_r, latlon = False, extend = "neither")
     else:
-      cs = map.contourf(x, y, prob, clevs, cmap = plt.cm.PuBu_r, latlon = False, extend = "neither")
-    map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 2.0)
+      cs = map.contourf(x, y, prob, clevs, cmap = plt.cm.RdYlGn_r, latlon = False, extend = "neither")
+    map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
     map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
     map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
     cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
@@ -205,4 +208,3 @@ for j_sub in range(n_sub):
     print("  Probability day " + str(jt + 1).zfill(2) + " printed")
     plt.close("fig")
   
-
