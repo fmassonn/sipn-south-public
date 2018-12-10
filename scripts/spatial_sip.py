@@ -141,7 +141,7 @@ for j_sub in range(n_sub):
     if sub_id[j_sub] == "ucl":
       cs = map.contourf(x[0:-1,0:-1], y[0:-1,0:-1], prob[0:-1,0:-1], clevs, cmap = plt.cm.RdYlGn_r, latlon = False, extend = "neither")
     else:
-      cs = map.contourf(x, y, prob, clevs, cmap = plt.cm.PuBu_r, latlon = False, extend = "neither")
+      cs = map.contourf(x, y, prob, clevs, cmap = plt.cm.RdYlGn_r, latlon = False, extend = "neither")
     map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 2.0)
     map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
     map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
