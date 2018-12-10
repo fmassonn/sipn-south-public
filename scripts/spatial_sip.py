@@ -48,8 +48,8 @@ if myyear == "2017-2018":
 elif myyear == "2018-2019":
   inidate = "20181201"
   ndays   = 90
-  period_name = "February 2018"
-  period_short_name = "Feb2018"
+  period_name = "February 2019"
+  period_short_name = "Feb2019"
   t1, t2 = 63 - 1, 63 - 1 + 28
 
 # Time axis
@@ -138,7 +138,7 @@ for j_sub in range(n_sub):
     cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
     cbar.set_label("%")
     plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + period_name + " mean")
-    plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + period_short_name + "mean")
+    plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + period_short_name + "-mean")
     print("    Monthly mean conc printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
     plt.close("fig")
 
