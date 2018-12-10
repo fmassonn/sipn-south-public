@@ -8,7 +8,7 @@ info = [ ["nrl"     ,1            ,"#92B558",   ""],  \
          #["Gateway", 1            ,"#C48F65",  ""],  \
          ["CMCC"    , 50          ,"#2E8B57",   ""],  \
          #["mpas-cesm",2           ,"#223A5E",  ""],  \
-         #["Modified-CanSIPS",20   ,"#898E8C",  ""],  \
+         ["Modified-CanSIPS",20   ,"#898E8C",  ""],  \
          ["Petty-NASA",1           ,"#005960",  "(interpolated)"],\
          ["Lamont",  1            ,"#9C9A40",  "(interpolated)"],\
          ["nasa-gmao",10          ,"#4F84C4", ""],\
