@@ -28,11 +28,15 @@ if myyear == "2017-2018":
   inidate = "20180201"
   ndays   = 28 #number of days of the forecast period
   period_name = "February 2018"
+  t1, t2 = 0, 0 + ndays # time indices defining the period for diagnostics
+                        # (Pythonic convention)
 
 elif myyear == "2018-2019":
   inidate = "20181201"
   ndays   = 90
   period_name = "Dec-Jan-Feb 2018-2019"
+  t1, t2 = 63 - 1, 63 - 1 + 28    # Period to compute means and identify minimum
+                                  # nb of days since first day
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
@@ -77,9 +81,8 @@ for j_sub in range(n_sub):
     # Record when the minimum of the series occurs
     # --------------------------------------------
     # Fit a quadratic polynomial to filter out weather variability
-    # Time axis subdivided in tenths of days to avoid clustering
-    tt = np.arange(0.0, len(series), 1)
-    daymin = time[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
+    tt = np.arange(0.0, len(series[t1:t2]), 1)
+    daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
 
     plt.figure("fig2")
     if info[j_sub][3] != "(monthly)":
@@ -99,8 +102,8 @@ if plotobs:
   plt.figure("fig1")
   plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = "--", label = "OBS 2017-2018 (NSIDC-0081)")
   plt.figure("fig2")
-  tt = np.arange(0.0, len(series), 1)
-  daymin = time[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
+  tt = np.arange(0.0, len(series[t1:t2]), 1)
+  daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
   plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2017-2018 (NSIDC-0081)")
   plt.figure("fig3")
   plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2017-2018 (NSIDC-0081)")
@@ -114,8 +117,8 @@ if plotobs:
   plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS 2017-2018 (OSI-401-b)")
   plt.legend(fontsize = 8)
   plt.figure("fig2")
-  tt = np.arange(0.0, len(series), 1)
-  daymin = time[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
+  tt = np.arange(0.0, len(series[t1:t2]), 1)
+  daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
   plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2017-2018 (OSI-401-b)")
   plt.legend(fontsize = 8)
   plt.figure("fig3")
@@ -126,11 +129,11 @@ plt.figure("fig1")
 plt.title(period_name + " total Antarctic sea ice area")
 #plt.xticks([1, 5, 10, 15, 20, 25, 28], ["01", "05", "10", "15", "20", "25", "28"])
 #plt.xlabel("Day in February 2018")
-plt.ylim(0.0, 10)
+plt.ylim(0.0, 13)
 
 import matplotlib.dates as mdates
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.legend()
+plt.legend(fontsize = 'small')
 plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
@@ -141,6 +144,7 @@ print("Figure ../figs/fig1.png printed")
 plt.figure("fig2")
 plt.legend()
 plt.title("When does the minimum of Antarctic sea ice area occur?")
+plt.legend(fontsize = 'small')
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 plt.grid()
 plt.yticks([],[])
