@@ -12,7 +12,9 @@ git clone https://github.com/fmassonn/sipn-south-public.git
 2. Go to the scripts directory to download the SIPN South forecast data:
 ```
 cd sipn-south-public/scripts
-./retrieve_data.bash   # Will fill the folder netcdf with data, takes a few minutes
+./retrieve_data.bash   # Will fill the folder netcdf with data, takes a few minutes. 
+                       # You can specify in that script the year(s) for which you want
+                       # to retrieve data
 ```
 
 3. Process the Python and NCL scripts
