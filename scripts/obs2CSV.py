@@ -47,8 +47,13 @@ def compute_area(concentration, cellarea, mask = 1):
   return are
 # ------
 # ------
+
+# Date parameters
+
+target = "2018-2019"   # Where to place the output file (../data/$target/txt)
+
 d0 = date(1850, 1, 1)  # Zero-time reference of the input file
-d1 = date(2018, 2, 1)  # Start investigated period
+d1 = date(2017, 12, 1)  # Start investigated period
 d2 = date(2018, 2, 28) # End investigated period (included)
 
 daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
@@ -84,17 +89,17 @@ for j_obs in range(len(obs)):
     # Save as CSV file
     # ----------------
     # Total area
-    with open("../data/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "wb") as file:
-        file.write(",".join(["{0:.2f}".format(a) for a in areatot]))  
+    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "wb") as file:
+        file.write(",".join(["{0:.4f}".format(a) for a in areatot]))  
         file.write("\n")
     
     # Per longitude
-    with open("../data/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "wb") as file:
+    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "wb") as file:
         # Per longitude bin
         for j_bin in np.arange(36):
           print(j_bin)
           area = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0) * (sftof == 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
-          file.write(",".join(["{0:.2f}".format(a) for a in area]))  # + 1 as python does not take the last bit
+          file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
           file.write("\n")
     
     # Plot for internal check

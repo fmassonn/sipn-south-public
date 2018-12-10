@@ -19,7 +19,7 @@ from datetime import date
 plt.close("all")
 
 myyear = "2018-2019"  # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = False       # Add obs as reference or not (False if forecast mode)
+plotobs = True        # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
 exec(open("./namelist_" + myyear + ".py").read())
@@ -97,13 +97,13 @@ if plotobs:
   csv = pd.read_csv(filein, header = None)
   series = csv.iloc[0][:]
   plt.figure("fig1")
-  plt.plot(np.arange(len(time)) + 1, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = "--", label = "OBS (NSIDC-0081)")
+  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = "--", label = "OBS 2017-2018 (NSIDC-0081)")
   plt.figure("fig2")
-  tt = np.arange(0.0, len(series), 0.1)
-  daymin = 1 + tt[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
-  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS (NSIDC-0081)")
+  tt = np.arange(0.0, len(series), 1)
+  daymin = time[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
+  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2017-2018 (NSIDC-0081)")
   plt.figure("fig3")
-  plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS (NSIDC-0081)")
+  plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2017-2018 (NSIDC-0081)")
   
   
   
@@ -111,15 +111,15 @@ if plotobs:
   csv = pd.read_csv(filein, header = None)
   series = csv.iloc[0][:]
   plt.figure("fig1")
-  plt.plot(np.arange(len(time)) + 1, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS (OSI-401-b)")
+  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS 2017-2018 (OSI-401-b)")
   plt.legend(fontsize = 8)
   plt.figure("fig2")
-  tt = np.arange(0.0, len(series), 0.1)
-  daymin = 1 + tt[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
-  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS (OSI-401-b)")
+  tt = np.arange(0.0, len(series), 1)
+  daymin = time[np.argmin(np.polyval(np.polyfit(range(len(series)), series, 2), tt))]
+  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2017-2018 (OSI-401-b)")
   plt.legend(fontsize = 8)
   plt.figure("fig3")
-  plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS (OSI-401-b)")
+  plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2017-2018 (OSI-401-b)")
   plt.legend(fontsize = 8)
   
 plt.figure("fig1")
@@ -149,13 +149,11 @@ plt.savefig("../figs/fig2.png", dpi = 500)
 print("Figure ../figs/fig2.png printed")
   
   
-  #plt.figure("fig3")
-  #plt.title("Monthly mean Antarctic sea ice area")
-  #plt.xlim(0.0, 5.0)
-  #plt.xticks([1, 5, 10, 15, 20, 25, 28], ["<01", "05", "10", "15", "20", "25", ">28"])
-  #plt.xlabel("10$^6$ km$^2$")
-  #plt.yticks([],[])
-  #plt.tight_layout()
-  #plt.savefig("../figs/fig3.png", dpi = 500)
-  #print("Figure ../figs/fig3.png printed")
+plt.figure("fig3")
+plt.title("Monthly mean Antarctic sea ice area")
+plt.xlabel("10$^6$ km$^2$")
+plt.yticks([],[])
+plt.tight_layout()
+plt.savefig("../figs/fig3.png", dpi = 500)
+print("Figure ../figs/fig3.png printed")
   
