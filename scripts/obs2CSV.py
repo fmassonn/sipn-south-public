@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Script to convert NetCDF observational references to
+# Script to convert NetCDF observational references of SIC to
 # SIPN South compliant format (CSV)
 # NSIDC 0081 and OSI-401b
 #
@@ -19,6 +19,15 @@ import os
 obs = [ ["NSIDC-0081", os.environ["TECLIM_CLIMATE_DATA"] + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
         ["OSI-401-b" , os.environ["TECLIM_CLIMATE_DATA"] + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
       ]
+
+# Date parameters
+
+target = "2018-2019"    # Where to place the output file (../data/$target/txt)
+
+d0 = date(1850, 1, 1)    # Zero-time reference of the input file (should not change)
+d1 = date(2018, 12, 1)   # Start investigated period
+d2 = date(2018, 12, 31)   # End investigated period (included)
+
 
 # Function to compute sea ice area from sea ice concentation
 # -----
@@ -48,13 +57,6 @@ def compute_area(concentration, cellarea, mask = 1):
 # ------
 # ------
 
-# Date parameters
-
-target = "2018-2019"   # Where to place the output file (../data/$target/txt)
-
-d0 = date(1850, 1, 1)  # Zero-time reference of the input file
-d1 = date(2017, 12, 1)  # Start investigated period
-d2 = date(2018, 2, 28) # End investigated period (included)
 
 daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
 
@@ -85,7 +87,7 @@ for j_obs in range(len(obs)):
     # Compute sea ice area for that period
     # ------------------------------------
     areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
-    
+
     # Save as CSV file
     # ----------------
     # Total area

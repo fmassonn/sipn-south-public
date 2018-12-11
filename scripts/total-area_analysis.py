@@ -96,11 +96,15 @@ for j_sub in range(n_sub):
 # -----------------
 if plotobs:
 
-  filein = "../data/" + myyear + "/txt/NSIDC-0081_000_total-area.txt"
+  filein = "../data/2017-2018/txt/NSIDC-0081_000_total-area.txt"
   csv = pd.read_csv(filein, header = None)
   series = csv.iloc[0][:]
   plt.figure("fig1")
   plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = "--", label = "OBS 2017-2018 (NSIDC-0081)")
+  #Also plot (hard-coded for now...) the current state
+  mydata = [8.4169,8.2069,7.9816,7.8211,7.6011,7.2880,7.1140,6.9764,6.7289,6.4839,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan]
+  plt.plot(time, mydata, color = [1.0, 0.2, 0.2], lw = 3.0, linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
+
   plt.figure("fig2")
   tt = np.arange(0.0, len(series[t1:t2]), 1)
   daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
@@ -110,11 +114,15 @@ if plotobs:
   
   
   
-  filein = "../data/" + myyear + "/txt/OSI-401-b_000_total-area.txt"
+  filein = "../data/2017-2018/txt/OSI-401-b_000_total-area.txt"
   csv = pd.read_csv(filein, header = None)
   series = csv.iloc[0][:]
   plt.figure("fig1")
   plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS 2017-2018 (OSI-401-b)")
+  #Also plot (hard-coded for now...) the current state
+  mydata = [8.9798,8.7607,8.4994,8.2861,8.0624,7.7428,7.5236,7.2674,7.0243,6.7677,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan]
+  plt.plot(time, mydata, color = [1.0, 0.2, 0.2], lw = 3.0, linestyle = ":", label = "OBS 2018-2019 (OSI-401-b)")
+
   plt.legend(fontsize = 8)
   plt.figure("fig2")
   tt = np.arange(0.0, len(series[t1:t2]), 1)
