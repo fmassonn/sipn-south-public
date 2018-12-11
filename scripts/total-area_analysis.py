@@ -47,9 +47,9 @@ n_sub = len(info)
 # Submission ID
 sub_id = [info[j_sub][0] for j_sub in range(n_sub)]
 
-# Number of forecasts for each submission
-n_for = [info[j_sub][1] for j_sub in range(n_sub)]
-
+# List of forecasts for each submission
+list_for = [info[j_sub][1] for j_sub in range(n_sub)]
+n_for    = [len(l) for l in list_for] # Nb of forecasts
 # Colors
 col = [info[j_sub][2] for j_sub in range(n_sub)]
 
@@ -61,15 +61,15 @@ plt.figure("fig2", figsize = (6, 4))
 plt.figure("fig3", figsize = (6, 4))
 
 for j_sub in range(n_sub):
-  for j_for in range(n_for[j_sub]):
+  for j_for in list_for[j_sub]:
     # Total area
-    filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + str(j_for + 1).zfill(3) + "_total-area.txt"
+    filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_total-area.txt"
     # Read the CSV file
     csv = pd.read_csv(filein, header = None)
     series = csv.iloc[0][:]
     # Plot series, line thinner for large ensembles. Legend only if first member
      
-    if j_for == 0:
+    if j_for == list_for[j_sub][0]:
       mylab = info[j_sub][0] + " " + info[j_sub][3]
     else:
       mylab = "_nolegend_"
