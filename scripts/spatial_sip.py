@@ -61,8 +61,9 @@ n_sub = len(info)
 # Submission ID
 sub_id = [info[j_sub][0] for j_sub in range(n_sub)]
 
-# Number of forecasts
-n_for = [info[j_sub][1] for j_sub in range(n_sub)]
+# List of forecasts for each submission
+list_for = [info[j_sub][1] for j_sub in range(n_sub)]
+n_for    = [len(l) for l in list_for] # Nb of forecasts
 
 # Observations
 obs_labels = ["OSI-401-b", "NSIDC-0081"]
@@ -96,7 +97,8 @@ for j_sub in range(n_sub):
   map.fillcontinents(color = 'grey', lake_color = 'w')
 
   # Load the data into a big array "data"
-  for j_for in np.arange(1, n_for[j_sub] + 1):
+  my_index = 0
+  for j_for in list_for[j_sub]:
     filein = "../data/" + myyear + "/netcdf/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration.nc"
 
     if not os.path.exists(filein):
@@ -105,7 +107,7 @@ for j_sub in range(n_sub):
     # Open file, read geometric parameters if the first one 
     print("  Loading " + filein)
     f = Dataset(filein, mode = "r")
-    if j_for == 1:
+    if j_for == list_for[j_sub][0]:
       lat = f.variables["latitude"][:]
       lon = f.variables["longitude"][:]
       nt = f.dimensions["time"].size
@@ -116,9 +118,10 @@ for j_sub in range(n_sub):
       ny, nx = lat.shape
       data = np.empty((n_for[j_sub], nt, ny, nx))
 
-    data[j_for - 1, :, :, :] = f.variables["siconc"][:]
+    data[my_index, :, :, :] = f.variables["siconc"][:]
     sftof = f.variables["sftof"][:]
     f.close()
+    my_index += 1
 
 
   # Regularize
@@ -138,7 +141,7 @@ for j_sub in range(n_sub):
     cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
     cbar.set_label("%")
     plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + period_name + " mean")
-    plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + period_short_name + "-mean")
+    plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + period_short_name + "-mean", dpi = 300)
     print("    Monthly mean conc printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
     plt.close("fig")
 
@@ -148,7 +151,7 @@ for j_sub in range(n_sub):
   sic_grandmean = np.mean(np.mean(data, axis = 0)[t1:t2], axis = 0)
   for j_for in np.arange(1, n_for[j_sub] + 1):
     print("      Contour for forecast # " + str(j_for).zfill(3))
-    cl = map.contour(x, y, np.mean(data[j_for - 1, t1:t2, :, :], axis = 0), [15.0], latlon = False, colors = '#ffcccc', linewidths = 0.1, linestyles = "-")
+    cl = map.contour(x, y, np.mean(data[j_for - 1, t1:t2, :, :], axis = 0), [15.0], latlon = False, colors = '#ffcccc', linewidths = 0.2, linestyles = "-")
 
   if sub_id[j_sub] == "ucl":
     cs = map.contourf(x[0:-1,0:-1], y[0:-1,0:-1], sic_grandmean[0:-1,0:-1], clevs, cmap = plt.cm.PuBu_r, latlon = False, extend = "neither")     
@@ -166,7 +169,7 @@ for j_sub in range(n_sub):
   cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
   cbar.set_label("%")
   plt.title(sub_id[j_sub] + " | ens mean | " + period_name + " mean")
-  plt.savefig("../figs/" + sub_id[j_sub] + "_ens-mean" + "_concentration_" + period_short_name + "-mean.png", dpi = 200)        
+  plt.savefig("../figs/" + sub_id[j_sub] + "_ens-mean" + "_concentration_" + period_short_name + "-mean.png", dpi = 300)        
   print("  Monthly mean conc printed for ensemble mean")
   plt.close("fig")
 
@@ -204,7 +207,7 @@ for j_sub in range(n_sub):
     #plt.scatter(np.linspace(x1, x2, nt)[jt], np.linspace(y1, y2, nt)[jt], 80, color = [0.1, 0.1, 0.1])
     #for day in [1, 10, 20, 28]:
     #  plt.text(np.linspace(x1, x2, nt)[day - 1], np.linspace(y1, y2, nt)[day - 1], " " + period_name + " " + str(day).zfill(2), rotation = 90, va = "bottom", ha = "center", color = [0.7, 0.7, 0.7])
-    plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 200)
+    plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
     print("  Probability day " + str(jt + 1).zfill(2) + " printed")
     plt.close("fig")
   

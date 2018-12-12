@@ -25,7 +25,7 @@ do
   rm -f ${dd}_X.png ${dd}_Y.png
 done
 
-#convert -delay 50 ??.png probability.gif
+convert -delay 50 ??.png probability.gif
 
 # The monthly mean
 convert +append nrl_ens-mean_concentration_Feb2019-mean.png \
