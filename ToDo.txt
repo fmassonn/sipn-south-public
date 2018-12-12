@@ -1,1 +1,2 @@
 - Update sea ice area plots by showing shaded ranges instead of lines
+- Update regional scripts
