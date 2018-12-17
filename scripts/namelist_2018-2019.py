@@ -1,7 +1,7 @@
 #          Group               Forecast ID      Color for plots [string]     Comment
 #          name [string]       list [list]
 np.random.seed(10)
-info = [ [ "nrl",              [f for f in range(1, 10 + 1) if f != 5]               , "#92B558",  ""                ],  \
+info = [ [ "nrl",              range(1, 10 + 1)  , "#92B558",  ""                ],  \
          [ "Nico-Sun",         range(1, 3 + 1)   , "#DC4C46",  ""                ],  \
          [ "FIO-ESM",          [1]               , "#672E3B",  ""                ],  \
          [ "ecmwf",            range(1, 50 + 1)  , "#F3D6E4",  ""                ],  \
