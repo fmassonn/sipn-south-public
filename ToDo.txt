@@ -1,2 +1,7 @@
 - Update sea ice area plots by showing shaded ranges instead of lines
 - Update regional scripts
+- Add Sandra Barreira's contribution
+- Add Sylvain Marchi's contribution
+- Add review of melting season
+- Understand origins of biases at initial time
+- Apply integrated ice edge error metric to data
