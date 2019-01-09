@@ -26,7 +26,7 @@ target = "2018-2019"    # Where to place the output file (../data/$target/txt)
 
 d0 = date(1850, 1, 1)    # Zero-time reference of the input file (should not change)
 d1 = date(2018, 12, 1)   # Start investigated period
-d2 = date(2018, 12, 31)   # End investigated period (included)
+d2 = date(2019, 2, 28)   # End investigated period (included)
 
 
 # Function to compute sea ice area from sea ice concentation
