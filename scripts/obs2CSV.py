@@ -66,7 +66,7 @@ plt.figure(figsize = (4, 4))
 for j_obs in range(len(obs)):
     print(obs[j_obs][0])
     # Input file, following CMIP conventions
-    filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_20150101-20181231_sh.nc"
+    filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_20150101-20191231_sh.nc"
     
     f = Dataset(filein, mode = "r")
     siconc = f.variables["siconc"][:]
