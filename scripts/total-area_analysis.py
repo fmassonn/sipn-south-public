@@ -101,7 +101,7 @@ if plotobs:
   series = csv.iloc[0][:]
   # It can be that the obs is not as long as the forecast, when the verification period is not over yet
   # --> complete with NaN.
-  obscomplete = (len(time) == len(series))
+  obscomplete = (len(time) == np.sum((1 - np.isnan(series)) * 1))
   if not obscomplete:
       series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
   plt.figure("fig1")
@@ -110,7 +110,6 @@ if plotobs:
   plt.figure("fig2")
   tt = np.arange(0.0, len(series[t1:t2]), 1)
   # Don't calculate minimum if series not yet completed
-  print(obscomplete)
   if obscomplete:
       daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
   else:
@@ -126,7 +125,7 @@ if plotobs:
   series = csv.iloc[0][:]
   # It can be that the obs is not as long as the forecast, when the verification period is not over yet
   # --> complete with NaN.
-  obscomplete = (len(time) == len(series))
+  obscomplete = (len(time) == np.sum((1 - np.isnan(series)) * 1))
   if not obscomplete:
       series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
   plt.figure("fig1")
