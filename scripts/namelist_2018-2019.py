@@ -5,6 +5,7 @@ info = [
          [ "Petty-NASA",       [1]               , "#005960",  "(interpolated)"  ],  \
          [ "FIO-ESM",          [1]               , "#672E3B",  ""                ],  \
          [ "Lamont",           [1]               , "#9C9A40",  "(interpolated)"  ],  \
+         [ "barreira",         [1]               , "#CC5137",  "(interpolated)"  ],  \
          [ "Nico-Sun",         range(1, 3 + 1)   , "#DC4C46",  ""                ],  \
          [ "ucl",              range(1, 10 + 1)  , "#77dd77",  ""                ],  \
          [ "nasa-gmao",        range(1, 10 + 1)  , "#4F84C4",  ""                ],  \

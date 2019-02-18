@@ -6,7 +6,7 @@ from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 
-R = 6378.0
+R = 6378000.0
 
 dlon, dlat = 1.0, 1.0
 
@@ -18,7 +18,7 @@ ny, nx = lon_out.shape
 
 areacello = R * np.cos( (lat_out * 2.0 * np.pi / 360.0 )) * (dlon * 2.0 * np.pi / 360.0)  * R * (dlat * 2.0 * np.pi / 360.0)
 
-
+root = "/storepelican/fmasson/sipn-south-data/2018-2019/"
 files = ["dic2018", "ene2019", "feb2019"]
 nt = len(files)
 
@@ -27,7 +27,7 @@ nt = len(files)
 for jt in range(nt):
 
     data = list()
-    with open (files[jt], "r") as f:
+    with open (root + "/other/" + files[jt], "r") as f:
         for row in csv.reader(f):
             data.append(np.array([float(r) for r in row[0].split()]))
     
@@ -62,7 +62,7 @@ for jt in range(nt):
                 sic_out[jt, jy, jx] = np.mean(sic[mask])
     
 # Create file
-fileout = "barreira_001_concentration.nc"
+fileout = "../data/2018-2019/netcdf/barreira_001_concentration_monthly.nc"
 f = Dataset(fileout, mode = "w")
 # Create dimensions
 time = f.createDimension('time', nt)
