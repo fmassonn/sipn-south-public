@@ -6,6 +6,7 @@ info = [ ["nrl",        range(1, 10 + 1), "#92B558",   ""              ],\
          ["nasa-gmao",  range(1, 10 + 1), "#4F84C4",   ""              ],\
          ["MetOffice",  range(1, 42 + 1), "#D2691E",   ""              ],\
          ["Nico-Sun",   range(1, 3 + 1),  "#DC4C46",   ""              ],\
+         ["ucl",        range(1, 10 + 1), "#77dd77",   ""              ],  \
        ]
 
 

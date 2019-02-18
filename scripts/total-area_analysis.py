@@ -61,6 +61,7 @@ plt.figure("fig2", figsize = (6, 4))
 plt.figure("fig3", figsize = (6, 4))
 
 for j_sub in range(n_sub):
+  print("Processing " + sub_id[j_sub])
   for j_for in list_for[j_sub]:
     # Total area
     filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_total-area.txt"
