@@ -18,6 +18,7 @@ do
 
   convert +append Lamont_prob-15_concentration_d${dd}.png \
                   Nico-Sun_prob-15_concentration_d${dd}.png \
+                  ucl_prob-15_concentration_d${dd}.png     \
                   ${dd}_Y.png
 
   convert -append ${dd}_X.png ${dd}_Y.png ${dd}.png
@@ -35,6 +36,7 @@ convert +append nrl_ens-mean_concentration_Feb2019-mean.png \
 
 convert +append Lamont_ens-mean_concentration_Feb2019-mean.png \
                 Nico-Sun_ens-mean_concentration_Feb2019-mean.png \
+                ucl_ens-mean_concentration_Feb2019-mean.png \
                 Y.png
 
 convert -append X.png Y.png monthly_mean.png

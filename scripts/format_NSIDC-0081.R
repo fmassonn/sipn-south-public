@@ -9,7 +9,7 @@ library(ncdf4)
 #
 
 yearb <- 2015          # The first year to process
-yeare <- 2018          # The last  year to process
+yeare <- 2019          # The last  year to process
 
 TECLIMDIR <- Sys.getenv(x = "TECLIM_CLIMATE_DATA")
 

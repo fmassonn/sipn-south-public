@@ -14,7 +14,7 @@ import os
 teclim_dir = os.environ["TECLIM_CLIMATE_DATA"]
 
 yearb=2015   # First year to process
-yeare=2018   # Last year to process
+yeare=2019   # Last year to process
 hemi="sh"    # Hemisphere to proces ("nh" or "sh")
 
 # Where to read the data from
@@ -95,7 +95,7 @@ for day in daterange:
 # -----------------
 date_ref =  date(1850, 1, 1) # zero-time reference
 
-fileout = outdir + "siconc_SIday_OSI-401-b_r1i1p1_" + str(yearb) + "0101-" + str(yeare) + "1231.nc"
+fileout = outdir + "siconc_SIday_OSI-401-b_r1i1p1_" + str(yearb) + "0101-" + str(yeare) + "1231_" + hemi + ".nc"
 # Create file
 f = Dataset(fileout, mode = "w")
 # Create dimensions

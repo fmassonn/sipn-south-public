@@ -16,8 +16,8 @@ set -o nounset
 set -o errexit
 set -x
 
-yearb=2015
-yeare=2018
+yearb=2018
+yeare=2019
 ftype="multi" # multi (= operational, OSI-401b) 
 
 outdir=${TECLIM_CLIMATE_DATA}/obs/ice/siconc/OSI-SAF/OSI-401-b/raw

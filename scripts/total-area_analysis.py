@@ -58,6 +58,7 @@ list_for = [info[j_sub][1] for j_sub in range(n_sub)]
 n_for    = [len(l) for l in list_for] # Nb of forecasts
 # Colors
 col = [info[j_sub][2] for j_sub in range(n_sub)]
+col = [plt.cm.RdYlBu(int(i))[:3] for i in np.linspace(0, 255, n_sub)]
 
 # Time series
 plt.figure("fig1", figsize = (6, 4))
@@ -106,11 +107,11 @@ for j_sub in range(n_sub):
   # Plot ensemble mean
   mean = np.mean(np.array(submission), axis = 0)
   plt.figure("fig1")
-  plt.plot(time, mean, color = col[j_sub], lw = 2, label = info[j_sub][0] + " " + info[j_sub][3])
+  plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = info[j_sub][0] + " " + info[j_sub][3])
   # Plot range as shading
   mymax = np.max(np.array(submission), axis = 0)
   mymin = np.min(np.array(submission), axis = 0)
-  plt.fill_between(time, mymin, mymax, color = col[j_sub], alpha = 0.2, lw = 0)
+  plt.fill_between(time, mymin, mymax, color = col[j_sub], alpha = 0.5, lw = 0)
     
 
 # Plot observations
@@ -126,7 +127,7 @@ if plotobs:
   if not obscomplete:
       series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
   plt.figure("fig1")
-  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
+  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 1.5, linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
 
   plt.figure("fig2")
   tt = np.arange(0.0, len(series[t1:t2]), 1)

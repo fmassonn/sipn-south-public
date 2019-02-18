@@ -16,8 +16,9 @@ import os
 
 # Name of obs to process
 #        OBS LABEL      OBS DIRECTORY
-obs = [ ["NSIDC-0081", os.environ["TECLIM_CLIMATE_DATA"] + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
+obs = [ 
         ["OSI-401-b" , os.environ["TECLIM_CLIMATE_DATA"] + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
+        ["NSIDC-0081", os.environ["TECLIM_CLIMATE_DATA"] + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
       ]
 
 # Date parameters
@@ -67,7 +68,8 @@ for j_obs in range(len(obs)):
     print(obs[j_obs][0])
     # Input file, following CMIP conventions
     filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_20150101-20191231_sh.nc"
-    
+    print(filein)
+
     f = Dataset(filein, mode = "r")
     siconc = f.variables["siconc"][:]
     time   = f.variables["time"][:]
@@ -87,7 +89,7 @@ for j_obs in range(len(obs)):
     # Compute sea ice area for that period
     # ------------------------------------
     areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
-
+    print(areatot)
     # Save as CSV file
     # ----------------
     # Total area

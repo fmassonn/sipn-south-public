@@ -1,4 +1,3 @@
-- Update sea ice area plots by showing shaded ranges instead of lines
 - Update regional scripts
 - Add Sandra Barreira's contribution
 - Add review of melting season
