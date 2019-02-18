@@ -6,30 +6,21 @@
 
 # Imports
 import pandas as pd
-from datetime import datetime
-import matplotlib.pyplot as plt#; import matplotlib; matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 import os
-from netCDF4 import Dataset
 import sys
-from mpl_toolkits.basemap import Basemap, addcyclic
+
+from   mpl_toolkits.basemap import Basemap, addcyclic
+from   netCDF4 import Dataset
+from   datetime import datetime
 
 
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
-print("WARNING: NRL between 0 and 1 for incoming forecasts")
 
-# Load color maps
+# Script parameters
 
 myyear = "2018-2019"  # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = False       # Add obs as reference or not (False if forecast mode)
+plotobs = True        # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -48,9 +39,12 @@ if myyear == "2017-2018":
 elif myyear == "2018-2019":
   inidate = "20181201"
   ndays   = 90
-  period_name = "February 2019"
-  period_short_name = "Feb2019"
-  t1, t2 = 63 - 1, 63 - 1 + 28
+  #period_name = "February 2019"
+  period_name = "1 December 2019"
+  #period_short_name = "Feb2019"
+  period_short_name = "1Dec2019"
+  #t1, t2 = 63 - 1, 63 - 1 + 28
+  t1, t2 = 1 - 1, 1 - 1 + 1
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
@@ -129,7 +123,7 @@ for j_sub in range(n_sub):
   data[data < 0.0  ] = 0.0
   # Do some plots
 
-  # Monthly mean for each member
+  # Time mean for each member
   for j_for in np.arange(1, n_for[j_sub] + 1):
     fig = plt.figure("fig", figsize = (5, 5))
     sic_monmean = np.mean(data[j_for - 1, t1:t2, :, :], axis = 0)
@@ -145,6 +139,27 @@ for j_sub in range(n_sub):
     print("    Monthly mean conc printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
     plt.close("fig")
 
+  # Daily for each member (time consuming)
+  for j_for in np.arange(1, n_for[j_sub] + 1):
+    for jt in np.arange(t1, t2):
+      fig = plt.figure("fig", figsize = (5, 5))
+      sic = data[j_for - 1, jt, :, :]
+      cs = map.contourf(x, y, sic, clevs, cmap = plt.cm.PuBu_r, latlon = False, extend = "neither")
+      cl = map.contour(x, y, sic, [15.0], latlon = False, colors = '#ffcccc', linewidths = 1, linestyles = "-")
+      map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
+      map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
+      map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
+      cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
+      cbar.set_label("%")
+      
+      if plotobs:
+        for j_obs in range(n_obs):
+          map.contour(obs[j_obs][0], obs[j_obs][1], obs[j_obs][2][jt, :, :], [15.0], latlon = False, colors = 'y', linewidths = 1, linestyles = "-")
+
+      plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + time[jt].strftime('%d %B %Y'))
+      plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
+      print("    Concentration " + time[jt].strftime('%d %B %Y') + " printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
+      plt.close("fig")
 
   # Monthly mean for the ensemble mean + spaghetti for forecasts
   fig = plt.figure("fig", figsize = (5, 5))
@@ -208,6 +223,6 @@ for j_sub in range(n_sub):
     #for day in [1, 10, 20, 28]:
     #  plt.text(np.linspace(x1, x2, nt)[day - 1], np.linspace(y1, y2, nt)[day - 1], " " + period_name + " " + str(day).zfill(2), rotation = 90, va = "bottom", ha = "center", color = [0.7, 0.7, 0.7])
     plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
-    print("  Probability day " + str(jt + 1).zfill(2) + " printed")
+    print("  Probability " + time[jt].strftime('%d %B %Y') + " printed")
     plt.close("fig")
   
