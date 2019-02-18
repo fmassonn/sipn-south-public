@@ -4,25 +4,28 @@
 # Date  : December 2017
 #         December 2018: update to account for new data arrival
 #                        each year
+#         February 2019: update to plot uncertainty better
+
 # Data: SIPN South contributors
 
-# Imports
-import pandas as pd
+# Imports and clean-up
+# --------------------
+import pandas            as pd
+import matplotlib.pyplot as plt
+import numpy             as np
+import os
+
 from datetime import datetime
 from datetime import timedelta
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-from netCDF4 import Dataset
+from netCDF4  import Dataset
 from datetime import date
 
 plt.close("all")
 
+
+# Script parameters
 myyear = "2018-2019"  # label with the year investigated (2017-2018, 2018-2019, ...)
 plotobs = True        # Add obs as reference or not (False if forecast mode)
-
-# Load namelist
-exec(open("./namelist_" + myyear + ".py").read())
 
 if myyear == "2017-2018":
   inidate = "20180201"
@@ -37,6 +40,9 @@ elif myyear == "2018-2019":
   period_name = "Dec-Jan-Feb 2018-2019"
   t1, t2 = 63 - 1, 63 - 1 + 28    # Period to compute means and identify minimum
                                   # nb of days since first day
+
+# Load namelist
+exec(open("./namelist_" + myyear + ".py").read())
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
@@ -62,21 +68,25 @@ plt.figure("fig3", figsize = (6, 4))
 
 for j_sub in range(n_sub):
   print("Processing " + sub_id[j_sub])
+  # Will have list of forecasted areas
+  submission = list() 
   for j_for in list_for[j_sub]:
     # Total area
     filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_total-area.txt"
     # Read the CSV file
     csv = pd.read_csv(filein, header = None)
     series = csv.iloc[0][:]
+    # Append that series to the contribution data
+    submission.append(series)
+
     # Plot series, line thinner for large ensembles. Legend only if first member
-     
     if j_for == list_for[j_sub][0]:
       mylab = info[j_sub][0] + " " + info[j_sub][3]
     else:
       mylab = "_nolegend_"
 
-    plt.figure("fig1")
-    plt.plot(time, series, color = col[j_sub], lw = (5.0 / n_for[j_sub]) ** 0.2, label = mylab)
+    #plt.figure("fig1")
+    #plt.plot(time, series, color = col[j_sub], lw = (5.0 / n_for[j_sub]) ** 0.2, label = mylab)
 
 
     # Record when the minimum of the series occurs
@@ -92,6 +102,16 @@ for j_sub in range(n_sub):
 
     plt.figure("fig3")
     plt.scatter(np.mean(series), n_sub - j_sub, color = col[j_sub], label = mylab)
+
+  # Plot ensemble mean
+  mean = np.mean(np.array(submission), axis = 0)
+  plt.figure("fig1")
+  plt.plot(time, mean, color = col[j_sub], lw = 2, label = info[j_sub][0] + " " + info[j_sub][3])
+  # Plot range as shading
+  mymax = np.max(np.array(submission), axis = 0)
+  mymin = np.min(np.array(submission), axis = 0)
+  plt.fill_between(time, mymin, mymax, color = col[j_sub], alpha = 0.2, lw = 0)
+    
 
 # Plot observations
 # -----------------
