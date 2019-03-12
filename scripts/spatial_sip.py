@@ -39,12 +39,12 @@ if myyear == "2017-2018":
 elif myyear == "2018-2019":
   inidate = "20181201"
   ndays   = 90
-  #period_name = "February 2019"
-  period_name = "1 December 2019"
-  #period_short_name = "Feb2019"
-  period_short_name = "1Dec2019"
-  #t1, t2 = 63 - 1, 63 - 1 + 28
-  t1, t2 = 1 - 1, 1 - 1 + 1
+  period_name = "February 2019"
+  #period_name = "1 December 2019"
+  period_short_name = "Feb2019"
+  #period_short_name = "1Dec2019"
+  t1, t2 = 63 - 1, 63 - 1 + 28
+  #t1, t2 = 1 - 1, 1 - 1 + 1
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
@@ -75,7 +75,7 @@ if plotobs:
   obs = list() # Each item of the list will have one x_array, y_array, SIC for each day
   for j_obs in range(n_obs):
     f = Dataset("../data/" + myyear + "/netcdf/" + obs_labels[j_obs] + "_000_concentration.nc")
-    sic = f.variables["siconc"][t1:t2, :, :]
+    sic = f.variables["siconc"][:]
     latitude = f.variables["latitude"][:]
     longitude = f.variables["longitude"][:]
     map = Basemap(projection = "spstere", boundinglat = - 50,lon_0 = 180, resolution = 'l')
