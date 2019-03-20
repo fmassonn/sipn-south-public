@@ -1,3 +1,4 @@
+barreira_001_concentration.nc
 Lamont_001_concentration.nc
 MetOffice_001_concentration.nc
 MetOffice_002_concentration.nc
@@ -51,9 +52,9 @@ nasa-gmao_007_concentration.nc
 nasa-gmao_008_concentration.nc
 nasa-gmao_009_concentration.nc
 nasa-gmao_010_concentration.nc
-NicoSun_001_concentration.nc
-NicoSun_002_concentration.nc
-NicoSun_003_concentration.nc
+Nico-Sun_001_concentration.nc
+Nico-Sun_002_concentration.nc
+Nico-Sun_003_concentration.nc
 nrl_001_concentration.nc
 nrl_002_concentration.nc
 nrl_003_concentration.nc
@@ -64,6 +65,8 @@ nrl_007_concentration.nc
 nrl_008_concentration.nc
 nrl_009_concentration.nc
 nrl_010_concentration.nc
+NSIDC-0081_000_concentration.nc
+OSI-401-b_000_concentration.nc
 ucl_001_concentration.nc
 ucl_002_concentration.nc
 ucl_003_concentration.nc
