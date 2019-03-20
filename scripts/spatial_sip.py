@@ -140,26 +140,26 @@ for j_sub in range(n_sub):
     plt.close("fig")
 
   # Daily for each member (time consuming)
-  for j_for in np.arange(1, n_for[j_sub] + 1):
-    for jt in np.arange(t1, t2):
-      fig = plt.figure("fig", figsize = (5, 5))
-      sic = data[j_for - 1, jt, :, :]
-      cs = map.contourf(x, y, sic, clevs, cmap = plt.cm.PuBu_r, latlon = False, extend = "neither")
-      cl = map.contour(x, y, sic, [15.0], latlon = False, colors = '#ffcccc', linewidths = 1, linestyles = "-")
-      map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
-      map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
-      map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
-      cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
-      cbar.set_label("%")
-      
-      if plotobs:
-        for j_obs in range(n_obs):
-          map.contour(obs[j_obs][0], obs[j_obs][1], obs[j_obs][2][jt, :, :], [15.0], latlon = False, colors = 'y', linewidths = 1, linestyles = "-")
+  #for j_for in np.arange(1, n_for[j_sub] + 1):
+  #  for jt in np.arange(t1, t2):
+  #    fig = plt.figure("fig", figsize = (5, 5))
+  #    sic = data[j_for - 1, jt, :, :]
+  #    cs = map.contourf(x, y, sic, clevs, cmap = plt.cm.PuBu_r, latlon = False, extend = "neither")
+  #    cl = map.contour(x, y, sic, [15.0], latlon = False, colors = '#ffcccc', linewidths = 1, linestyles = "-")
+  #    map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
+  #    map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
+  #    map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
+  #    cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
+  #    cbar.set_label("%")
+  #    
+  #    if plotobs:
+  #      for j_obs in range(n_obs):
+  #        map.contour(obs[j_obs][0], obs[j_obs][1], obs[j_obs][2][jt, :, :], [15.0], latlon = False, colors = 'y', linewidths = 1, linestyles = "-")
 
-      plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + time[jt].strftime('%d %B %Y'))
-      plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
-      print("    Concentration " + time[jt].strftime('%d %B %Y') + " printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
-      plt.close("fig")
+  #    plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + time[jt].strftime('%d %B %Y'))
+  #    plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
+  #    print("    Concentration " + time[jt].strftime('%d %B %Y') + " printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
+  #    plt.close("fig")
 
   # Monthly mean for the ensemble mean + spaghetti for forecasts
   fig = plt.figure("fig", figsize = (5, 5))
@@ -176,7 +176,7 @@ for j_sub in range(n_sub):
   # Put obs
   if plotobs:
     for j_obs in range(n_obs):
-      map.contour(obs[j_obs][0], obs[j_obs][1], np.mean(obs[j_obs][2], axis = 0), [15.0], latlon = False, colors = 'y', linewidths = 1, linestyles = "-")
+      map.contour(obs[j_obs][0], obs[j_obs][1], np.mean(obs[j_obs][2][t1:t2, :, :], axis = 0), [15.0], latlon = False, colors = 'y', linewidths = 1, linestyles = "-")
     
   map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
   map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
