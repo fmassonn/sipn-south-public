@@ -54,11 +54,10 @@ with open("../data/2018-2019/txt/barreira_001_total-area.txt", "wb") as file:
 
 del area
 
-
 with open("../data/2018-2019/txt/barreira_001_regional-area.txt", "wb") as file:
   # Per longitude bin
   for j_bin in np.arange(36):
     print(j_bin)
-    area = compute_area(siconc, areacello, 1.0 * (lat < 0) * (sftof / 100.0) * (lon >= j_bin * 10.0) * (lat < (j_bin + 1) * 10.0))
+    area = compute_area(siconc, areacello, 1.0 * (lat < 0) * (sftof / 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
     file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
     file.write("\n")
