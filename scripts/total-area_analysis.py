@@ -14,6 +14,7 @@ import pandas            as pd
 import matplotlib.pyplot as plt
 import numpy             as np
 import os
+import random
 
 from datetime import datetime
 from datetime import timedelta
@@ -21,7 +22,6 @@ from netCDF4  import Dataset
 from datetime import date
 
 plt.close("all")
-
 
 # Script parameters
 myyear = "2018-2019"  # label with the year investigated (2017-2018, 2018-2019, ...)
@@ -58,14 +58,13 @@ list_for = [info[j_sub][1] for j_sub in range(n_sub)]
 n_for    = [len(l) for l in list_for] # Nb of forecasts
 # Colors
 col = [info[j_sub][2] for j_sub in range(n_sub)]
-col = [plt.cm.RdYlBu(int(i))[:3] for i in np.linspace(0, 255, n_sub)]
 
 # Time series
 plt.figure("fig1", figsize = (6, 4))
 # Minimum 
-plt.figure("fig2", figsize = (6, 4))
+plt.figure("fig2", figsize = (6, 5))
 # Monthly means
-plt.figure("fig3", figsize = (6, 4))
+plt.figure("fig3", figsize = (6, 5))
 
 for j_sub in range(n_sub):
   print("Processing " + sub_id[j_sub])
@@ -111,7 +110,7 @@ for j_sub in range(n_sub):
   # Plot range as shading
   mymax = np.max(np.array(submission), axis = 0)
   mymin = np.min(np.array(submission), axis = 0)
-  plt.fill_between(time, mymin, mymax, color = col[j_sub], alpha = 0.5, lw = 0)
+  plt.fill_between(time, mymin, mymax, color = [c * 1.0 for c in col[j_sub]], alpha = 0.5, lw = 0)
     
 
 # Plot observations
@@ -169,13 +168,14 @@ if plotobs:
   
 plt.figure("fig1")
 plt.title(period_name + " total Antarctic sea ice area")
+
 #plt.xticks([1, 5, 10, 15, 20, 25, 28], ["01", "05", "10", "15", "20", "25", "28"])
 #plt.xlabel("Day in February 2018")
 plt.ylim(0.0, 13)
 
 import matplotlib.dates as mdates
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.legend(fontsize = 'small')
+plt.legend(fontsize = 7)
 plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
