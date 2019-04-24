@@ -124,7 +124,7 @@ for j_sub in range(n_sub):
   # Do some plots
 
   # Time mean for each member
-  for j_for in np.arange(1, n_for[j_sub] + 1):
+  for j_for in list_for[j_sub]:
     fig = plt.figure("fig", figsize = (5, 5))
     sic_monmean = np.mean(data[j_for - 1, t1:t2, :, :], axis = 0)
     cl = map.contour(x, y, sic_monmean, [15.0], latlon = False, colors = '#ffcccc', linewidths = 1, linestyles = "-")
@@ -140,7 +140,7 @@ for j_sub in range(n_sub):
     plt.close("fig")
 
   # Daily for each member (time consuming)
-  #for j_for in np.arange(1, n_for[j_sub] + 1):
+  #for j_for in list_for[j_sub]:
   #  for jt in np.arange(t1, t2):
   #    fig = plt.figure("fig", figsize = (5, 5))
   #    sic = data[j_for - 1, jt, :, :]
@@ -164,7 +164,7 @@ for j_sub in range(n_sub):
   # Monthly mean for the ensemble mean + spaghetti for forecasts
   fig = plt.figure("fig", figsize = (5, 5))
   sic_grandmean = np.mean(np.mean(data, axis = 0)[t1:t2], axis = 0)
-  for j_for in np.arange(1, n_for[j_sub] + 1):
+  for j_for in list_for[j_sub]:
     print("      Contour for forecast # " + str(j_for).zfill(3))
     cl = map.contour(x, y, np.mean(data[j_for - 1, t1:t2, :, :], axis = 0), [15.0], latlon = False, colors = '#ffcccc', linewidths = 0.2, linestyles = "-")
 
