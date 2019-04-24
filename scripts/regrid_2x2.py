@@ -24,6 +24,12 @@ list_for = [info[j_sub][1] for j_sub in range(n_sub)]
 n_for    = [len(l) for l in list_for] # Nb of forecasts
 
 
+# Tweak and add obs to list
+n_sub += 1
+sub_id = ["OSI-401-b", "NSIDC-0081"] + sub_id
+list_for = [[0] + [0]] + list_for
+n_for = [1, 1] + n_for
+
 # Regridding at finer than 2x2 not possible due to native
 # resolution of Lamont
 
