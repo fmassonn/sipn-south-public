@@ -97,10 +97,13 @@ def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, lon
   overestim = np.array([np.sum(1.0 * (sic_eva[jt, :, :] >  threshold) * (sic_ref[jt, :, :] <= threshold)  * mask * cellarea) for jt in range(nt)]) / 1e12
   underestim= np.array([np.sum(1.0 * (sic_eva[jt, :, :] <= threshold) * (sic_ref[jt, :, :] > threshold)   * mask * cellarea) for jt in range(nt)]) / 1e12
 
+  ref_area  = np.array([np.nansum(sic_ref[jt, :, :] / 100.0 * mask * cellarea) for jt in range(nt)]) / 1e12
   AEE = np.abs(overestim - underestim)
   ME  = 2.0 * np.minimum(overestim, underestim)
 
   IIEE = overestim + underestim
+  NIIEE = 100.0 * IIEE /ref_area
+
   if np.max(np.abs((AEE + ME) - IIEE)) > 1e-14:
     print(np.abs((AEE + ME) - IIEE))
     sys.exit("ERROR")
@@ -123,7 +126,8 @@ def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, lon
     plt.savefig("../figs/map.png")
     plt.close("fig")
 
-  return IIEE, AEE, ME, overestim, underestim
+  
+  return IIEE, NIIEE, AEE, ME, overestim, underestim
 
 # Load observational data
 # -----------------------
@@ -155,7 +159,7 @@ for j_sub in range(n_sub):
     f = Dataset(filein, mode = "r")
     sic = f.variables["siconc"][:]
     f.close()
-    IIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, lat = latitude, lon = longitude, plot = False)
+    IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, lat = latitude, lon = longitude, plot = False)
 
     submission.append(IIEE)
 

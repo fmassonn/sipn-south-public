@@ -62,7 +62,7 @@ col = [info[j_sub][2] for j_sub in range(n_sub)]
 # Time series
 plt.figure("fig1", figsize = (6, 4))
 # Minimum 
-plt.figure("fig2", figsize = (6, 5))
+plt.figure("fig2", figsize = (7, 4))
 # Monthly means
 plt.figure("fig3", figsize = (6, 5))
 
@@ -101,7 +101,7 @@ for j_sub in range(n_sub):
       #plt.text(46, n_sub - j_sub, info[j_sub][0] + " " + info[j_sub][3], color = col[j_sub], ha = "right")
 
     plt.figure("fig3")
-    plt.scatter(np.mean(series), n_sub - j_sub, color = col[j_sub], label = mylab)
+    plt.scatter(np.mean(series[t1:t2]), n_sub - j_sub, color = col[j_sub], label = mylab)
 
   # Plot ensemble mean
   mean = np.mean(np.array(submission), axis = 0)
@@ -126,7 +126,7 @@ if plotobs:
   if not obscomplete:
       series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
   plt.figure("fig1")
-  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 1.5, linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
+  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 1.5, linestyle = "--", label = "OBS 2018-2019\n(NSIDC-0081)")
 
   plt.figure("fig2")
   tt = np.arange(0.0, len(series[t1:t2]), 1)
@@ -135,9 +135,9 @@ if plotobs:
       daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
   else:
       daymin = np.nan
-  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
+  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2018-2019\n(NSIDC-0081)")
   plt.figure("fig3")
-  plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
+  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
   
   
   
@@ -150,7 +150,7 @@ if plotobs:
   if not obscomplete:
       series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
   plt.figure("fig1")
-  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS 2018-2019 (OSI-401-b)")
+  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS 2018-2019\n(OSI-401-b)")
 
   plt.legend(fontsize = 8)
   plt.figure("fig2")
@@ -160,10 +160,10 @@ if plotobs:
   else:
       daymin = np.nan
 
-  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2018-2019 (OSI-401-b)")
+  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2018-2019\n(OSI-401-b)")
   plt.legend(fontsize = 8)
   plt.figure("fig3")
-  plt.plot((np.mean(series), np.mean(series)), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2018-2019 (OSI-401-b)")
+  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2018-2019 (OSI-401-b)")
   plt.legend(fontsize = 8)
   
 plt.figure("fig1")
