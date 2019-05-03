@@ -1,19 +1,27 @@
+load "~/scripts/NCL/ncl_funcs.ncl"
 
 ;plot monthly statistic of predicted sea ice area by longitude, for SIPN predictions
 
 
 begin
 
-  stat   = "min"  ;statistic to plot - "mean" or "min"
+  stat   = "mean"  ;statistic to plot - "mean" or "min"
   
   isAnom = True  ;plot climatological anomaly (True) or abs value (False)
   isObs  = True  ;plot Obs ?
   
 
-  year  = 2018
-  month = "Feb"
-  nday  = 28
-  nlon  = 36
+  nlon     = 36
+
+  callyear = 2019
+  year     = 2019
+  month    = "Feb"
+  mInd     = 2
+  stdat    = 62  ;start index of prediction files
+  endat    = 89  ;end index of prediction files
+  nday     = endat-stdat+1
+
+
 
   sNam  = (/"King Hakon VII","E. Antarctic","Ross","Amundsen","Bellingshausen","Weddell" /)
   nsec  = dimsizes(sNam)
@@ -33,7 +41,7 @@ begin
   fi   = addfile("~/data/NSIDC/NSIDC_nasa_team_SH_icearea_daily.nc","r")
   time = fi->time
   mon  = (time%10000)/100
-  tInd = ind(mon.eq.2)
+  tInd = ind(mon.eq.mInd)
 
   SIA  = fi->SIA(tInd,:)
 
@@ -74,7 +82,7 @@ begin
   end if
   
 
-  delete([/SIA,climtmp,time,mon,day,ilon,lonmin,lonmax,ii/])
+  delete([/SIA,climtmp,time,mon,day,ilon,lonmin,lonmax,ii,tmp/])
 
 
 ;******************
@@ -82,7 +90,7 @@ begin
 ;find contributors and their ensembles
 ;**************************************
 
-  diri         = "/Users/whobbs/data/SIPN/"+year+"/"
+  diri         = "/Users/whobbs/data/SIPN/"+callyear+"/"
   fili         = systemfunc("ls "+diri+"*_???_regional-area.txt")
   nfil         = dimsizes(fili)
 
@@ -112,10 +120,11 @@ begin
   data = new((/nfil,nlon,nday/), float)
 
   do i = 0, nfil-1
-    data(i,:,:) = readAsciiTable(fili(i),nday,"float",0)
+    tmp         = read_csv(fili(i), 0, "float")
+    data(i,:,:) = tmp(:,stdat:endat)
   end do
 
-  delete(fili)
+  delete([/fili,tmp/])
 
 
 
@@ -157,7 +166,8 @@ begin
     Obs = new((/nObs,nlon,nday/), float)
 
     do i = 0, nObs-1
-      Obs(i,:,:) = readAsciiTable(fili(i),nday,"float",0)
+      tmp         = read_csv(fili(i), 0, "float")
+      Obs(i,:,:)  = tmp(:,stdat:endat)
     end do
 
     delete(fili)
@@ -208,9 +218,10 @@ begin
       EnsMn(i,:)   = monMean(memList[i],:)
     end if
 
+
+
   end do
   
-
 
 
 
@@ -231,12 +242,12 @@ begin
 
   if (isAnom) then
     res@tiYAxisString          = "SIA anomaly (10~S~6~N~ km~S~2~N~)"
-    res@trYMinF                = 0.1 * floor(10.*min(monMean))
+    res@trYMinF                = 0.1 * floor(10.*min((/min(monMean),min(oMean)/)))
   else
     res@tiYAxisString          = "SIA (10~S~6~N~ km~S~2~N~)"
     res@trYMinF                = 0.
   end if
-  res@trYMaxF                = 0.1 * ceil(10.*max(monMean))
+  res@trYMaxF                = 0.1 * ceil(10.* max((/max(monMean),max(oMean)/)))
   res@gsnYRefLine            = 0.
   res@gsnYRefLineThicknessF  = 2.
 
@@ -252,26 +263,35 @@ begin
 
 
 
-;colors - this needs to be better
-  cmap  = read_colormap_file("srip_reanalysis")
-  ncol  = 12
-  stcol = 2
-
-
+;colors 
+  tmp                      := read_csv("~/scripts/ANTARCTIC/SIPN/SIPN_colorfile.csv",1,"string")
+  cInd                      = new(nsrc, integer)
+  do i = 0, nsrc-1
+    cInd(i) = ind(tmp(:,0).eq.src(i))
+  end do
+  cmap                      = stringtofloat(tmp(cInd,1:)) ;nsrc, 3
+  delete(tmp)
 
 ;plot ranges
-  res@xyLineThicknessF      = 0.01                     
-  res@xyLineColors          = cmap(:nsrc*2-1:2,:)
+  res@xyLineThicknessF      = 0.01              
+      
+  res@xyLineColors          = cmap
   res@gsnXYFillOpacities    = .3
 
 
-
   i=1
-  res@gsnXYFillColors       = res@xyLineColors(i)  
+  res@gsnXYFillColors       = cmap(i,:)  
+  res@gsnLeftString         = month+" "+year
+
   plot                      = gsn_csm_xy(wks, lon, Range(i,:,:), res)
+  res@gsnLeftString         = ""
 
   do i = 2, nsrc-1
-    res@gsnXYFillColors       = res@xyLineColors(i) 
+
+    if (Nmem(i).eq.1) then
+      continue
+    end if
+    res@gsnXYFillColors       = cmap(i,:)
     oplot = gsn_csm_xy(wks, lon, Range(i,:,:), res)
     overlay(plot, oplot)
   end do
@@ -284,9 +304,9 @@ begin
   if (isObs) then
     res@xyExplicitLegendLabels = array_append_record(src,osrc,0)
     res@xyLineThicknesses      = array_append_record(conform_dims(nsrc,3.5,-1),conform_dims(nObs,5.,-1),0)
-    lcols                      = new((/nsrc+nObs,4/),float) 
-    lcols(:nsrc-1,:)           = res@xyLineColors
-    lcols(nsrc:,:)             = conform_dims((/nObs,4/),(/0.,0.,0.,1/),1)
+    lcols                      = new((/nsrc+nObs,3/),float) 
+    lcols(:nsrc-1,:)           = cmap
+    lcols(nsrc:,:)             = 0.
     res@xyLineColors          := lcols
     res@xyDashPatterns         = array_append_record(conform_dims(nsrc+1,0,-1),(/14,15,16/),0)
     res@xyMonoDashPattern      = False
@@ -303,25 +323,19 @@ begin
   res@lgPerimOn                = True
 
   res@pmLegendWidthF           = 0.22
+  res@pmLegendHeightF          = 0.27
+  res@lgLabelFontHeightF       = 0.018
   res@pmLegendSide             = "Top"
-  res@pmLegendParallelPosF     = 0.13  ;x-position
+  res@pmLegendParallelPosF     = 0.21  ;x-position
   if (isAnom) then
-    res@pmLegendOrthogonalPosF = -1. ;y-position
+    res@pmLegendOrthogonalPosF = -1.05 ;y-position
   else
     res@pmLegendOrthogonalPosF = -0.5 ;y-position
   end if
 
 
-
   oplot =  gsn_csm_xy(wks, lon, EnsMn, res)
   overlay(plot, oplot)
-
-
-
-
-
-
-
 
 
 
