@@ -43,18 +43,12 @@ if myyear == "2017-2018":
   inidate = "20180201"
   ndays   = 28 #number of days of the forecast period
   period_name = "February 2018"
-  t1, t2 = 0, 0 + ndays # time indices defining the period for diagnostics
                         # (Pythonic convention)
 
 elif myyear == "2018-2019":
   inidate = "20181201"
   ndays   = 90
-  period_name = "February 2019"
-  #period_name = "1 December 2019"
-  period_short_name = "Feb2019"
-  #period_short_name = "1Dec2019"
-  t1, t2 = 63 - 1, 63 - 1 + 28
-  #t1, t2 = 1 - 1, 1 - 1 + 1
+  period_name = "Dec-Jan-Feb 2018-2019"
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
