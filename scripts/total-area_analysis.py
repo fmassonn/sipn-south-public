@@ -175,7 +175,7 @@ plt.ylim(0.0, 13)
 
 import matplotlib.dates as mdates
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.legend(fontsize = 7)
+#plt.legend(fontsize = 7)
 plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
