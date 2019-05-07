@@ -1,5 +1,1 @@
-- Update regional scripts
-- Add Sandra Barreira's contribution
-- Add review of melting season
-- Understand origins of biases at initial time
-- Apply integrated ice edge error metric to data
+- Add Nico Sun 2018 data
