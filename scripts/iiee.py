@@ -181,5 +181,5 @@ plt.ylabel("10$^6$ km$^2$")
 import matplotlib.dates as mdates
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 plt.grid()
-plt.legend()
+#plt.legend()
 plt.savefig("../figs/iiee.png", dpi = 300)
