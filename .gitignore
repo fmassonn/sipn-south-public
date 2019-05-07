@@ -26,3 +26,6 @@ bin-release/
 *.png
 *.ps
 *.gif
+
+# Logs
+log*
