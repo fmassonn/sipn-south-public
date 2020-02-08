@@ -19,8 +19,8 @@ from   datetime import datetime
 
 # Script parameters
 
-myyear = "2018-2019"  # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = True        # Add obs as reference or not (False if forecast mode)
+myyear = "2019-2020"  # label with the year investigated (2017-2018, 2018-2019, ...)
+plotobs = False       # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -45,6 +45,14 @@ elif myyear == "2018-2019":
   #period_short_name = "1Dec2019"
   t1, t2 = 63 - 1, 63 - 1 + 28
   #t1, t2 = 1 - 1, 1 - 1 + 1
+
+elif myyear == "2019-2020":
+  inidate = "20191201"
+  ndays   = 90
+  period_name = "February 2020"
+  period_short_name = "Feb2019"
+  t1, t2 = 63 - 1, 63 - 1 + 28
+
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()

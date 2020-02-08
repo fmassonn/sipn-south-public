@@ -23,11 +23,15 @@ obs = [
 
 # Date parameters
 
-target = "2018-2019"    # Where to place the output file (../data/$target/txt)
+target = "2019-2020"    # Where to place the output file (../data/$target/txt)
 
 d0 = date(1850, 1, 1)    # Zero-time reference of the input file (should not change)
-d1 = date(2018, 12, 1)   # Start investigated period
-d2 = date(2019, 2, 28)   # End investigated period (included)
+d1 = date(2019, 12, 1)   # Start investigated period
+d2 = date(2019, 12, 21)   # End investigated period (included)
+
+
+# ========================================
+
 
 
 # Function to compute sea ice area from sea ice concentation
@@ -93,12 +97,12 @@ for j_obs in range(len(obs)):
     # Save as CSV file
     # ----------------
     # Total area
-    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "wb") as file:
+    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "w") as file:
         file.write(",".join(["{0:.4f}".format(a) for a in areatot]))  
         file.write("\n")
     
     # Per longitude
-    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "wb") as file:
+    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "w") as file:
         # Per longitude bin
         for j_bin in np.arange(36):
           print(j_bin)

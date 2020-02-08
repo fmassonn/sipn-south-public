@@ -16,7 +16,7 @@ set -o nounset
 set -o errexit
 set -x
 
-yearb=2018
+yearb=2019
 yeare=2019
 ftype="multi" # multi (= operational, OSI-401b) 
 
@@ -28,7 +28,7 @@ mkdir -p $outdir
 
 for year in `seq $yearb $yeare`
 do
-  for month in 01 02 03 04 05 06 07 08 09 10 11 12
+  for month in 12 # 01 02 03 04 05 06 07 08 09 10 11 12
   do
     rootaddress="ftp://osisaf.met.no/archive/ice/conc/"
     wget -N -c $rootaddress/${year}/${month}/ice_conc_?h_polstere-100_${ftype}_${year}${month}??1200.nc -P $outdir

@@ -5,6 +5,7 @@
 #         December 2018: update to account for new data arrival
 #                        each year
 #         February 2019: update to plot uncertainty better
+#         December 2019: update for 2019-2020 forecast
 
 # Data: SIPN South contributors
 
@@ -24,8 +25,8 @@ from datetime import date
 plt.close("all")
 
 # Script parameters
-myyear = "2018-2019"  # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = True        # Add obs as reference or not (False if forecast mode)
+myyear = "2019-2020"   # label with the year investigated (2017-2018, 2018-2019, ...)
+plotobs = True         # Add obs as reference or not (False if forecast mode)
 
 if myyear == "2017-2018":
   inidate = "20180201"
@@ -40,6 +41,11 @@ elif myyear == "2018-2019":
   period_name = "Dec-Jan-Feb 2018-2019"
   t1, t2 = 63 - 1, 63 - 1 + 28    # Period to compute means and identify minimum
                                   # nb of days since first day
+elif myyear == "2019-2020":
+  inidate = "20191201"
+  ndays   = 90
+  period_name = "Dec-Jan-Feb 2019-2020"
+  t1, t2 = 63 - 1, 63 - 1 + 28    # Period to compute means and identify minimum
 
 # Load namelist
 exec(open("./namelist_" + myyear + ".py").read())
@@ -117,7 +123,7 @@ for j_sub in range(n_sub):
 # -----------------
 if plotobs:
 
-  filein = "../data/2018-2019/txt/NSIDC-0081_000_total-area.txt"
+  filein = "../data/" + myyear + "/txt/NSIDC-0081_000_total-area.txt"
   csv = pd.read_csv(filein, header = None)
   series = csv.iloc[0][:]
   # It can be that the obs is not as long as the forecast, when the verification period is not over yet
@@ -141,7 +147,7 @@ if plotobs:
   
   
   
-  filein = "../data/2018-2019/txt/OSI-401-b_000_total-area.txt"
+  filein = "../data/" + myyear + "/txt/OSI-401-b_000_total-area.txt"
   csv = pd.read_csv(filein, header = None)
   series = csv.iloc[0][:]
   # It can be that the obs is not as long as the forecast, when the verification period is not over yet
