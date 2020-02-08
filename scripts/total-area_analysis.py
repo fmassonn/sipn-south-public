@@ -26,7 +26,7 @@ plt.close("all")
 
 # Script parameters
 myyear = "2019-2020"   # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = True         # Add obs as reference or not (False if forecast mode)
+plotobs = False         # Add obs as reference or not (False if forecast mode)
 
 if myyear == "2017-2018":
   inidate = "20180201"
@@ -176,7 +176,8 @@ plt.figure("fig1")
 plt.title(period_name + " total Antarctic sea ice area")
 
 #plt.xticks([1, 5, 10, 15, 20, 25, 28], ["01", "05", "10", "15", "20", "25", "28"])
-#plt.xlabel("Day in February 2018")
+#plt.xlabel("Day in February 2020")
+plt.xticks([time[j] for j in np.arange(0, len(time), 15)])
 plt.ylim(0.0, 13)
 
 import matplotlib.dates as mdates
@@ -194,6 +195,8 @@ plt.legend()
 plt.title("When does the minimum of Antarctic sea ice area occur?")
 plt.legend(fontsize = 'small')
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+plt.xticks([time[j] for j in [62, 71, 81, 89]])
+
 plt.grid()
 plt.yticks([],[])
 plt.tight_layout()
