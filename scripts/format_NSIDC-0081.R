@@ -8,14 +8,14 @@ library(ncdf4)
 #
 #
 
-yearb <- 2015          # The first year to process
-yeare <- 2019          # The last  year to process
+yearb <- 2019          # The first year to process
+yeare <- 2020          # The last  year to process
 
-TECLIMDIR <- Sys.getenv(x = "TECLIM_CLIMATE_DATA")
+datadir <- "../data/"
 
-rootdir <- paste(TECLIMDIR, "/obs/ice/siconc/NSIDC/NSIDC-0081/raw/", sep = "/") # The base directory
+rootdir <- paste(datadir, "/obs/ice/siconc/NSIDC/NSIDC-0081/raw/", sep = "/") # The base directory
 
-outdir <- paste(TECLIMDIR, "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/", sep = "/") # Where to save the files
+outdir <- paste(datadir, "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/", sep = "/") # Where to save the files
 
 # Create if not exists
 dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
@@ -48,7 +48,7 @@ for (year in seq(yearb, yeare)) {
 
 scaling <- 100.0 # convert fractional to % (to be CMIP compliant)
 
-for (hemi in c("north","south")){
+for (hemi in c("south")){
   print(hemi)
   # 1. Read the grid
   # ----------------

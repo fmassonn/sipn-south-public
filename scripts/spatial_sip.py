@@ -20,7 +20,7 @@ from   datetime import datetime
 # Script parameters
 
 myyear = "2019-2020"  # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = False       # Add obs as reference or not (False if forecast mode)
+plotobs = True       # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())

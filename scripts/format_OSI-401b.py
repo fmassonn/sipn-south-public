@@ -11,16 +11,16 @@ from datetime import date, timedelta
 import os
 
 # The (machine-dependent) location of CLIMDATA folder
-teclim_dir = os.environ["TECLIM_CLIMATE_DATA"]
+data_dir = "../data/"
 
-yearb=2015   # First year to process
-yeare=2019   # Last year to process
+yearb=2019   # First year to process
+yeare=2020   # Last year to process
 hemi="sh"    # Hemisphere to proces ("nh" or "sh")
 
 # Where to read the data from
-rootdir = teclim_dir + "/obs/ice/siconc/OSI-SAF/OSI-401-b/raw/"
+rootdir = data_dir + "/obs/ice/siconc/OSI-SAF/OSI-401-b/raw/"
 # Where to write the data to
-outdir =  teclim_dir + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"
+outdir =  data_dir + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"
 
 
 # Check existence of paths

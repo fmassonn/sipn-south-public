@@ -26,7 +26,7 @@ plt.close("all")
 
 # Script parameters
 myyear = "2019-2020"   # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = False         # Add obs as reference or not (False if forecast mode)
+plotobs = True         # Add obs as reference or not (False if forecast mode)
 
 if myyear == "2017-2018":
   inidate = "20180201"
