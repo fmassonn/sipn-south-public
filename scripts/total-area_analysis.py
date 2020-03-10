@@ -188,7 +188,7 @@ plt.grid()
 plt.tight_layout()
 plt.savefig("../figs/fig1.png", dpi = 500)
 print("Figure ../figs/fig1.png printed")
-  
+plt.savefig("../figs/fig1.eps")
   
 plt.figure("fig2")
 plt.legend()
@@ -202,7 +202,7 @@ plt.yticks([],[])
 plt.tight_layout()
 plt.savefig("../figs/fig2.png", dpi = 500)
 print("Figure ../figs/fig2.png printed")
-  
+plt.savefig("../figs/fig2.eps") 
   
 plt.figure("fig3")
 plt.title("Monthly mean Antarctic sea ice area")
@@ -211,4 +211,5 @@ plt.yticks([],[])
 plt.tight_layout()
 plt.savefig("../figs/fig3.png", dpi = 500)
 print("Figure ../figs/fig3.png printed")
+plt.savefig("../figs/fig3.eps")
   
