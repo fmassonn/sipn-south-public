@@ -143,7 +143,7 @@ for j_sub in range(n_sub):
     cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
     cbar.set_label("%")
     plt.title(sub_id[j_sub] + " | member " + str(j_for).zfill(3)  + " | " + period_name + " mean")
-    plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + period_short_name + "-mean", dpi = 300)
+    plt.savefig("../figs/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_" + period_short_name + "-mean.png", dpi = 300)
     print("    Monthly mean conc printed for " + sub_id[j_sub] + " " + str(j_for).zfill(3))
     plt.close("fig")
 
@@ -231,6 +231,7 @@ for j_sub in range(n_sub):
     #for day in [1, 10, 20, 28]:
     #  plt.text(np.linspace(x1, x2, nt)[day - 1], np.linspace(y1, y2, nt)[day - 1], " " + period_name + " " + str(day).zfill(2), rotation = 90, va = "bottom", ha = "center", color = [0.7, 0.7, 0.7])
     plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
+    plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".eps", dpi = 300)
     print("  Probability " + time[jt].strftime('%d %B %Y') + " printed")
     plt.close("fig")
   
