@@ -132,7 +132,7 @@ if plotobs:
   if not obscomplete:
       series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
   plt.figure("fig1")
-  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 1.5, linestyle = "--", label = "OBS 2018-2019\n(NSIDC-0081)")
+  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 1.5, linestyle = "--", label = "OBS " + myyear + "\n(NSIDC-0081)")
 
   plt.figure("fig2")
   tt = np.arange(0.0, len(series[t1:t2]), 1)
@@ -141,9 +141,9 @@ if plotobs:
       daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
   else:
       daymin = np.nan
-  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2018-2019\n(NSIDC-0081)")
+  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS " + myyear + "\n(NSIDC-0081)")
   plt.figure("fig3")
-  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS 2018-2019 (NSIDC-0081)")
+  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS " + myyear + " (NSIDC-0081)")
   
   
   
@@ -156,7 +156,7 @@ if plotobs:
   if not obscomplete:
       series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
   plt.figure("fig1")
-  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS 2018-2019\n(OSI-401-b)")
+  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS " + myyear + "\n(OSI-401-b)")
 
   plt.legend(fontsize = 8)
   plt.figure("fig2")
@@ -166,10 +166,10 @@ if plotobs:
   else:
       daymin = np.nan
 
-  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2018-2019\n(OSI-401-b)")
+  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS " + myyear + "\n(OSI-401-b)")
   plt.legend(fontsize = 8)
   plt.figure("fig3")
-  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS 2018-2019 (OSI-401-b)")
+  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS " + myyear + " (OSI-401-b)")
   plt.legend(fontsize = 8)
   
 plt.figure("fig1")
