@@ -77,6 +77,7 @@ elif myyear == "2019-2020":
   period_name = "Dec-Jan-Feb 2019-2020"
   # Starting and ending time indices (Python conventions)  
   t1, t2 = 63 - 1, 63 - 1 + 28
+  target_period_name = "February"
 
 
 # Load namelist
@@ -182,8 +183,7 @@ for j_sub in range(n_sub):
 if plotobs:
     for j_obs, obsname in enumerate(obs):
         plt.plot(time, data_obs[j_obs], color = [0.1, 0.1, 0.1], lw = 1.5, \
-                 linestyle = lst[j_obs], label = "OBS " + myyear + \
-                 "\n" + obsname)
+                 linestyle = lst[j_obs], label = "OBS " + obsname)
 # Figure polishing
 plt.title(period_name + " total Antarctic sea ice area")
 plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
@@ -202,7 +202,7 @@ for fmt in ["png", "eps", "pdf"]:
 plt.close(fig)
 
 # Figure 2: minimum of time series
-fig, ax = plt.subplots(figsize = (5, 6), dpi = dpi)
+fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
 
 for j_sub in range(n_sub):
     # List that will have the day of minimum for each member
@@ -214,7 +214,8 @@ for j_sub in range(n_sub):
         # Create dummy time index to locate the minimum. 
         # This index is expressed as seconds since first date analyzed
     
-        #tt = np.arange(time[t1].timestamp(), time[t2 - 1].timestamp())
+        # Create dummy time axis (hourly resolution) to locate the minimum
+        # after the quadratic fit has been performed
         tt = np.arange(t1, t2, 1 / 24)
         # The raw data is fitted by a quadratic polynomial,
         # and the day at which the minimum is achieved is recorded
@@ -235,7 +236,6 @@ for j_sub in range(n_sub):
     scale = 5e5
     if n_for[j_sub] >= 3:
         daymin_sec = np.array([d.timestamp() for d in daymin])
-        #xpdf = np.linspace(time[0].timestamp(), time[-1].timestamp() + , 10000)#
         xpdf = np.linspace(np.min(daymin_sec) - 10 * 86400, \
                            np.max(daymin_sec) + 10 * 86400, 10000)
         kernel = stats.gaussian_kde(daymin_sec)
@@ -245,166 +245,106 @@ for j_sub in range(n_sub):
                  n_sub - j_sub + scale * pdf, 
                  color = col[j_sub], alpha = 0.2, lw = 0)
 
-#  
-# Figure polishing
-plt.title("When does the minimum of Antarctic sea ice area occur?")
-plt.legend(fontsize = "small")
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.xticks([time[j] for j in [62, 71, 81, 89]])
-plt.xlim(time[t1] - timedelta(days = 10), time[t2 - 1] + timedelta(days = 20))
+# Plot grey area right to end of forecasting period
+ax.fill_between((time[-1], time[-1] + timedelta(days= 31), time[-1] + 
+                 timedelta(days= 31), time[-1]),
+                (-1e9, -1e9, 1e9, 1e9), color = [0.9, 0.9, 0.9], 
+                zorder = -1000)
 
-plt.grid()
-plt.yticks([],[])
+# Plot observations if required
+if plotobs:
+    daymin_obs = list()
+    
+    for j_obs, obsname in enumerate(obs):
+        series = data_obs[j_obs]
+        # Create dummy time axis (hourly resolution) to locate the minimum
+        # after the quadratic fit has been performed
+        tt = np.arange(t1, t2, 1 / 24)
+        # The raw data is fitted by a quadratic polynomial,
+        # and the day at which the minimum is achieved is recorded
+        
+        coeffs = np.polyfit(np.arange(t1, t2), series[t1:t2], 2)
+        
+        # Minimum of ax^2 + bx + c occurs at  - b / 2a
+        daymin_obs_tmp = time[0] + \
+                         timedelta(days = -coeffs[1] / (2 * coeffs[0]))
+        daymin_obs.append(daymin_obs_tmp)
+        
+        ax.plot((daymin_obs_tmp, daymin_obs_tmp), (-1e9, 1e9), 
+                color = [0.1, 0.1, 0.1], lw = 1.5, \
+                 linestyle = lst[j_obs], label = "OBS " + obsname, 
+                 zorder = -100)
+        
+        del daymin_obs_tmp
+    del daymin_obs
+
+# Figure polishing
+ax.set_title("When does the minimum of Antarctic sea ice area occur?")
+ax.legend(loc = "upper left", ncol = 2, fontsize = 7)
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+ax.set_xticks([time[j] for j in [62, 71, 81, 89]])
+ax.set_xlim(time[t1] - timedelta(days = 10), time[t2 - 1] + \
+            timedelta(days = 20))
+ax.set_ylim(0.0, n_sub + 1)
+ax.grid()
+ax.set_yticks([],[])
 plt.tight_layout()
 for fmt in ["png", "eps", "pdf"]:
     plt.savefig("../figs/fig2." + fmt)
     print("Figure ../figs/fig2." + fmt + " printed")
 
-stop()
-## Record when the minimum of the series occurs
-#    # --------------------------------------------
-#    # Fit a quadratic polynomial to filter out weather variability
-#daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
-#
-#plt.figure("fig2")
-#if info[j_sub][3] != "(monthly)":
-#  plt.scatter(daymin, n_sub - j_sub, 50 / n_for[j_sub], color = col[j_sub], 
-#               label = mylab, marker = ".")
-#  #plt.text(46, n_sub - j_sub, info[j_sub][0] + " " + info[j_sub][3], color = col[j_sub], ha = "right")
-#
-#plt.figure("fig3")
-#plt.scatter(np.mean(series[t1:t2]), n_sub - j_sub, 50 / n_for[j_sub], 
-#            color = col[j_sub], 
-#            label = mylab)
-#
-#
-#    
-#
-#
-#
-#
-#
-#
-## Monthly means
-#plt.figure("fig3", figsize = (6, 5))
-#
-#for j_sub in range(n_sub):
-#  print("Processing " + sub_id[j_sub])
-#  # Will have list of forecasted areas
-#  submission = list() 
-#  for j_for in range_for[j_sub]:
-#    # Total area
-#    filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_total-area.txt"
-#    # Read the CSV file
-#    csv = pd.read_csv(filein, header = None)
-#    series = csv.iloc[0][:]
-#    # Append that series to the contribution data
-#    submission.append(series)
-#
-#    # Plot series, line thinner for large ensembles. Legend only if first member
-#    if j_for == range_for[j_sub][0]:
-#      mylab = info[j_sub][0] + " " + info[j_sub][3]
-#    else:
-#      mylab = "_nolegend_"
-#
-#    #plt.figure("fig1")
-#    #plt.plot(time, series, color = col[j_sub], lw = (5.0 / n_for[j_sub]) ** 0.2, label = mylab)
-#
-#
-#    
-#  # Plot PDF
 
-#
-#  # Plot ensemble mean
-#  mean = np.mean(np.array(submission), axis = 0)
-#  plt.figure("fig1")
-#  plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = info[j_sub][0] + " " + info[j_sub][3])
-#  # Plot range as shading
-#  mymax = np.max(np.array(submission), axis = 0)
-#  mymin = np.min(np.array(submission), axis = 0)
-#  plt.fill_between(time, mymin, mymax, color = [c * 1.0 for c in col[j_sub]], alpha = 0.5, lw = 0)
-#    
-#
-## Plot observations
-## -----------------
-#if plotobs:
-#
-#  filein = "../data/" + myyear + "/txt/NSIDC-0081_000_total-area.txt"
-#  csv = pd.read_csv(filein, header = None)
-#  series = csv.iloc[0][:]
-#  # It can be that the obs is not as long as the forecast, when the verification period is not over yet
-#  # --> complete with NaN.
-#  obscomplete = (len(time) == np.sum((1 - np.isnan(series)) * 1))
-#  if not obscomplete:
-#      series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
-#  plt.figure("fig1")
-#  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 1.5, linestyle = "--", label = "OBS " + myyear + "\n(NSIDC-0081)")
-#
-#  plt.figure("fig2")
-#  tt = np.arange(0.0, len(series[t1:t2]), 1)
-#  # Don't calculate minimum if series not yet completed
-#  if obscomplete:
-#      daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
-#  else:
-#      daymin = np.nan
-#  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS " + myyear + "\n(NSIDC-0081)")
-#  plt.figure("fig3")
-#  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = "--", label = "OBS " + myyear + " (NSIDC-0081)")
-#  
-#  
-#  
-#  filein = "../data/" + myyear + "/txt/OSI-401-b_000_total-area.txt"
-#  csv = pd.read_csv(filein, header = None)
-#  series = csv.iloc[0][:]
-#  # It can be that the obs is not as long as the forecast, when the verification period is not over yet
-#  # --> complete with NaN.
-#  obscomplete = (len(time) == np.sum((1 - np.isnan(series)) * 1))
-#  if not obscomplete:
-#      series = series.append(pd.Series([np.nan for i in range(len(time) - len(series))]), ignore_index = True)
-#  plt.figure("fig1")
-#  plt.plot(time, series, color = [0.1, 0.1, 0.1], lw = 3.0, linestyle = ":", label = "OBS " + myyear + "\n(OSI-401-b)")
-#
-#  plt.legend(fontsize = 8)
-#  plt.figure("fig2")
-#  tt = np.arange(0.0, len(series[t1:t2]), 1)
-#  if obscomplete:
-#      daymin = time[t1:t2][np.argmin(np.polyval(np.polyfit(range(len(series[t1:t2])), series[t1:t2], 2), tt))]
-#  else:
-#      daymin = np.nan
-#
-#  plt.plot((daymin, daymin), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS " + myyear + "\n(OSI-401-b)")
-#  plt.legend(fontsize = 8)
-#  plt.figure("fig3")
-#  plt.plot((np.mean(series[t1:t2]), np.mean(series[t1:t2])), (0, n_sub), color = [0.1, 0.1, 0.1], linestyle = ":", label = "OBS " + myyear + " (OSI-401-b)")
-#  plt.legend(fontsize = 8)
-#  
-#plt.figure("fig1")
-#plt.title(period_name + " total Antarctic sea ice area")
-#
-##plt.xticks([1, 5, 10, 15, 20, 25, 28], ["01", "05", "10", "15", "20", "25", "28"])
-##plt.xlabel("Day in February 2020")
-#plt.xticks([time[j] for j in np.arange(0, len(time), 15)])
-#plt.ylim(0.0, 13)
-#
-#import matplotlib.dates as mdates
-#plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-#plt.legend(fontsize = 7)
-#plt.ylabel("10$^6$ km$^2$")
-#plt.grid()
-#plt.tight_layout()
-#plt.savefig("../figs/fig1.png", dpi = 500)
-#print("Figure ../figs/fig1.png printed")
-#plt.savefig("../figs/fig1.eps")
-#plt.savefig("../figs/fig1.pdf")
-#
-#  
-#plt.figure("fig3")
-#plt.title("Monthly mean Antarctic sea ice area")
-#plt.xlabel("10$^6$ km$^2$")
-#plt.yticks([],[])
-#plt.tight_layout()
-#plt.savefig("../figs/fig3.png", dpi = 500)
-#print("Figure ../figs/fig3.png printed")
-#plt.savefig("../figs/fig3.pdf")
-#plt.savefig("../figs/fig3.eps")
-#  
+
+
+# Figure 3: monthly means 
+fig, ax = plt.subplots(figsize = (5, 5), dpi = dpi)
+
+for j_sub in range(n_sub):
+    # List that will have the day of minimum for each member
+    monmean = np.mean(data[j_sub], axis = 0)
+    
+    ax.scatter(monmean, np.full(n_for[j_sub], n_sub - j_sub), 
+               15, color = col[j_sub], 
+               label = info[j_sub][0] + " " + info[j_sub][3],
+               edgecolor = "white", lw = 0.2)
+        
+    # Plot associated PDF
+    scale = 0.5
+    if n_for[j_sub] >= 3:
+        
+        xpdf = np.linspace(0, 10, 1000)
+        
+        kernel = stats.gaussian_kde(monmean)
+        
+        pdf = kernel(xpdf).T
+        
+        ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf, 
+                 color = col[j_sub], alpha = 0.2, lw = 0)
+
+# Plot observations if required
+if plotobs:
+    monmean_obs = list()
+    
+    for j_obs, obsname in enumerate(obs):
+        series = data_obs[j_obs]
+        mean_tmp= np.mean(series)
+        monmean_obs.append(mean_tmp)
+        
+        ax.plot((mean_tmp, mean_tmp), (-1e9, 1e9), color = [0.1, 0.1, 0.1], lw = 1.5, \
+                 linestyle = lst[j_obs], label = "OBS " + obsname,
+                 zorder = -100)
+
+        del mean_tmp
+        
+# Figure polishing
+ax.set_title(target_period_name + " mean sea ice area")
+ax.legend(loc = "upper right", ncol = 1, fontsize = 7)
+ax.set_xlabel("Million km$^2$")
+ax.set_xlim(3, 7.5)
+ax.set_ylim(0.0, n_sub + 1)
+ax.grid()
+ax.set_yticks([],[])
+plt.tight_layout()
+for fmt in ["png", "eps", "pdf"]:
+    plt.savefig("../figs/fig3." + fmt)
+    print("Figure ../figs/fig3." + fmt + " printed")  
