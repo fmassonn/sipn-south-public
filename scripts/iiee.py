@@ -22,7 +22,7 @@ from   datetime import datetime
 
 
 # Script parameters
-myyear = "2018-2019"  # label with the year investigated (2017-2018, 2018-2019, ...)
+myyear = "2019-2020"  # label with the year investigated (2017-2018, 2018-2019, ...)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -49,6 +49,14 @@ elif myyear == "2018-2019":
   inidate = "20181201"
   ndays   = 90
   period_name = "Dec-Jan-Feb 2018-2019"
+  
+elif myyear == "2019-2020":
+  # Initialization date
+  inidate = "20191201"
+  # Number of days in the forecast period
+  ndays   = 90
+  # Label for period that is forecasted
+  period_name = "Dec-Jan-Feb 2019-2020"
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
