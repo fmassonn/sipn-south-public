@@ -6,6 +6,8 @@
 #         December 2019: update for 2019-2020 forecast
 #         April    2020: update to read data once and store it in arrays
 
+# Purpose: large-scale sea ice diagnostics from SIPN South data
+
 # Data: SIPN South contributors
 
 # Imports and clean-up
@@ -279,6 +281,7 @@ if plotobs:
     del daymin_obs
 
 # Figure polishing
+ax.set_axisbelow(True)
 ax.set_title("When does the minimum of Antarctic sea ice area occur?")
 ax.legend(loc = "upper left", ncol = 2, fontsize = 7)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
@@ -301,7 +304,7 @@ fig, ax = plt.subplots(figsize = (5, 5), dpi = dpi)
 
 for j_sub in range(n_sub):
     # List that will have the day of minimum for each member
-    monmean = np.mean(data[j_sub], axis = 0)
+    monmean = np.mean(data[j_sub][t1:t2, :], axis = 0)
     
     ax.scatter(monmean, np.full(n_for[j_sub], n_sub - j_sub), 
                15, color = col[j_sub], 
@@ -327,7 +330,7 @@ if plotobs:
     
     for j_obs, obsname in enumerate(obs):
         series = data_obs[j_obs]
-        mean_tmp= np.mean(series)
+        mean_tmp= np.mean(series[t1:t2])
         monmean_obs.append(mean_tmp)
         
         ax.plot((mean_tmp, mean_tmp), (-1e9, 1e9), color = [0.1, 0.1, 0.1], lw = 1.5, \
@@ -337,10 +340,11 @@ if plotobs:
         del mean_tmp
         
 # Figure polishing
+ax.set_axisbelow(True)
 ax.set_title(target_period_name + " mean sea ice area")
 ax.legend(loc = "upper right", ncol = 1, fontsize = 7)
 ax.set_xlabel("Million km$^2$")
-ax.set_xlim(3, 7.5)
+ax.set_xlim(0, 4)
 ax.set_ylim(0.0, n_sub + 1)
 ax.grid()
 ax.set_yticks([],[])
