@@ -59,7 +59,8 @@ elif myyear == "2019-2020":
   period_name = "Dec-Jan-Feb 2019-2020"
 
 # Time axis
-time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
+time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), 
+                     periods = ndays).tolist()
 
 # Number of submissions
 n_sub = len(info)
@@ -76,7 +77,8 @@ obs_name = "NSIDC-0081"
 
 # ======================
 
-def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, lon = None, plot = False):
+def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, 
+         lon = None, plot = False):
   """
   sic_ref -> reference field [%]
   sic_eva -> evaluated field    [%]
@@ -96,10 +98,15 @@ def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, lon
 
   nt, _, _ = sic_ref.shape
   
-  overestim = np.array([np.sum(1.0 * (sic_eva[jt, :, :] >  threshold) * (sic_ref[jt, :, :] <= threshold)  * mask * cellarea) for jt in range(nt)]) / 1e12
-  underestim= np.array([np.sum(1.0 * (sic_eva[jt, :, :] <= threshold) * (sic_ref[jt, :, :] > threshold)   * mask * cellarea) for jt in range(nt)]) / 1e12
+  overestim = np.array([np.sum(1.0 * (sic_eva[jt, :, :] >  threshold) * \
+                  (sic_ref[jt, :, :] <= threshold)  * mask * cellarea) \
+                  for jt in range(nt)]) / 1e12
+  underestim= np.array([np.sum(1.0 * (sic_eva[jt, :, :] <= threshold) * \
+                  (sic_ref[jt, :, :] > threshold)   * mask * cellarea) \
+                  for jt in range(nt)]) / 1e12
 
-  ref_area  = np.array([np.nansum(sic_ref[jt, :, :] / 100.0 * mask * cellarea) for jt in range(nt)]) / 1e12
+  ref_area  = np.array([np.nansum(sic_ref[jt, :, :] / 100.0 * mask * cellarea)\
+                        for jt in range(nt)]) / 1e12
   AEE = np.abs(overestim - underestim)
   ME  = 2.0 * np.minimum(overestim, underestim)
 
@@ -115,11 +122,14 @@ def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, lon
     clevs = np.arange(0.0, 110.0, 10.0)
     from   mpl_toolkits.basemap import Basemap, addcyclic
     plt.figure(figsize = (6, 6))
-    map = Basemap(projection = "spstere", boundinglat = - 50,lon_0 = 180, resolution = 'l')
+    map = Basemap(projection = "spstere", boundinglat = - 50, 
+                  lon_0 = 180, resolution = 'l')
     x, y = map(lon, lat)
     plt.subplot(1, 1, 1)
-    cs = map.contourf(x, y, sic_ref[0, :, :], clevs, cmap = plt.cm.Blues_r, latlon = False, extend = "neither")
-    map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
+    cs = map.contourf(x, y, sic_ref[0, :, :], clevs, cmap = plt.cm.Blues_r, 
+                      latlon = False, extend = "neither")
+    map.fillcontinents(color = 'grey', lake_color = 'w')
+    map.drawcoastlines(linewidth = 1.0)
     map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
     map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
     cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
@@ -134,7 +144,8 @@ def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, lon
 # Load observational data
 # -----------------------
 
-f = Dataset("../data/" + myyear + "/netcdf/regrid/" + obs_name + "_000_concentration_2x2.nc")
+f = Dataset("../data/" + myyear + "/netcdf/regrid/" + \
+            obs_name + "_000_concentration_2x2.nc")
 sic_obs = f.variables["siconc"][:]
 latitude = f.variables["latitude"][:]
 longitude = f.variables["longitude"][:]
@@ -151,7 +162,8 @@ for j_sub in range(n_sub):
   submission = list()
 
   for j_for in list_for[j_sub]:
-    filein = "../data/" + myyear + "/netcdf/regrid/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration_2x2.nc"
+    filein = "../data/" + myyear + "/netcdf/regrid/" + sub_id[j_sub] + "_" \
+    + str(j_for).zfill(3) + "_concentration_2x2.nc"
 
     if not os.path.exists(filein):
       sys.exit(filein + " not found")
@@ -161,27 +173,34 @@ for j_sub in range(n_sub):
     f = Dataset(filein, mode = "r")
     sic = f.variables["siconc"][:]
     f.close()
-    IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, lat = latitude, lon = longitude, plot = False)
+    IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * \
+           (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, 
+           lat = latitude, lon = longitude, plot = False)
 
     submission.append(IIEE)
 
-    # Plot series, line thinner for large ensembles. Legend only if first member
+    # Plot series, line thinner for large ensembles. 
+    # Legend only if first member
     if j_for == list_for[j_sub][0]:
       mylab = info[j_sub][0] + " " + info[j_sub][3]
     else:
       mylab = "_nolegend_"
 
   mean = np.mean(np.array(submission), axis = 0)
-  plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = info[j_sub][0] + " " + info[j_sub][3])
+  plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = info[j_sub][0] \
+           + " " + info[j_sub][3])
   # Plot range as shading
   mymax = np.max(np.array(submission), axis = 0)
   mymin = np.min(np.array(submission), axis = 0)
-  plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], alpha = 0.5, lw = 0)
+  plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], \
+                   alpha = 0.5, lw = 0)
 
 plt.title(period_name + " Integrated Ice Edge Error")
 plt.ylabel("10$^6$ km$^2$")
 import matplotlib.dates as mdates
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
 plt.grid()
 plt.legend()
-plt.savefig("../figs/iiee.png", dpi = 300)
+for fmt in ["png", "eps", "pdf"]:
+    plt.savefig("../figs/iiee." + fmt, dpi = 300)
