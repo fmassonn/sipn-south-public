@@ -98,5 +98,9 @@ cellarea = f.createVariable("areacello", np.float32, ("y", "x"))
 cellarea.units = "m2"
 cellarea[:] = areacello
 
+sftof = f.createVariable("sftof", np.float32, ("y", "x"))
+sftof.units = "%"
+sftof[:] = np.full((ny, nx), 100.0)
+
 # Close
 f.close()
