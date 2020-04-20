@@ -1,4 +1,4 @@
-load "~/scripts/NCL/ncl_funcs.ncl"
+
 
 ;plot monthly statistic of predicted sea ice area by longitude, for SIPN predictions
 
@@ -9,19 +9,16 @@ begin
   
   isAnom = True  ;plot climatological anomaly (True) or abs value (False)
   isObs  = True  ;plot Obs ?
-  
+  colfile  = "~/scripts/ANTARCTIC/SIPN/SIPN_colorfile.csv" ;filepath of standard colormap
+
+  callyear = 2020
+  year     = 2020
+  month    = "Feb"
+  nday     = 28 ;   days_in_month(year,mInd)   ;number of days in month
+  mInd     = 2
+  date0    = (/2019,12,1/)  ;first date of prediction file, formatted year,month,day
 
   nlon     = 36
-
-  callyear = 2019
-  year     = 2019
-  month    = "Feb"
-  mInd     = 2
-  stdat    = 62  ;start index of prediction files
-  endat    = 89  ;end index of prediction files
-  nday     = endat-stdat+1
-
-
 
   sNam  = (/"King Hakon VII","E. Antarctic","Ross","Amundsen","Bellingshausen","Weddell" /)
   nsec  = dimsizes(sNam)
@@ -30,7 +27,7 @@ begin
 
   oType = "ps"
   diro  = "~/plots/ANTARCTIC/SIPN/"
-  filo  = "SIPN_"+month+year+"_"+stat+"_SIA_bylon"
+  filo  = "SIPN_"+month+year+"_"+stat+"_SIA_bylon-corrected"
 
 ;**************************
 ;get climatology
@@ -85,6 +82,26 @@ begin
   delete([/SIA,climtmp,time,mon,day,ilon,lonmin,lonmax,ii,tmp/])
 
 
+;******************************************
+;function to read SIPN csv formatted files
+;******************************************
+
+ undef("read_csv")
+ function read_csv(fnam[1]:string)
+;fnam : scalar string representing input filepath
+
+ local dat, ndat, line, ncol,out,i
+
+ begin
+
+   dat    = asciiread(fnam,-1,"string")     ;read data as a string
+   dsplit = str_split_csv(dat,",",0) ;split entries using comma
+   out    = stringtofloat(dsplit)              ; convert to float
+   return(out)
+ end 
+
+
+
 ;******************
 ;get file lists
 ;find contributors and their ensembles
@@ -112,21 +129,32 @@ begin
 
   delete(filsplt)
 
-
 ;****************************
 ;read forecast data
 ;****************************
+  
 
+;find indices of analysis period, based on perdiction file start date
+
+  ttmp     = yyyymmdd_time(date0(0),year,"integer")
+  ind0     = ind(ttmp.eq.date0(0)*10000+date0(1)*100+date0(2))
+  stdat    = ind(ttmp.eq.year*10000+mInd*100+1) -ind0
+  endat    = stdat + nday -1
+
+
+
+;read data
   data = new((/nfil,nlon,nday/), float)
 
   do i = 0, nfil-1
-    tmp         = read_csv(fili(i), 0, "float")
+    tmp         = read_csv(fili(i))
     data(i,:,:) = tmp(:,stdat:endat)
   end do
 
-  delete([/fili,tmp/])
 
 
+
+  delete([/fili,tmp,ttmp,ind0/])
 
 
 
@@ -166,7 +194,7 @@ begin
     Obs = new((/nObs,nlon,nday/), float)
 
     do i = 0, nObs-1
-      tmp         = read_csv(fili(i), 0, "float")
+      tmp         = read_csv(fili(i))
       Obs(i,:,:)  = tmp(:,stdat:endat)
     end do
 
@@ -203,6 +231,7 @@ begin
 
   StDev = new((/nsrc,nlon/), typeof(monMean))
   Range = new((/nsrc,2,nlon/), typeof(monMean))
+
   
   do i = 0, nsrc-1
 
@@ -218,12 +247,17 @@ begin
       EnsMn(i,:)   = monMean(memList[i],:)
     end if
 
-
-
   end do
-  
 
 
+  ;regressions against Obs
+  if (isObs) then
+    reg = regCoef(EnsMn(nsrc,:),EnsMn) 
+  end if
+
+do i = 0, nsrc-1
+print(src(i)+", "+reg(i))
+end do
 
 ;**************************
 ;plot
@@ -264,11 +298,16 @@ begin
 
 
 ;colors 
-  tmp                      := read_csv("~/scripts/ANTARCTIC/SIPN/SIPN_colorfile.csv",1,"string")
+  tmp    := asciiread(colfile,-1,"string")     ;read data as a string
+  tmp   := str_split_csv(tmp(1:),",",0) ;split entries using comma
+
   cInd                      = new(nsrc, integer)
   do i = 0, nsrc-1
     cInd(i) = ind(tmp(:,0).eq.src(i))
   end do
+
+
+
   cmap                      = stringtofloat(tmp(cInd,1:)) ;nsrc, 3
   delete(tmp)
 
@@ -279,15 +318,18 @@ begin
   res@gsnXYFillOpacities    = .3
 
 
-  i=1
+  i=0
+ ;initial plot needs to have a range, i.e. more than 1 member
+  ; this ensure first plot has that
+  do while (Nmem(i).eq.1) 
+    i = i+1
+  end do
   res@gsnXYFillColors       = cmap(i,:)  
-  res@gsnLeftString         = month+" "+year
-
+  res@gsnLeftString         = "";month+" "+year
   plot                      = gsn_csm_xy(wks, lon, Range(i,:,:), res)
   res@gsnLeftString         = ""
 
-  do i = 2, nsrc-1
-
+  do i = i+1, nsrc-1
     if (Nmem(i).eq.1) then
       continue
     end if
@@ -323,12 +365,12 @@ begin
   res@lgPerimOn                = True
 
   res@pmLegendWidthF           = 0.22
-  res@pmLegendHeightF          = 0.27
+  res@pmLegendHeightF          = 0.24
   res@lgLabelFontHeightF       = 0.018
   res@pmLegendSide             = "Top"
-  res@pmLegendParallelPosF     = 0.21  ;x-position
+  res@pmLegendParallelPosF     = 0.19  ;x-position
   if (isAnom) then
-    res@pmLegendOrthogonalPosF = -1.05 ;y-position
+    res@pmLegendOrthogonalPosF = -1.03 ;y-position
   else
     res@pmLegendOrthogonalPosF = -0.5 ;y-position
   end if
