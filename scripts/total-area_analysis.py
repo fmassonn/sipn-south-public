@@ -6,6 +6,7 @@
 #         December 2019: update for 2019-2020 forecast
 #         April    2020: update to read data once and store it in arrays
 
+
 # Purpose: large-scale sea ice diagnostics from SIPN South data
 
 # Data: SIPN South contributors
@@ -31,7 +32,7 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2019-2020"   
+myyear = "2020-2021"   
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = True   
@@ -60,23 +61,15 @@ if myyear == "2017-2018":
   # Starting and ending time indices (Python conventions)
   t1, t2 = 0, 0 + ndays
 
-elif myyear == "2018-2019":
+elif myyear == "2018-2019" \
+  or myyear == "2019-2020" \
+  or myyear == "2020-2021":
   # Initialization date
-  inidate = "20181201"
+  inidate = myyear[:4] + "1201"
   # Number of days in the forecast period
   ndays   = 90
   # Label for period that is forecasted
-  period_name = "Dec-Jan-Feb 2018-2019"
-  # Starting and ending time indices (Python conventions)  
-  t1, t2 = 63 - 1, 63 - 1 + 28    
-                                  
-elif myyear == "2019-2020":
-  # Initialization date
-  inidate = "20191201"
-  # Number of days in the forecast period
-  ndays   = 90
-  # Label for period that is forecasted
-  period_name = "Dec-Jan-Feb 2019-2020"
+  period_name = "Dec-Jan-Feb " + myyear[:4] + "-" + myyear[5:]
   # Starting and ending time indices (Python conventions)  
   t1, t2 = 63 - 1, 63 - 1 + 28
   target_period_name = "February"
@@ -131,6 +124,7 @@ for j_sub in range(n_sub):
       series = csv.iloc[0][:]
       # Append that series to the contribution data
       sub_data[:, j_for - 1] = series
+      
       del series, csv
     
     # Store numpy array
