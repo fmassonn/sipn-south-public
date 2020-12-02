@@ -16,7 +16,7 @@ set -o nounset
 set -o errexit
 set -x
 
-yearb=2019
+yearb=2020
 yeare=2020
 ftype="multi" # multi (= operational, OSI-401b) 
 
