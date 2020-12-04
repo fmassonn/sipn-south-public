@@ -35,7 +35,7 @@ plt.close("all")
 myyear = "2020-2021"   
 
 # Add obs as reference or not (False if forecast mode)
-plotobs = True   
+plotobs = False   
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
 # line styles to be used
@@ -190,7 +190,7 @@ plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
 
-for fmt in ["png", "eps", "pdf"]:
+for fmt in ["png" , "pdf"]:
     plt.savefig("../figs/fig1." + fmt)
     print("Figure ../figs/fig1." + fmt + " printed")
 
@@ -286,7 +286,7 @@ ax.set_ylim(0.0, n_sub + 1)
 ax.grid()
 ax.set_yticks([],[])
 plt.tight_layout()
-for fmt in ["png", "eps", "pdf"]:
+for fmt in ["png", "pdf"]:
     plt.savefig("../figs/fig2." + fmt)
     print("Figure ../figs/fig2." + fmt + " printed")
 
@@ -343,6 +343,6 @@ ax.set_ylim(0.0, n_sub + 1)
 ax.grid()
 ax.set_yticks([],[])
 plt.tight_layout()
-for fmt in ["png", "eps", "pdf"]:
+for fmt in ["png", "pdf"]:
     plt.savefig("../figs/fig3." + fmt)
     print("Figure ../figs/fig3." + fmt + " printed")  
