@@ -35,7 +35,7 @@ plt.close("all")
 myyear = "2020-2021"   
 
 # Add obs as reference or not (False if forecast mode)
-plotobs = False   
+plotobs = True   
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
 # line styles to be used
