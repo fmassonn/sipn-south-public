@@ -7,18 +7,11 @@ set -o nounset
 set -o errexit
 set -x 
 
-#. ./retrieve_NSIDC-0081.bash
-
-#. ./retrieve_OSI-401b.bash
-
 source ~/module_load.txt
-
-#module load R
+#. ./retrieve_NSIDC-0081.bash
+#. ./retrieve_OSI-401b.bash
 #Rscript format_NSIDC-0081.R
-
-#Storm
-#module load Python/3.6.1-intel-2018
-#python3 ./format_OSI-401b.py
+#python ./format_OSI-401b.py
 
 # Year of 1 Dec of initialization
 yearb=2020
