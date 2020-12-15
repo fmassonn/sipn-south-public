@@ -40,6 +40,12 @@ figs
 doc
   # contains the form with answer of participating groups to the SIPN South forecast
 ```
+# Important notes
+
+CNRM usually submits two forecasts, one raw and one bias-corrected. For 2019, the official forecast was the raw one, so there is another submission named CNRM_corrected. For 2020-2021, it's the opposite, so there is a CNRM_raw forecast in addition to CNRM
+
+
+
 # References
 Massonnet, F., P. Reid, J. L. Lieser, C. M. Bitz, J. Fyfe, W. Hobbs (2019). Assessment of February 2018-2019 sea-ice forecasts for the Southern Ocean. Technical
 Note, Université catholique de Louvain, available at http://acecrc.org.au/sipn-south/
