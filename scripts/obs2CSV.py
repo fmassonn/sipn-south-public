@@ -10,6 +10,8 @@
 # Imports, modules, etc.
 import numpy as np
 from netCDF4 import Dataset
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from datetime import date, timedelta
 import os
@@ -22,12 +24,13 @@ obs = [
       ]
 
 # Date parameters
-
-target = "2019-2020"    # Where to place the output file (../data/$target/txt)
+yearb = 2020
+yearbp1= yearb + 1
+target = str(yearb) + "-" + str(yearbp1)    # Where to place the output file (../data/$target/txt)
 
 d0 = date(1850, 1, 1)    # Zero-time reference of the input file (should not change)
-d1 = date(2019, 12, 1)   # Start investigated period
-d2 = date(2020, 2, 28)   # End investigated period (included)
+d1 = date(yearb, 12, 1)   # Start investigated period
+d2 = date(yearbp1, 2, 28)   # End investigated period (included)
 
 
 # ========================================
@@ -71,7 +74,7 @@ plt.figure(figsize = (4, 4))
 for j_obs in range(len(obs)):
     print(obs[j_obs][0])
     # Input file, following CMIP conventions
-    filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_20190101-20201231_sh.nc"
+    filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_" + str(yearb) + "0101-" + str(yearbp1) + "1231_sh.nc"
     print(filein)
 
     f = Dataset(filein, mode = "r")

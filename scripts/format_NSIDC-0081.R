@@ -8,8 +8,14 @@ library(ncdf4)
 #
 #
 
-yearb <- 2019          # The first year to process
-yeare <- 2020          # The last  year to process
+yearb <- 2020          # The first year to process
+
+
+
+# ==================
+
+# dont touch, leave year + 1 (two years because NCO does a cut afterward
+yeare <- yearb + 1       # The last  year to process
 
 datadir <- "../data/"
 

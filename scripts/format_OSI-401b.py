@@ -13,8 +13,16 @@ import os
 # The (machine-dependent) location of CLIMDATA folder
 data_dir = "../data/"
 
-yearb=2019   # First year to process
-yeare=2020   # Last year to process
+
+yearb=2020        # First year to process
+
+# =========================
+
+
+# ATTENTION, script is supposed to take end year different from
+# first year to make NCO command extract work automatically
+
+yeare=yearb + 1   # Last year to process
 hemi="sh"    # Hemisphere to proces ("nh" or "sh")
 
 # Where to read the data from
