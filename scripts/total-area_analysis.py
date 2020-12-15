@@ -14,6 +14,7 @@
 # Imports and clean-up
 # --------------------
 import pandas            as pd
+import matplotlib; matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import matplotlib.dates  as mdates
 import numpy             as np
