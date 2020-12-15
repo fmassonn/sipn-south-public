@@ -43,7 +43,7 @@ obs = ["NSIDC-0081", "OSI-401-b"]
 lst = ["--",         ":"]
 
 # Resolution for saving figures
-dpi = 300
+dpi = 150
 
 # End script parameters
 # ---------------------
@@ -192,7 +192,7 @@ plt.grid()
 plt.tight_layout()
 
 for fmt in ["png" , "pdf"]:
-    plt.savefig("../figs/fig1." + fmt)
+    plt.savefig("../figs/fig1." + fmt, dpi = dpi)
     print("Figure ../figs/fig1." + fmt + " printed")
 
 
@@ -345,5 +345,5 @@ ax.grid()
 ax.set_yticks([],[])
 plt.tight_layout()
 for fmt in ["png", "pdf"]:
-    plt.savefig("../figs/fig3." + fmt)
+    plt.savefig("../figs/fig3." + fmt, dpi = dpi)
     print("Figure ../figs/fig3." + fmt + " printed")  
