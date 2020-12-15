@@ -30,9 +30,10 @@ def compute_area(concentration, cellarea, mask = 1):
   return are
 
 
+myyear = "2020-2021"
 
 
-filein = "../data/2018-2019/netcdf/barreira_001_concentration.nc"
+filein = "../data/" + myyear + "/netcdf/barreira_001_concentration.nc"
 n_memb = 1
 f = Dataset(filein, mode = "r")
 siconc = f.variables["siconc"][:]
@@ -48,13 +49,13 @@ lon[lon < 0.0] = lon[lon < 0.0] + 360.0
 
 area = compute_area(siconc, areacello, 1.0 * (lat < 0) * (sftof / 100.0))
 
-with open("../data/2018-2019/txt/barreira_001_total-area.txt", "wb") as file:
+with open("../data/" + myyear + "/txt/barreira_001_total-area.txt", "w") as file:
   file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
   file.write("\n")
 
 del area
 
-with open("../data/2018-2019/txt/barreira_001_regional-area.txt", "wb") as file:
+with open("../data/" + myyear + "/txt/barreira_001_regional-area.txt", "w") as file:
   # Per longitude bin
   for j_bin in np.arange(36):
     print(j_bin)
