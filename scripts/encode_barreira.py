@@ -6,9 +6,7 @@ import os
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-from mpl_toolkits.basemap import Basemap
-
-myyear = "2019-2020"
+myyear = "2020-2021"
 
 R = 6378000.0
 
