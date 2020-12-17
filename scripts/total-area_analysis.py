@@ -37,6 +37,10 @@ myyear = "2020-2021"
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = True   
+
+# Are we after the period to be forecasted? (to know if need to plot verif)
+postseason = False
+
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
 # line styles to be used
@@ -248,8 +252,8 @@ ax.fill_between((time[-1], time[-1] + timedelta(days= 31), time[-1] +
                 (-1e9, -1e9, 1e9, 1e9), color = [0.9, 0.9, 0.9], 
                 zorder = -1000)
 
-# Plot observations if required
-if plotobs:
+# Plot observations if required and if complete
+if plotobs and postseason:
     daymin_obs = list()
     
     for j_obs, obsname in enumerate(obs):
@@ -320,7 +324,7 @@ for j_sub in range(n_sub):
                  color = col[j_sub], alpha = 0.2, lw = 0)
 
 # Plot observations if required
-if plotobs:
+if plotobs and postseason:
     monmean_obs = list()
     
     for j_obs, obsname in enumerate(obs):
