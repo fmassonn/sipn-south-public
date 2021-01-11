@@ -281,8 +281,8 @@ if plotobs and postseason:
 
 # Figure polishing
 ax.set_axisbelow(True)
-ax.set_title("When does the minimum of Antarctic sea ice area occur?")
-ax.legend(loc = "upper left", ncol = 2, fontsize = 7)
+ax.set_title("When will the minimum of "  + myyear[5:]+ " Antarctic sea ice area occur?")
+ax.legend(loc = "lower left", ncol = 2, fontsize = 7)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 ax.set_xticks([time[j] for j in [62, 71, 81, 89]])
 ax.set_xlim(time[t1] - timedelta(days = 10), time[t2 - 1] + \
@@ -292,7 +292,7 @@ ax.grid()
 ax.set_yticks([],[])
 plt.tight_layout()
 for fmt in ["png", "pdf"]:
-    plt.savefig("../figs/fig2." + fmt)
+    plt.savefig("../figs/fig2." + fmt, dpi = dpi)
     print("Figure ../figs/fig2." + fmt + " printed")
 
 
