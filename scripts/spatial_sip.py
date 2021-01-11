@@ -6,6 +6,7 @@
 
 # Imports
 import pandas as pd
+import matplotlib; matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -19,8 +20,8 @@ from   datetime import datetime
 
 # Script parameters
 
-myyear = "2019-2020"  # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = True       # Add obs as reference or not (False if forecast mode)
+myyear = "2020-2021"  # label with the year investigated (2017-2018, 2018-2019, ...)
+plotobs = False       # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -36,23 +37,18 @@ if myyear == "2017-2018":
   t1, t2 = 0, 0 + ndays # time indices defining the period for diagnostics
                         # (Pythonic convention)
 
-elif myyear == "2018-2019":
-  inidate = "20181201"
+elif myyear == "2018-2019" \
+  or myyear == "2019-2020" \
+  or myyear == "2020-2021":
+  # Initialization date
+  inidate = myyear[:4] + "1201"
+  # Number of days in the forecast period
   ndays   = 90
-  period_name = "February 2019"
-  #period_name = "1 December 2019"
-  period_short_name = "Feb2019"
-  #period_short_name = "1Dec2019"
+  # Label for period that is forecasted
+  period_name = "February " +  myyear[5:]
+  period_short_name = "Feb" + myyear[5:]
+  # Starting and ending time indices (Python conventions)
   t1, t2 = 63 - 1, 63 - 1 + 28
-  #t1, t2 = 1 - 1, 1 - 1 + 1
-
-elif myyear == "2019-2020":
-  inidate = "20191201"
-  ndays   = 90
-  period_name = "February 2020"
-  period_short_name = "Feb2019"
-  t1, t2 = 63 - 1, 63 - 1 + 28
-
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
@@ -201,6 +197,11 @@ for j_sub in range(n_sub):
   for jt in np.arange(t1, t2):
     fig = plt.figure("fig", figsize = (5, 5))
     prob = 100.0 * np.sum(1.0 * (data[:, jt, :, :] > 15.0), axis = 0) / n_for[j_sub]
+    if sub_id[j_sub] == "AWI-SDAP":
+      # AWI submits SIP directly
+      prob = np.squeeze(data[:, jt, :, :])
+    else:
+      prob = 100.0 * np.sum(1.0 * (data[:, jt, :, :] > 15.0), axis = 0) / n_for[j_sub]
     if sub_id[j_sub] == "ucl":
       cs = map.contourf(x[0:-1,0:-1], y[0:-1,0:-1], prob[0:-1,0:-1], clevs, cmap = plt.cm.RdYlGn_r, latlon = False, extend = "neither")
     else:
