@@ -37,6 +37,10 @@ myyear = "2020-2021"
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = True   
+
+# Are we after the period to be forecasted? (to know if need to plot verif)
+postseason = False
+
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
 # line styles to be used
@@ -248,8 +252,8 @@ ax.fill_between((time[-1], time[-1] + timedelta(days= 31), time[-1] +
                 (-1e9, -1e9, 1e9, 1e9), color = [0.9, 0.9, 0.9], 
                 zorder = -1000)
 
-# Plot observations if required
-if plotobs:
+# Plot observations if required and if complete
+if plotobs and postseason:
     daymin_obs = list()
     
     for j_obs, obsname in enumerate(obs):
@@ -277,8 +281,8 @@ if plotobs:
 
 # Figure polishing
 ax.set_axisbelow(True)
-ax.set_title("When does the minimum of Antarctic sea ice area occur?")
-ax.legend(loc = "upper left", ncol = 2, fontsize = 7)
+ax.set_title("When will the minimum of "  + myyear[5:]+ " Antarctic sea ice area occur?")
+ax.legend(loc = "lower left", ncol = 2, fontsize = 7)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 ax.set_xticks([time[j] for j in [62, 71, 81, 89]])
 ax.set_xlim(time[t1] - timedelta(days = 10), time[t2 - 1] + \
@@ -288,7 +292,7 @@ ax.grid()
 ax.set_yticks([],[])
 plt.tight_layout()
 for fmt in ["png", "pdf"]:
-    plt.savefig("../figs/fig2." + fmt)
+    plt.savefig("../figs/fig2." + fmt, dpi = dpi)
     print("Figure ../figs/fig2." + fmt + " printed")
 
 
@@ -320,7 +324,7 @@ for j_sub in range(n_sub):
                  color = col[j_sub], alpha = 0.2, lw = 0)
 
 # Plot observations if required
-if plotobs:
+if plotobs and postseason:
     monmean_obs = list()
     
     for j_obs, obsname in enumerate(obs):
