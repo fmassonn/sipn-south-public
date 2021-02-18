@@ -47,7 +47,7 @@ obs = ["NSIDC-0081", "OSI-401-b"]
 lst = ["--",         ":"]
 
 # Resolution for saving figures
-dpi = 150
+dpi = 300
 
 # End script parameters
 # ---------------------
