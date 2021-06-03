@@ -23,7 +23,9 @@ bin-release/
 # Other files
 *.nc
 *.orig
-#*.png
+*.png
+*.pdf
+*.eps
 *.ps
 *.gif
 

@@ -17,7 +17,7 @@ set -o errexit
 set -x
 
 yearb=2020
-yeare=2020
+yeare=2021
 ftype="multi" # multi (= operational, OSI-401b) 
 
 rootdir="../data/"

@@ -21,7 +21,7 @@ from   datetime import datetime
 # Script parameters
 
 myyear = "2020-2021"  # label with the year investigated (2017-2018, 2018-2019, ...)
-plotobs = False       # Add obs as reference or not (False if forecast mode)
+plotobs = True       # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -180,7 +180,7 @@ for j_sub in range(n_sub):
   # Put obs
   if plotobs:
     for j_obs in range(n_obs):
-      map.contour(obs[j_obs][0], obs[j_obs][1], np.mean(obs[j_obs][2][t1:t2, :, :], axis = 0), [15.0], latlon = False, colors = 'y', linewidths = 1, linestyles = "-")
+      map.contour(obs[j_obs][0], obs[j_obs][1], np.nanmean(obs[j_obs][2][t1:t2, :, :], axis = 0), [15.0], latlon = False, colors = 'y', linewidths = 1, linestyles = "-")
     
   map.fillcontinents(color = 'grey', lake_color = 'w'); map.drawcoastlines(linewidth = 1.0)
   map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
