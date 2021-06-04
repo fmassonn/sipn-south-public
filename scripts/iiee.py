@@ -183,19 +183,15 @@ for j_sub in range(n_sub):
 
       # Plot series, line thinner for large ensembles. 
       # Legend only if first member
-      if j_for == list_for[j_sub][0]:
-        mylab = info[j_sub][0] + " " + info[j_sub][3]
-      else:
-        print("HELLO")
-        mylab = "_nolegend_"
-
-      mean = np.mean(np.array(submission), axis = 0)
-      plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = mylab)
-      # Plot range as shading
-      mymax = np.max(np.array(submission), axis = 0)
-      mymin = np.min(np.array(submission), axis = 0)
-      plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], \
-                       alpha = 0.5, lw = 0)
+  mylab = info[j_sub][0] + " " + info[j_sub][3]
+  
+  mean = np.mean(np.array(submission), axis = 0)
+  plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = mylab)
+  # Plot range as shading
+  mymax = np.max(np.array(submission), axis = 0)
+  mymin = np.min(np.array(submission), axis = 0)
+  plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], \
+                   alpha = 0.5, lw = 0)
 
 plt.title(period_name + " Integrated Ice Edge Error")
 plt.ylabel("10$^6$ km$^2$")
