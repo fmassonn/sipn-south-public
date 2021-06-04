@@ -10,6 +10,7 @@
 
 # Imports
 import pandas as pd
+import matplotlib; matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -22,7 +23,7 @@ from   datetime import datetime
 
 
 # Script parameters
-myyear = "2019-2020"  # label with the year investigated (2017-2018, 2018-2019, ...)
+myyear = "2020-2021"  # label with the year investigated (2017-2018, 2018-2019, ...)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -45,18 +46,18 @@ if myyear == "2017-2018":
   period_name = "February 2018"
                         # (Pythonic convention)
 
-elif myyear == "2018-2019":
-  inidate = "20181201"
-  ndays   = 90
-  period_name = "Dec-Jan-Feb 2018-2019"
-  
-elif myyear == "2019-2020":
+elif myyear == "2018-2019" \
+  or myyear == "2019-2020" \
+  or myyear == "2020-2021":
   # Initialization date
-  inidate = "20191201"
+  inidate = myyear[:4] + "1201"
   # Number of days in the forecast period
   ndays   = 90
   # Label for period that is forecasted
-  period_name = "Dec-Jan-Feb 2019-2020"
+  period_name = "Dec-Jan-Feb " + myyear[:4] + "-" + myyear[5:]
+  # Starting and ending time indices (Python conventions)
+  t1, t2 = 63 - 1, 63 - 1 + 28
+  target_period_name = "February"
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), 
@@ -166,34 +167,35 @@ for j_sub in range(n_sub):
     + str(j_for).zfill(3) + "_concentration_2x2.nc"
 
     if not os.path.exists(filein):
-      sys.exit(filein + " not found")
+      print(filein + " not found")
 
-    # Open file, read geometric parameters if the first one 
-    print("  Loading " + filein)
-    f = Dataset(filein, mode = "r")
-    sic = f.variables["siconc"][:]
-    f.close()
-    IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * \
-           (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, 
-           lat = latitude, lon = longitude, plot = False)
-
-    submission.append(IIEE)
-
-    # Plot series, line thinner for large ensembles. 
-    # Legend only if first member
-    if j_for == list_for[j_sub][0]:
-      mylab = info[j_sub][0] + " " + info[j_sub][3]
     else:
-      mylab = "_nolegend_"
+      # Open file, read geometric parameters if the first one 
+      print("  Loading " + filein)
+      f = Dataset(filein, mode = "r")
+      sic = f.variables["siconc"][:]
+      f.close()
+      IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * \
+             (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, 
+             lat = latitude, lon = longitude, plot = False)
 
-  mean = np.mean(np.array(submission), axis = 0)
-  plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = info[j_sub][0] \
-           + " " + info[j_sub][3])
-  # Plot range as shading
-  mymax = np.max(np.array(submission), axis = 0)
-  mymin = np.min(np.array(submission), axis = 0)
-  plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], \
-                   alpha = 0.5, lw = 0)
+      submission.append(IIEE)
+
+      # Plot series, line thinner for large ensembles. 
+      # Legend only if first member
+      if j_for == list_for[j_sub][0]:
+        mylab = info[j_sub][0] + " " + info[j_sub][3]
+      else:
+        print("HELLO")
+        mylab = "_nolegend_"
+
+      mean = np.mean(np.array(submission), axis = 0)
+      plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = mylab)
+      # Plot range as shading
+      mymax = np.max(np.array(submission), axis = 0)
+      mymin = np.min(np.array(submission), axis = 0)
+      plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], \
+                       alpha = 0.5, lw = 0)
 
 plt.title(period_name + " Integrated Ice Edge Error")
 plt.ylabel("10$^6$ km$^2$")
@@ -202,5 +204,5 @@ plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
 plt.grid()
 plt.legend()
-for fmt in ["png", "eps", "pdf"]:
+for fmt in ["png",]:# "eps", "pdf"]:
     plt.savefig("../figs/iiee." + fmt, dpi = 300)
