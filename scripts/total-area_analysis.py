@@ -39,7 +39,7 @@ myyear = "2020-2021"
 plotobs = True   
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = False
+postseason = True
 
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
@@ -263,8 +263,16 @@ if plotobs and postseason:
         tt = np.arange(t1, t2, 1 / 24)
         # The raw data is fitted by a quadratic polynomial,
         # and the day at which the minimum is achieved is recorded
-        
-        coeffs = np.polyfit(np.arange(t1, t2), series[t1:t2], 2)
+        myTime   = np.arange(t1, t2)
+        mySeries = series[t1:t2]
+
+
+        # It happens (in 2021 at least) that there are NaNs because
+        # missing data, which need to be taken out then
+        myTime = myTime[~np.isnan(mySeries)]
+        mySeries = mySeries[~np.isnan(mySeries)]    
+
+        coeffs = np.polyfit(myTime, mySeries, 2)
         
         # Minimum of ax^2 + bx + c occurs at  - b / 2a
         daymin_obs_tmp = time[0] + \
