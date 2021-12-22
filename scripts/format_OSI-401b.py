@@ -14,7 +14,7 @@ import os
 data_dir = "../data/"
 
 
-yearb=2020        # First year to process
+yearb=2021        # First year to process
 
 # =========================
 

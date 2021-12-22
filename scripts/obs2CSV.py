@@ -24,7 +24,7 @@ obs = [
       ]
 
 # Date parameters
-yearb = 2020
+yearb = 2021
 yearbp1= yearb + 1
 target = str(yearb) + "-" + str(yearbp1)    # Where to place the output file (../data/$target/txt)
 

@@ -8,7 +8,7 @@ library(ncdf4)
 #
 #
 
-yearb <- 2020          # The first year to process
+yearb <- 2021          # The first year to process
 
 
 
