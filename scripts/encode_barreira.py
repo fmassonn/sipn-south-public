@@ -6,7 +6,7 @@ import os
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-myyear = "2020-2021"
+myyear = "2021-2022"
 
 R = 6378000.0
 
