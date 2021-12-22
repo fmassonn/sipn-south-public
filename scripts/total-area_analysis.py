@@ -33,13 +33,13 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2020-2021"   
+myyear = "2021-2022"   
 
 # Add obs as reference or not (False if forecast mode)
-plotobs = True   
+plotobs = False   
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = True
+postseason = False
 
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
@@ -66,9 +66,7 @@ if myyear == "2017-2018":
   # Starting and ending time indices (Python conventions)
   t1, t2 = 0, 0 + ndays
 
-elif myyear == "2018-2019" \
-  or myyear == "2019-2020" \
-  or myyear == "2020-2021":
+else:
   # Initialization date
   inidate = myyear[:4] + "1201"
   # Number of days in the forecast period
