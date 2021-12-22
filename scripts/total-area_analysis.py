@@ -17,6 +17,7 @@ import pandas            as pd
 import matplotlib; matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import matplotlib.dates  as mdates
+import matplotlib.colors
 import numpy             as np
 import os
 import random
@@ -103,6 +104,10 @@ n_for    = [len(l) for l in range_for]
 # Colors for each submission
 col = [info[j_sub][2] for j_sub in range(n_sub)]
 
+# Convert to RGB if necessary
+for j_sub in range(n_sub):
+    if type(col[j_sub]) is str:
+        col[j_sub] = matplotlib.colors.to_rgb(col[j_sub])
 
 # Store the raw data
 # ------------------
@@ -177,6 +182,8 @@ for j_sub in range(n_sub):
     # Plot range as shading
     mymax = np.max(data[j_sub], axis = 1)
     mymin = np.min(data[j_sub], axis = 1)
+    
+
     plt.fill_between(time, mymin, mymax, 
                      color = [c * 1.0 for c in col[j_sub]], 
                      alpha = 0.2, lw = 0)
@@ -223,8 +230,14 @@ for j_sub in range(n_sub):
         # and the day at which the minimum is achieved is recorded
         
         coeffs = np.polyfit(np.arange(t1, t2), series[t1:t2], 2)
-        # Minimum of ax^2 + bx + c occurs at  - b / 2a
-        daymin.append(time[0] + timedelta(days = -coeffs[1] / (2 * coeffs[0])))
+        
+        if np.max(np.abs(coeffs)) == 0.0:
+            # In this case likely the model goes to zero --> set first date of 
+            # zero
+            daymin.append(time[0] + timedelta(days = float(np.where(series == 0)[0][0])))
+        else:
+            # Minimum of ax^2 + bx + c occurs at  - b / 2a
+            daymin.append(time[0] + timedelta(days = -coeffs[1] / (2 * coeffs[0])))
 
         del series, coeffs
         
@@ -291,7 +304,7 @@ if plotobs and postseason:
 # Figure polishing
 ax.set_axisbelow(True)
 ax.set_title("When will the minimum of "  + myyear[5:]+ " Antarctic sea ice area occur?")
-ax.legend(loc = "lower left", ncol = 2, fontsize = 7)
+ax.legend(loc = "upper left", ncol = 2, fontsize = 7)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 ax.set_xticks([time[j] for j in [62, 71, 81, 89]])
 ax.set_xlim(time[t1] - timedelta(days = 10), time[t2 - 1] + \
@@ -350,10 +363,10 @@ if plotobs and postseason:
 # Figure polishing
 ax.set_axisbelow(True)
 ax.set_title(target_period_name + " mean sea ice area")
-ax.legend(loc = "upper right", ncol = 1, fontsize = 7)
+ax.legend(loc = "upper center", ncol = 4, fontsize = 7)
 ax.set_xlabel("Million km$^2$")
 ax.set_xlim(0, 4)
-ax.set_ylim(0.0, n_sub + 1)
+ax.set_ylim(0.0, n_sub + 6)
 ax.grid()
 ax.set_yticks([],[])
 plt.tight_layout()
