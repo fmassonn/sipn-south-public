@@ -30,7 +30,7 @@ def compute_area(concentration, cellarea, mask = 1):
   return are
 
 
-myyear = "2020-2021"
+myyear = "2021-2022"
 
 
 filein = "../data/" + myyear + "/netcdf/barreira_001_concentration.nc"
