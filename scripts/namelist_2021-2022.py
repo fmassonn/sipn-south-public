@@ -2,7 +2,7 @@
 #          name [string]       list [list]
 np.random.seed(10)
 info = [ 
-#    [ "barreira",         [1]               , [0.65, 0.81, 0.89], "$^{s}$"  ],  \
+    [ "barreira",         [1]               , [0.65, 0.81, 0.89], "$^{s}$"  ],  \
     [ "CanSIPSv2",        range(1, 20 + 1), "#1898e0", "$^d$"    ],  \
     [ "cmcc",             range(1, 50 + 1), "#00b2ed", "$^d$"    ],  \
     [ "CNRM",             range(1, 51 + 1), "#00bb62", "$^d$"    ],  \
