@@ -145,7 +145,7 @@ for j_sub in range(n_sub):
 
 # Repeat with observations, if needed
 if plotobs:
-    # A list of 1-D numpy arrays, each of dimensions {time}
+021    # A list of 1-D numpy arrays, each of dimensions {time}
     data_obs= list()
     
     for obsname in obs:
