@@ -1,13 +1,16 @@
 # Folders
-data/2018-2019/netcdf/regrid/
-data/2018-2019/raw/
-data/2019-2020/raw/
-data/2021-2022/barreira/
+data/2018-2019/netcdf
+data/2018-2019/raw
+data/2019-2020/raw
+data/2021-2022/barreira
 data/2021-2022/netcdf
-data/obs/
+data/obs
 data/2018-2019/netcdf
 data/2018-2019/netcdf.on.home
 data/2020-2021/netcdf
+scripts/__pycache__
+figs/
+
 # Build and Release Folders
 bin/
 bin-debug/
