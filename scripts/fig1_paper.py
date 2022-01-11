@@ -51,6 +51,8 @@ time_long = np.arange(yearb_long, yeare_long  + 1)
 f = Dataset(fileObsLong)
 sic = f.variables["siconc"][:]
 lat = f.variables["lat"][:]
+lon = f.variables["lon"][:]
+lon[lon > 180] = lon[lon > 180] - 360
 f.close()
 
 cellarea = 25000 ** 2
@@ -58,40 +60,70 @@ cellarea = 25000 ** 2
 sia = compute_area(sic[1::12], cellarea, lat < 0.0)
 
 
-fig, ax = plt.subplots(1, 1, dpi = 300, figsize = (4, 3) )
-ax.plot(time_long,sia, label = "OSI-450 (OBS)")
+fig, ax = plt.subplots(3, 2, dpi = 300, figsize = (8, 6) )
 
-ax.set_xlim(1978, 2023) 
-ax.set_ylim(0.0, 5.0)
-ax.grid()
+for s, a in zip(sectors, ax.flatten()):
+    print(s[0])
+    lonW, lonE = s[1], s[2]
+    
+    # Create mask
+    if lonE > lonW:
+        mask = (lat < 0.0) * (lon > lonW) * (lon <= lonE)
+    else:
+        mask = (lat < 0.0) * ( (lon > lonW) + (lon <= lonE))
+    # Compute area
+    sia_sector = compute_area(sic[1::12], cellarea, mask)
+    
+    a.plot(time_long, sia_sector, label = "OSI-450 (OBS)")
+    a.set_title(s[0])
 
+    a.set_xlim(1978, 2023) 
+    a.set_ylim(bottom = 0)
+    a.grid()
+
+
+
+# Complete with the SIPN South verification data
+# ----------------------------------------------
+
+# Load SIPN South data
+# --------------------
+# The years defining the forecast season, taken as the year of the
+# month of February
+
+yearb, yeare = 2018, 2022
+
+for year in np.arange(yearb, yeare + 1):
+    # 1. Load the relevant namelist
+    exec(open("./namelist_" + str(year - 1) + "-" + str(year) + ".py").read())
+
+    # 2. Get meta-data
+    # Number of submissions
+    n_sub = len(info)
+
+    # Submission IDs
+    sub_id = [info[j_sub][0] for j_sub in range(n_sub)]
+
+    # Range of forecasts for each submission
+    range_for = [info[j_sub][1] for j_sub in range(n_sub)]
+
+    # Number of forecasts for each submission
+    n_for    = [len(l) for l in range_for]
+
+    # Read in the total-area data
+    
+
+fig.tight_layout()
 fig.legend()
+
 fig.savefig("../figs/fig1_paper.png")
+
 
 
 
 stop()
 
 
-# label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2021-2022"   
-
-# Add obs as reference or not (False if forecast mode)
-plotobs = True
-
-# Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = False
-
-# Name of observational products      
-obs = ["NSIDC-0081", "OSI-401-b"]
-# line styles to be used
-lst = ["--",         ":"]
-
-# Resolution for saving figures
-dpi = 300
-
-# End script parameters
-# ---------------------
 
 
 # Read or create meta-data
