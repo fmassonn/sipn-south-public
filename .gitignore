@@ -5,6 +5,8 @@ data/2019-2020/raw/
 data/2021-2022/barreira/
 data/2021-2022/netcdf
 data/obs/
+scripts/__pycache__
+figs/
 
 # Build and Release Folders
 bin/
