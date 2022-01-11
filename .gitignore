@@ -5,7 +5,9 @@ data/2019-2020/raw/
 data/2021-2022/barreira/
 data/2021-2022/netcdf
 data/obs/
-
+data/2018-2019/netcdf
+data/2018-2019/netcdf.on.home
+data/2020-2021/netcdf
 # Build and Release Folders
 bin/
 bin-debug/
