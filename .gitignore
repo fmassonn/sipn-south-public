@@ -1,7 +1,9 @@
 # Folders
+data/2017-2018/netcdf
 data/2018-2019/netcdf/regrid/
 data/2018-2019/raw/
 data/2019-2020/raw/
+data/2019-2020/netcdf
 data/2021-2022/barreira/
 data/2021-2022/netcdf
 data/obs/
