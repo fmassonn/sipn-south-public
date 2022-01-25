@@ -11,18 +11,14 @@ from datetime import date, timedelta
 import os
 
 # The (machine-dependent) location of CLIMDATA folder
-data_dir = "../data/"
+data_dir = os.environ['TECLIM_CLIMATE_DATA']
 
 
-yearb=2021        # First year to process
-
+yearb=2015        # First year to process
+yeare=2022        # Last year
 # =========================
 
 
-# ATTENTION, script is supposed to take end year different from
-# first year to make NCO command extract work automatically
-
-yeare=yearb + 1   # Last year to process
 hemi="sh"    # Hemisphere to proces ("nh" or "sh")
 
 # Where to read the data from
