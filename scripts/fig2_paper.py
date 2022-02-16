@@ -145,20 +145,95 @@ for s, season in enumerate(nameSeasons):
         ax[2, 1].scatter(endYears[s], obsMean, 5, marker = "s", color = "black")
         
 
-# # Complete with the SIPN South forecast data
-# # ----------------------------------------------
+# Complete with the SIPN South forecast data
+# ----------------------------------------------
 
+# We are creating a list with as many elements as there are startDates
+#
+myData = list()
 
-data = [list() for _ in range(nStartDates)]
-# This list has as many items as there are start dates / outlooks
+# myData : 1 / Which startDate
+#          2 / Which sector
+#          3 / Which contributor
+#          4 / Which forecast
 
-# Now we populate each of the item by going from one outlook to the next
-for jStartDates in range(nStartDates):
+for i in range(nStartDates):
+    print("Loading " + nameSeasons[i])
     
-    # We create a new list with as many items as there are diagnostics
-    listTmp = [list() for _ in range()]
+    iList = list()
+    for j in range(nSectors):
+        jList = list()
+        
+        for k in range(nContributors):
+            nameContributor = namelistContributions[k][0]
+            kList = list()
+            
+            
+            if sectors[j][0] == "Southern Ocean": # total area
+                nForecasts = namelistContributions[k][i + 1][0] # 0 since total area, i+ 1 since first item is name
+            
+                for l in range(nForecasts):
+                                
+                    # Fetch the relevant file
+                    filein = "../data/" + nameSeasons[i] + "/txt/" + nameContributor + "_" + \
+                     str(l + 1).zfill(3) + "_total-area.txt"
+                    
+                    
+                    csv = pd.read_csv(filein, header = None)
+                    seriesTmp = csv.iloc[0][:]
+                    
+                    kList.append(seriesTmp)
+                    
+            else:
+                
+                # Read regional file
+                nForecasts = namelistContributions[k][i + 1][1] # 1 since regional area, i+ 1 since first item is name
+                
+                
+                lonMin = sectors[j][1]
+                lonMax = sectors[j][2]
+                
+                # Recast everything into 0, 360
+                if lonMin < 0:
+                    lonMin += 360
+                if lonMax < 0:
+                    lonMax +=360
+                
+
+                # Fetch relevant file
+                for l in range(nForecasts):
+                     filein = "../data/" + nameSeasons[i] + "/txt/" + nameContributor + "_" + \
+                     str(l + 1).zfill(3) + "_regional-area.txt"
+                     
+                     csv = pd.read_csv(filein, header = None)
+                     arrayTmp = np.array(csv.iloc[:][:])
+                     
+                     # Sum over relevant rows to accumulate regional average
+                     # The data comes by 10° increments
+                     
+                     if lonMin > lonMax: # This can happen for e.g. weddell sea
+
+                         row0 = int(lonMax / 10.0)
+                         row1 = int(lonMin / 10.0)
+                         seriesTmp = np.sum(arrayTmp, axis = 0) - np.sum(arrayTmp[row0:row1, :], axis = 0)
+                         #if i == 1 and j == 0 and k == 12 and l ==6:
+                         #    stop()
+                     else:
+                         row0 = int(lonMin / 10.0)
+                         row1 = int(lonMax / 10.0)
+                         seriesTmp = np.sum(arrayTmp[row0:row1, :], axis = 0)
+                         
+                     kList.append(seriesTmp)
+                         
+            
+            jList.append(kList)
+        
+        iList.append(jList)
+        
+    myData.append(iList)
     
     
+
 
 
 # # The idea is to populate a 2-item list. The first item is for total area
@@ -200,339 +275,19 @@ for jStartDates in range(nStartDates):
 
 #fig.tight_layout()
 
-for a in ax.flatten():
-    a.set_xlim(2015, 2023)
-    a.set_axisbelow(True)
+# =============================================================================
+# for a in ax.flatten():
+#     a.set_xlim(2015, 2023)
+#     a.set_axisbelow(True)
+# 
+# fig.legend()
+# fig.tight_layout()
+# 
+# fig.savefig("../figs/fig2_paper.png", dpi = 300)
+# 
+# 
+# 
+# 
+# stop()
+# =============================================================================
 
-fig.legend()
-fig.tight_layout()
-
-fig.savefig("../figs/fig2_paper.png", dpi = 300)
-
-
-
-
-stop()
-
-
-
-
-# Read or create meta-data
-# ------------------------
-
-if myyear == "2017-2018":
-  # Initialization date
-  inidate = "20180201"
-  # Number of days in the forecast period
-  ndays   = 28 
-  # Label for period that is forecasted
-  period_name = "February 2018"
-  # Starting and ending time indices (Python conventions)
-  t1, t2 = 0, 0 + ndays
-
-else:
-  # Initialization date
-  inidate = myyear[:4] + "1201"
-  # Number of days in the forecast period
-  ndays   = 90
-  # Label for period that is forecasted
-  period_name = "Dec-Jan-Feb " + myyear[:4] + "-" + myyear[5:]
-  # Starting and ending time indices (Python conventions)  
-  t1, t2 = 63 - 1, 63 - 1 + 28
-  target_period_name = "February"
-
-
-# Load namelist
-exec(open("./namelist_" + myyear + ".py").read())
-
-# Create time axis
-#time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), 
-#                     periods = ndays).tolist()
-time = [datetime.strptime(inidate, "%Y%m%d") + timedelta(days = x) for x in 
-                    range(0, ndays)]
-nt = len(time)
-
-# Number of submissions
-n_sub = len(info)
-
-# Submission ID
-sub_id = [info[j_sub][0] for j_sub in range(n_sub)]
-
-# Range of forecasts for each submission
-range_for = [info[j_sub][1] for j_sub in range(n_sub)]
-
-# Number of forecasts for each submission
-n_for    = [len(l) for l in range_for]
-
-# Colors for each submission
-col = [info[j_sub][2] for j_sub in range(n_sub)]
-
-# Convert to RGB if necessary
-for j_sub in range(n_sub):
-    if type(col[j_sub]) is str:
-        col[j_sub] = matplotlib.colors.to_rgb(col[j_sub])
-
-# Store the raw data
-# ------------------
-# The daily total areas will be stored in a list. Each item of the list
-# will correspond to one submission and will be a 2-D numpy array
-# of dimensions {time, number of ensemble forecasts}
-data = list()
-
-for j_sub in range(n_sub):
-    print("Reading " + sub_id[j_sub])
-    # Create empty numpy array
-    sub_data = np.full((nt, n_for[j_sub]), np.nan)
-  
-    # Read in data for that submission
-    # Note that j_for refers to the forecast index in non-Pythonic
-    # conventions
-    for j_for in range_for[j_sub]:
-      filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + \
-               str(j_for).zfill(3) + "_total-area.txt"
-      # Read the CSV file
-      csv = pd.read_csv(filein, header = None)
-      series = csv.iloc[0][:]
-      # Append that series to the contribution data
-      if len(series) != nt:
-        print("WARNING: INPUT SERIES TOO LONG, CROPPING")
-        series = series[:nt]
-      sub_data[:, j_for - 1] = series
-      
-      del series, csv
-    
-    # Store numpy array
-    data.append(sub_data)
-    # Delete temporary data for that submission
-    del sub_data
-
-# Repeat with observations, if needed
-if plotobs:
- # A list of 1-D numpy arrays, each of dimensions {time}
-    data_obs= list()
-    
-    for obsname in obs:
-        filein = "../data/" + myyear + "/txt/" + obsname + \
-        "_000_total-area.txt"
-        # Read the CSV file
-        csv = pd.read_csv(filein, header = None)
-        series = csv.iloc[0][:]
-        # It might be that the obs is not as long as the forecast, 
-        # when the verification period is not over yet
-        # --> complete the data with NaNs
-        obscomplete = (nt == np.sum((1 - np.isnan(series)) * 1))
-        if not obscomplete:
-            series = series.append(pd.Series([np.nan for i in \
-                     range(nt - len(series))]), ignore_index = True)
-    
-        data_obs.append(series)
-        
-        del series, csv, obscomplete
-        
-# Process the raw data to produce diagnostics
-# and plot them
-# -------------------------------------------  
-        
-# Figure 1: daily ensemble median and range
-fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
-
-for j_sub in range(n_sub):
-    median = np.median(data[j_sub], axis = 1)
-
-    plt.plot(time, median, color = col[j_sub], lw = 1.5, 
-             label = info[j_sub][0] + " " + info[j_sub][3])
-    
-    # Plot range as shading
-    mymax = np.max(data[j_sub], axis = 1)
-    mymin = np.min(data[j_sub], axis = 1)
-    
-
-    plt.fill_between(time, mymin, mymax, 
-                     color = [c * 1.0 for c in col[j_sub]], 
-                     alpha = 0.2, lw = 0)
-    
-# Plot observations if required
-if plotobs:
-    for j_obs, obsname in enumerate(obs):
-        plt.plot(time, data_obs[j_obs], color = [0.1, 0.1, 0.1], lw = 1.5, \
-                 linestyle = lst[j_obs], label = "OBS " + obsname)
-# Figure polishing
-plt.title(period_name + " total Antarctic sea ice area")
-plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
-plt.ylim(0.0, 14)
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.legend(fontsize = 7)
-plt.ylabel("10$^6$ km$^2$")
-plt.grid()
-plt.tight_layout()
-
-for fmt in ["png" , "pdf"]:
-    plt.savefig("../figs/fig1." + fmt, dpi = dpi)
-    print("Figure ../figs/fig1." + fmt + " printed")
-
-
-plt.close(fig)
-
-# Figure 2: minimum of time series
-fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
-
-for j_sub in range(n_sub):
-    # List that will have the day of minimum for each member
-    daymin = list()
-    for j_for in range_for[j_sub]:
-
-        # Pythonic convention requires to start one index earlier
-        series = data[j_sub][:, j_for - 1]
-        # Create dummy time index to locate the minimum. 
-        # This index is expressed as seconds since first date analyzed
-    
-        # Create dummy time axis (hourly resolution) to locate the minimum
-        # after the quadratic fit has been performed
-        tt = np.arange(t1, t2, 1 / 24)
-        # The raw data is fitted by a quadratic polynomial,
-        # and the day at which the minimum is achieved is recorded
-        
-        coeffs = np.polyfit(np.arange(t1, t2), series[t1:t2], 2)
-        
-        if np.max(np.abs(coeffs)) == 0.0:
-            # In this case likely the model goes to zero --> set first date of 
-            # zero
-            daymin.append(time[0] + timedelta(days = float(np.where(series == 0)[0][0])))
-        else:
-            # Minimum of ax^2 + bx + c occurs at  - b / 2a
-            daymin.append(time[0] + timedelta(days = -coeffs[1] / (2 * coeffs[0])))
-
-        del series, coeffs
-        
-    # Plot all days of minimum
-    ax.scatter(daymin, np.full(n_for[j_sub], n_sub - j_sub), 
-               15, color = col[j_sub], 
-               label = info[j_sub][0] + " " + info[j_sub][3],
-               edgecolor = "white", lw = 0.2)
-        
-    # Plot associated PDF
-    scale = 5e5
-    if n_for[j_sub] >= 3:
-        daymin_sec = np.array([d.timestamp() for d in daymin])
-        xpdf = np.linspace(np.min(daymin_sec) - 10 * 86400, \
-                           np.max(daymin_sec) + 10 * 86400, 10000)
-        kernel = stats.gaussian_kde(daymin_sec)
-        pdf = kernel(xpdf).T
-        ax.fill_between([datetime.fromtimestamp(x) for x in xpdf],  \
-                 np.full(len(pdf), n_sub - j_sub),
-                 n_sub - j_sub + scale * pdf, 
-                 color = col[j_sub], alpha = 0.2, lw = 0)
-
-# Plot grey area right to end of forecasting period
-ax.fill_between((time[-1], time[-1] + timedelta(days= 31), time[-1] + 
-                 timedelta(days= 31), time[-1]),
-                (-1e9, -1e9, 1e9, 1e9), color = [0.9, 0.9, 0.9], 
-                zorder = -1000)
-
-# Plot observations if required and if complete
-if plotobs and postseason:
-    daymin_obs = list()
-    
-    for j_obs, obsname in enumerate(obs):
-        series = data_obs[j_obs]
-        # Create dummy time axis (hourly resolution) to locate the minimum
-        # after the quadratic fit has been performed
-        tt = np.arange(t1, t2, 1 / 24)
-        # The raw data is fitted by a quadratic polynomial,
-        # and the day at which the minimum is achieved is recorded
-        myTime   = np.arange(t1, t2)
-        mySeries = series[t1:t2]
-
-
-        # It happens (in 2021 at least) that there are NaNs because
-        # missing data, which need to be taken out then
-        myTime = myTime[~np.isnan(mySeries)]
-        mySeries = mySeries[~np.isnan(mySeries)]    
-
-        coeffs = np.polyfit(myTime, mySeries, 2)
-        
-        # Minimum of ax^2 + bx + c occurs at  - b / 2a
-        daymin_obs_tmp = time[0] + \
-                         timedelta(days = -coeffs[1] / (2 * coeffs[0]))
-        daymin_obs.append(daymin_obs_tmp)
-        
-        ax.plot((daymin_obs_tmp, daymin_obs_tmp), (-1e9, 1e9), 
-                color = [0.1, 0.1, 0.1], lw = 1.5, \
-                 linestyle = lst[j_obs], label = "OBS " + obsname, 
-                 zorder = -100)
-        
-        del daymin_obs_tmp
-    del daymin_obs
-
-# Figure polishing
-ax.set_axisbelow(True)
-ax.set_title("When will the minimum of "  + myyear[5:]+ " Antarctic sea ice area occur?")
-ax.legend(loc = "upper left", ncol = 2, fontsize = 7)
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-ax.set_xticks([time[j] for j in [62, 71, 81, 89]])
-ax.set_xlim(time[t1] - timedelta(days = 10), time[t2 - 1] + \
-            timedelta(days = 20))
-ax.set_ylim(0.0, n_sub + 1)
-ax.grid()
-ax.set_yticks([],[])
-plt.tight_layout()
-for fmt in ["png", "pdf"]:
-    plt.savefig("../figs/fig2." + fmt, dpi = dpi)
-    print("Figure ../figs/fig2." + fmt + " printed")
-
-
-
-
-# Figure 3: monthly means 
-fig, ax = plt.subplots(figsize = (5, 5), dpi = dpi)
-
-for j_sub in range(n_sub):
-    # List that will have the day of minimum for each member
-    monmean = np.mean(data[j_sub][t1:t2, :], axis = 0)
-    
-    ax.scatter(monmean, np.full(n_for[j_sub], n_sub - j_sub), 
-               15, color = col[j_sub], 
-               label = info[j_sub][0] + " " + info[j_sub][3],
-               edgecolor = "white", lw = 0.2)
-        
-    # Plot associated PDF
-    scale = 0.5
-    if n_for[j_sub] >= 3:
-        
-        xpdf = np.linspace(0, 10, 1000)
-        
-        kernel = stats.gaussian_kde(monmean)
-        
-        pdf = kernel(xpdf).T
-        
-        ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf, 
-                 color = col[j_sub], alpha = 0.2, lw = 0)
-
-# Plot observations if required
-if plotobs and postseason:
-    monmean_obs = list()
-    
-    for j_obs, obsname in enumerate(obs):
-        series = data_obs[j_obs]
-        mean_tmp= np.mean(series[t1:t2])
-        monmean_obs.append(mean_tmp)
-        
-        ax.plot((mean_tmp, mean_tmp), (-1e9, 1e9), color = [0.1, 0.1, 0.1], lw = 1.5, \
-                 linestyle = lst[j_obs], label = "OBS " + obsname,
-                 zorder = -100)
-
-        del mean_tmp
-        
-# Figure polishing
-ax.set_axisbelow(True)
-ax.set_title(target_period_name + " mean sea ice area")
-ax.legend(loc = "upper center", ncol = 4, fontsize = 7)
-ax.set_xlabel("Million km$^2$")
-ax.set_xlim(0, 4)
-ax.set_ylim(0.0, n_sub + 6)
-ax.grid()
-ax.set_yticks([],[])
-plt.tight_layout()
-for fmt in ["png", "pdf"]:
-    plt.savefig("../figs/fig3." + fmt, dpi = dpi)
-    print("Figure ../figs/fig3." + fmt + " printed")  
