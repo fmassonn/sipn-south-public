@@ -33,21 +33,24 @@ plt.close("all")
 
 # Open Namelist file
 # ------------------
-exec(open("./namelist_contributors.py").read())
+exec(open("./namelist.py").read())
 
 
 # Fetch starting dates and their number
-startDates  = namelist[0]
+startDates  = [n[0] for n in namelistOutlooks]
+endDates    = [n[1] for n in namelistOutlooks]
+
 nStartDates = len(startDates)
 
 # The list of years defining the start dates
 startYears   = [s.year for s in startDates]
+endYears     = [e.year for e in endDates]
 
-# The list of seasons (ex: 2017-2018)
-startSeasons = [str(s) + "-" + str(s + 1) for s in startYears]
+# The name of seasons (ex: 2017-2018)
+nameSeasons = [str(s) + "-" + str(e) for s, e in zip(startYears, endYears)]
 
 # Number of identified contributors to SIPN South
-nContributors = len(namelist[1])
+nContributors = len(namelistContributions)
 
 # How many contributors (at least one file submitted) as a function of
 # start date?
@@ -64,10 +67,10 @@ for s in range(nStartDates):
     nFilesTmp = 0
     
     for c in range(nContributors):
-        if max(namelist[1][c][s + 1]) > 0:
+        if max(namelistContributions[c][s + 1]) > 0:
             nCountTmp += 1
         
-        nFilesTmp += sum(namelist[1][c][s + 1])
+        nFilesTmp += sum(namelistContributions[c][s + 1])
 
     nCount.append(nCountTmp)
     nFiles.append(nFilesTmp)
@@ -91,7 +94,7 @@ ax1.set_yticks(np.arange(0, 25, 5))
 ax2.tick_params(axis = "y", color = color2, labelcolor = color2)
 
 ax1.set_xticks(startYears)
-ax1.set_xticklabels(startSeasons, rotation = 20)
+ax1.set_xticklabels(nameSeasons, rotation = 20)
 
 
 ax2.set_xlim(2016, 2022)
