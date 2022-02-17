@@ -25,6 +25,7 @@ from scipy    import stats
 
 from seaice_commondiags import *
 
+matplotlib.rcParams['font.family'] = "Arial Narrow"
 
 plt.close("all")
 
@@ -67,11 +68,11 @@ sia = compute_area(sic[targetMonth::12], cellarea, lat < 0.0)
 
 
 
-fig, ax = plt.subplots(3, 2, dpi = 300, figsize = (8, 6) )
+fig, ax = plt.subplots(3, 2, dpi = 300, figsize = (8, 8) )
 
 
 for s, a in zip(sectors, ax.flatten()):
-    print(s[0])
+
     lonW, lonE = s[1], s[2]
     
     # Create mask
@@ -88,14 +89,15 @@ for s, a in zip(sectors, ax.flatten()):
     pdf = kernel0(x_pdf).T
     
     
+    # Rescale for viz purposes.
+    pdf /= np.max(pdf) 
+    
+    
     a.plot(yearsClim, sia_sector)#label = "OSI-450 (OBS)")
-    a.plot(2015 + pdf, x_pdf)
+    a.fill_between(2016 + pdf, x_pdf, facecolor = "black", alpha = 0.4, edgecolor = "black")
     
     a.set_title(s[0])
 
-    a.set_xlim(1978, 2023) 
-    a.set_ylim(bottom = 0, top = np.max(sia_sector) * 1.2)
-    a.grid()
 
 
 # Add the two verification products
@@ -142,7 +144,7 @@ for s, season in enumerate(nameSeasons):
 
 
         # Plot it
-        ax[2, 1].scatter(endYears[s], obsMean, 5, marker = "s", color = "black")
+        ax[2, 1].scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
         
 
 # Complete with the SIPN South forecast data
@@ -233,61 +235,87 @@ for i in range(nStartDates):
     myData.append(iList)
     
     
+# Plot the grand distribution statistics. For each start date, and sector, we 
+# want to end up with a distribution of monthly-mean February sea ice area
+# forecasts. The number of contributors varies from one year to the next,
+# so we need a list of list of arrays.
 
+sipnAreas = list()
 
-
-# # The idea is to populate a 2-item list. The first item is for total area
-# # and the second is for regional area. The first item is an array with dim-
-# # ensions: nSub x nFor x nDay
-# # where
-# nSub = len(info) # Number of groups contributing
-# nFor = np.max([i[1:] for i in info]) # Max number of ensemble forecasts
-# nDay = 90 # number of days in forecasting season
-# nYear= yearEnd - yearStart + 1 # Number of hindcasts
-# years = np.arange(yearStart, yearEnd + 1)
-
-# itemTotalArea =    np.full((nSub, nFor, nYear, nDay), np.nan)
-
-# for jSub, i in enumerate(info):
-#     for jYear, y in enumerate(years):
+for i in range(nStartDates):
+    iList = list()
+    for j in range(nSectors):
+        jList = list()
         
-#         # Total Area
-#         if i[jYear + 1][0] == 0:
-#             # If there is no forecast of total area for that year
-#             pass
-#         else:
-#             # Load the files
-#             for jFor in np.arange(i[jYear + 1][0]):
-#                 filein = "../data/" + str(y) + "-" + str(y + 1) + "/txt/" + i[0] + "_" + \
-#                     str(jFor + 1).zfill(3) + "_total-area.txt"
-#                 # Read the CSV file
-#                 csv = pd.read_csv(filein, header = None)
-#                 series = csv.iloc[0][:]
-#                 # Append that series to the contribution data
-#                 if y == 2017:
-#                     itemTotalArea[jSub, jFor, jYear, -28:] = series[:28]
-#                 else:
-#                     itemTotalArea[jSub, jFor, jYear, :] = series[:90]
+        
+        for k in range(nContributors):
+            
+            thisInput = myData[i][j][k]
+            
+            if len(thisInput) == 0: # If no contribution for that year
+                pass
+            else:
+                nForecasts = len(myData[i][j][k])
+                arrayTmp = np.full(nForecasts, np.nan)
+                for l in range(nForecasts):
+                    seriesTmp = myData[i][j][k][l]
+                    t1 = (namelistOutlooks[i][2] -  namelistOutlooks[i][4]).days
+                    t2 = (namelistOutlooks[i][3] -  namelistOutlooks[i][4]).days + 1
+                    
+                    # Do the time monthly-mean over target month
+                    arrayTmp[l] = np.mean(seriesTmp[t1:t2])
+                    
+ 
+                    
+                # Ensemble mean
+                jList.append(np.mean(arrayTmp))
 
-# # Model mean, Ensemble mean
-# grandMean = np.mean(np.nanmean(itemTotalArea, axis = (0, 1))[:, -28:], axis = 1)
-# ax[2, 1].plot(years, grandMean, "-s")
+        iList.append(jList)
+        
+    sipnAreas.append(iList)
 
-#fig.tight_layout()
 
-# =============================================================================
-# for a in ax.flatten():
-#     a.set_xlim(2015, 2023)
-#     a.set_axisbelow(True)
-# 
-# fig.legend()
-# fig.tight_layout()
-# 
-# fig.savefig("../figs/fig2_paper.png", dpi = 300)
-# 
-# 
-# 
-# 
-# stop()
-# =============================================================================
+# Plot
+for i in range(nStartDates):
+    for j, (_, a) in enumerate(zip(sectors, ax.flatten())):
+        
+        #a.scatter(endYears[i], np.mean(sipnAreas[i][j]), 50, color = "red", marker = "x")
+        # Plot PDF
+        box = a.boxplot( sipnAreas[i][j], positions = [endYears[i] + 0.3], patch_artist=True)
+        #[b.set_facecolor("#4189DD") for b in box["boxes"]]
+        #[b.set_markeredgecolor("#381D59") for b in box ["fliers"]]
+        #box["boxes"][0].set_facecolor("#4189DD")
+        #box["fliers"][0].set_markeredgecolor("#381D59")
+        #box["fliers"][0].set_markeredgecolor("red")
+        
+        #box["medians"][0].set_markeredgecolor("white")
+        plt.setp(box["medians"], color = "#381D59")
+        for element in ['boxes', 'whiskers', 'fliers', 'means', 'caps']:
+            plt.setp(box[element], color = "#381D59")
+        for patch in box['boxes']:
+            patch.set(facecolor = "#4189DD")
+   
+maxS = [2, 0.5, 1.5, 1.5, 1.0, 4]
+    
+for j, a in enumerate(ax.flatten()):
+     a.set_xlim(2016, 2023)
+     a.set_axisbelow(True)
+     a.set_ylabel("Million km$^2$")
+     
+     a.set_xticks([2016] + endYears)
+     a.set_xticklabels([str(yearbClim) + "-" + str(yeareClim) + "\nobs. climatology"] + endYears, rotation = 20)
+
+     a.set_yticks(np.arange(0, 5, 0.5))     
+     a.set_xlim(2015, 2023) 
+ 
+     myMax = maxS[j]
+     a.set_ylim(0, myMax)
+     a.grid()
+     
+plt.suptitle("Observed and SIPN South forecast February mean sea ice area")
+
+fig.tight_layout()
+fig.savefig("../figs/fig2_paper.png", dpi = 300)
+ 
+stop()
 
