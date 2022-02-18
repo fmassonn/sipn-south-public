@@ -126,26 +126,71 @@ nContributors = len(namelistContributions)
 obsVerif = ["NSIDC-0081", "OSI-401-b"]
 
 for s, season in enumerate(nameSeasons):
-    print(season)
     for obsname in obsVerif:
-        filein = "../data/" + season + "/txt/" + obsname + \
-         "_000_total-area.txt"
+        
+        for j, (_, a) in enumerate(zip(sectors, ax.flatten())):
+            if sectors[j][0] == "Southern Ocean":
+                filein = "../data/" + season + "/txt/" + obsname + \
+                 "_000_total-area.txt"
+        
+                # Read the CSV file
+                csv = pd.read_csv(filein, header = None)
+                series = csv.iloc[0][:]
+                
+                # if more than 2 days missing, do nothing
+                
+                if np.sum(np.isnan(series[-28:])) > 2:
+                    pass
+                else:
+                    obsMean = np.nanmean(series[-28:])
+               
+                    # Plot it
+                    a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
+                    
+            else:
+                filein = "../data/" + season + "/txt/" + obsname + \
+                         "_000_regional-area.txt"
+                csv = pd.read_csv(filein, header = None)
+                arrayTmp = np.array(csv.iloc[:][:])
+                
+                lonMin = sectors[j][1]
+                lonMax = sectors[j][2]
+                
+                # Recast everything into 0, 360
+                if lonMin < 0:
+                    lonMin += 360
+                if lonMax < 0:
+                    lonMax +=360
+                
 
-        # Read the CSV file
-        csv = pd.read_csv(filein, header = None)
-        series = csv.iloc[0][:]
-        
-        # if more than 2 days missing, do nothing
-        
-        if np.sum(np.isnan(series[-28:])) > 2:
-            pass
-            print(season)
-        else:
-            obsMean = np.nanmean(series[-28:])
-       
-            # Plot it
-            ax[2, 1].scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
-        
+                     
+                # Sum over relevant rows to accumulate regional average
+                # The data comes by 10° increments
+                
+                if lonMin > lonMax: # This can happen for e.g. weddell sea
+
+                    row0 = int(lonMax / 10.0)
+                    row1 = int(lonMin / 10.0)
+                    seriesTmp = np.sum(arrayTmp, axis = 0) - np.sum(arrayTmp[row0:row1, :], axis = 0)
+                    #if i == 1 and j == 0 and k == 12 and l ==6:
+                    #    stop()
+                else:
+                    row0 = int(lonMin / 10.0)
+                    row1 = int(lonMax / 10.0)
+                    seriesTmp = np.sum(arrayTmp[row0:row1, :], axis = 0)
+  
+                # Time (monthly) mean:
+                t1 = (namelistOutlooks[s][2] -  namelistOutlooks[s][4]).days
+                t2 = (namelistOutlooks[s][3] -  namelistOutlooks[s][4]).days + 1
+                    
+                # Do the time monthly-mean over target month
+                if np.sum(np.isnan(seriesTmp[-28:])) > 2:
+                    obsMean = np.nan
+                else:
+                    obsMean = np.nanmean(seriesTmp[t1:t2])
+                print(sectors[j][0] + " " + season + ": " + str(obsMean))
+           
+                a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
 
 
 
@@ -297,7 +342,7 @@ for i in range(nStartDates):
         for patch in box['boxes']:
             patch.set(facecolor = "#4189DD")
    
-maxS = [2, 0.5, 1.5, 1.5, 1.0, 4]
+maxS = [2, 0.5, 1.0, 1.2    , 1.0, 4]
     
 for j, a in enumerate(ax.flatten()):
      a.set_xlim(2016, 2023)
@@ -311,7 +356,7 @@ for j, a in enumerate(ax.flatten()):
      a.set_xlim(2015, 2023) 
  
      myMax = maxS[j]
-     a.set_ylim(0, myMax)
+     a.set_ylim(-0.0, myMax * 1.1)
      a.grid()
      
 plt.suptitle("Observed and SIPN South forecast February mean sea ice area")
@@ -319,5 +364,5 @@ plt.suptitle("Observed and SIPN South forecast February mean sea ice area")
 fig.tight_layout()
 fig.savefig("../figs/fig2_paper.png", dpi = 300)
  
-stop()
+
 
