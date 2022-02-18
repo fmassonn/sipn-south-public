@@ -126,7 +126,7 @@ nContributors = len(namelistContributions)
 obsVerif = ["NSIDC-0081", "OSI-401-b"]
 
 for s, season in enumerate(nameSeasons):
-    
+    print(season)
     for obsname in obsVerif:
         filein = "../data/" + season + "/txt/" + obsname + \
          "_000_total-area.txt"
@@ -139,13 +139,15 @@ for s, season in enumerate(nameSeasons):
         
         if np.sum(np.isnan(series[-28:])) > 2:
             pass
+            print(season)
         else:
             obsMean = np.nanmean(series[-28:])
-
-
-        # Plot it
-        ax[2, 1].scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
+       
+            # Plot it
+            ax[2, 1].scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
         
+
+
 
 # Complete with the SIPN South forecast data
 # ----------------------------------------------

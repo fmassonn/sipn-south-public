@@ -24,7 +24,7 @@ source ~/module_load.txt
 Rscript format_NSIDC-0081.R
 python ./format_OSI-401b.py
 
-# Year of 1 Dec of initialization
+# The year of 1 Dec of initialization
 yearb=2021
 yearbp1=$(( $yearb + 1 ))
 isleap() { date -d $1-02-29 &>/dev/null && true  || false ; }
