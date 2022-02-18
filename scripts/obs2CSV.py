@@ -72,70 +72,75 @@ def compute_area(concentration, cellarea, mask = 1):
 
 
 for year in np.arange(yearb, yeare + 1):
-    yearp1 = year + 1
-    print(str(year) + "-" + str(yearp1))
-    target = str(year) + "-" + str(yearp1)    # Where to place the output file (../data/$target/txt)
+    if year >= 2017: # No need to do 2015 and 2016 since no forecasts
+
+        yearp1 = year + 1
+        print(str(year) + "-" + str(yearp1))
+        target = str(year) + "-" + str(yearp1)    # Where to place the output file (../data/$target/txt)
+        
+        d0 = date(1850,   1, 1 )   # Zero-time reference of the input file
+        if year == 2017: # The 2017-2018 (first) forecast season only asked for data from 1 Feb
+        	d1 = date(yearp1, 2, 1)	
+        else:
+            d1 = date(year,  12, 1 )   # Start investigated period
+        d2 = date(yearp1, 2, 28)   # End investigated period (include)
+        
     
-    d0 = date(1850,   1, 1 )   # Zero-time reference of the input file
-    d1 = date(year,  12, 1 )   # Start investigated period
-    d2 = date(yearp1, 2, 28)   # End investigated period (include)
+        daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
     
-
-    daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
-
-    # For internal check
-    plt.figure(figsize = (4, 4))
-
-    for j_obs in range(len(obs)):
-        
-        print(obs[j_obs][0])
-        # Input file, following CMIP conventions
-        filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_" + str(yearb) + "0101-" + str(yeare + 1) + "1231_sh.nc"
-        print("Source file: " + filein)
-
-        f = Dataset(filein, mode = "r")
-        siconc = f.variables["siconc"][:]
-        time   = f.variables["time"][:]
-        cellarea = f.variables["areacello"][:]
-        sftof    = f.variables["sftof"][:]
-        lat      = f.variables["latitude"][:]
-        lon      = f.variables["longitude"][:]
-        # Re-range longitude to [0, 360.0]
-        lon[lon < 0.0] = lon[lon < 0.0] + 360.0
-        f.close()
-        
-        # Subset to the forecasting season
-        # --------------------------------
-        t1 = (d1 - d0).days - time[0]
-        t2 = (d2 - d0).days - time[0]
-        
-        # Compute sea ice area for that period
-        # ------------------------------------
-        areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
-        print(areatot)
-        # Save as CSV file
-        # ----------------
-
-	#
-        # Total area
-        print("  Doing global")
-        with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "w") as file:
-            file.write(",".join(["{0:.4f}".format(a) for a in areatot]))  
-            file.write("\n")
-        
-        # Per longitude
-        print("  Doing regional")
-        with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "w") as file:
-            # Per longitude bin
-            for j_bin in np.arange(36):
-              # print(j_bin)
-              area = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0) * (sftof == 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
-              file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
-              file.write("\n")
-        
-        # Plot for internal check
-        # -----------------------
-        plt.plot(daterange, areatot, label = obs[j_obs][0])
+        # For internal check
+        plt.figure(figsize = (4, 4))
+    
+        for j_obs in range(len(obs)):
+            
+            print(obs[j_obs][0])
+            # Input file, following CMIP conventions
+            filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_" + str(yearb) + "0101-" + str(yeare + 1) + "1231_sh.nc"
+            print("Source file: " + filein)
+    
+            f = Dataset(filein, mode = "r")
+            siconc = f.variables["siconc"][:]
+            time   = f.variables["time"][:]
+            cellarea = f.variables["areacello"][:]
+            sftof    = f.variables["sftof"][:]
+            lat      = f.variables["latitude"][:]
+            lon      = f.variables["longitude"][:]
+            # Re-range longitude to [0, 360.0]
+            lon[lon < 0.0] = lon[lon < 0.0] + 360.0
+            f.close()
+            
+            # Subset to the forecasting season
+            # --------------------------------
+            t1 = (d1 - d0).days - time[0]
+            t2 = (d2 - d0).days - time[0]
+            
+            # Compute sea ice area for that period
+            # ------------------------------------
+            areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
+            print(areatot)
+            # Save as CSV file
+            # ----------------
+    
+    	#
+            # Total area
+            print("  Doing global")
+            with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "w") as file:
+                file.write(",".join(["{0:.4f}".format(a) for a in areatot]))  
+                file.write("\n")
+            
+            # Per longitude
+            print("  Doing regional")
+            with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "w") as file:
+                # Per longitude bin
+                for j_bin in np.arange(36):
+                  # print(j_bin)
+                  area = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0) * (sftof == 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
+                  file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
+                  file.write("\n")
+            
+            # Plot for internal check
+            # -----------------------
+            plt.plot(daterange, areatot, label = obs[j_obs][0])
 
 plt.legend()
 plt.ylim(0.0, 17.0)
