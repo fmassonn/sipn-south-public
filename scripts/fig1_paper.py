@@ -89,7 +89,7 @@ ax2 = ax1.twinx()
 
 color2 = "#381D59"
 ax2.plot(startYears, nFiles, "-bs", color = color2, label = "Nb. files contributed")
-ax2.set_ylim(bottom = 0, top = 800)
+ax2.set_ylim(bottom = 0, top = 1000)
 ax1.set_yticks(np.arange(0, 25, 5))
 ax2.tick_params(axis = "y", color = color2, labelcolor = color2)
 
