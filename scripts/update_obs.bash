@@ -18,9 +18,9 @@ set -o nounset
 set -o errexit
 #set -x 
 
-source ~/module_load.txt
-#./retrieve_NSIDC-0081.bash
-#./retrieve_OSI-401b.bash
+#source ~/module_load.txt
+./retrieve_NSIDC-0081.bash
+./retrieve_OSI-401b.bash
 Rscript format_NSIDC-0081.R
 python ./format_OSI-401b.py
 
