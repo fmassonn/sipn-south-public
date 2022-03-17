@@ -17,7 +17,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-from   mpl_toolkits.basemap import Basemap
 from   netCDF4 import Dataset
 from   glob import glob
 
