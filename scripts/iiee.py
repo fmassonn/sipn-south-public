@@ -17,13 +17,15 @@ import os
 import sys
 import random
 
-from   mpl_toolkits.basemap import Basemap, addcyclic
+#import cartopy.crs as ccrs ; import cartopy.feature as cfeature
+#from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+
 from   netCDF4 import Dataset
 from   datetime import datetime
 
 
 # Script parameters
-myyear = "2020-2021"  # label with the year investigated (2017-2018, 2018-2019, ...)
+myyear = "2021-2022"  # label with the year investigated (2017-2018, 2018-2019, ...)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -45,10 +47,7 @@ if myyear == "2017-2018":
   ndays   = 28 #number of days of the forecast period
   period_name = "February 2018"
                         # (Pythonic convention)
-
-elif myyear == "2018-2019" \
-  or myyear == "2019-2020" \
-  or myyear == "2020-2021":
+else:
   # Initialization date
   inidate = myyear[:4] + "1201"
   # Number of days in the forecast period
@@ -190,7 +189,8 @@ for j_sub in range(n_sub):
   # Plot range as shading
   mymax = np.max(np.array(submission), axis = 0)
   mymin = np.min(np.array(submission), axis = 0)
-  plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], \
+  print(col)
+  plt.fill_between(time, mymin, mymax, color = col[j_sub], \
                    alpha = 0.5, lw = 0)
 
 plt.title(period_name + " Integrated Ice Edge Error")
@@ -199,6 +199,7 @@ import matplotlib.dates as mdates
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
 plt.grid()
+plt.gca().set_axisbelow(True)
 plt.legend()
 for fmt in ["png",]:# "eps", "pdf"]:
     plt.savefig("../figs/iiee." + fmt, dpi = 300)
