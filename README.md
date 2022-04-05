@@ -1,7 +1,7 @@
 # SIPN South scripts and data
 Welcome to the public SIPN South directory. Here, you will find the data and scripts necessary to process Sea Ice Prediction Network South (SIPN South) analyses.
 
-<img src="./doc/sipn-south-logo.png" width="30%">
+<img src="./doc/Logo2.png" width="30%">
 
 # Quick start
 Assuming that Git is installed:
