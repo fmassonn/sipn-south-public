@@ -3,6 +3,7 @@
 
 set -o nounset
 set -o errexit
+set -x
 
 cd ../figs
 
@@ -39,7 +40,7 @@ do
 
   convert +append NicoSun_prob-15_concentration_d${dd}.png  \
                   Lamont_prob-15_concentration_d${dd}.png   \
-                  barreira_prob-15_concentration_d${dd}.png \ 
+                  barreira_prob-15_concentration_d${dd}.png \
                   ${dd}_Y.png
  
   convert +append cmcc_prob-15_concentration_d${dd}.png \
