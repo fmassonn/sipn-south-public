@@ -16,14 +16,17 @@ import numpy as np
 import os
 import sys
 import random
+import matplotlib.dates as mdates
 
-from   mpl_toolkits.basemap import Basemap, addcyclic
+#import cartopy.crs as ccrs ; import cartopy.feature as cfeature
+#from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+
 from   netCDF4 import Dataset
 from   datetime import datetime
 
 
 # Script parameters
-myyear = "2020-2021"  # label with the year investigated (2017-2018, 2018-2019, ...)
+myyear = "2021-2022"  # label with the year investigated (2017-2018, 2018-2019, ...)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -45,10 +48,7 @@ if myyear == "2017-2018":
   ndays   = 28 #number of days of the forecast period
   period_name = "February 2018"
                         # (Pythonic convention)
-
-elif myyear == "2018-2019" \
-  or myyear == "2019-2020" \
-  or myyear == "2020-2021":
+else:
   # Initialization date
   inidate = myyear[:4] + "1201"
   # Number of days in the forecast period
@@ -155,12 +155,15 @@ mask_obs  = f.variables["sftof"][:]
 nt = f.dimensions["time"].size
 f.close()
 
-plt.figure(figsize = (6, 4))
+fig, ax = plt.subplots(4, 1, figsize = (8, 16))
 # Load model data
 for j_sub in range(n_sub):
   print("Doing " + str(sub_id[j_sub]))
 
-  submission = list()
+  thisIIEE  = list()
+  thisNIIEE = list()
+  thisAEE   = list()
+  thisME    = list()
 
   for j_for in list_for[j_sub]:
     filein = "../data/" + myyear + "/netcdf/regrid/" + sub_id[j_sub] + "_" \
@@ -179,26 +182,79 @@ for j_sub in range(n_sub):
              (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, 
              lat = latitude, lon = longitude, plot = False)
 
-      submission.append(IIEE)
+      thisIIEE.append(IIEE)
+      thisNIIEE.append(NIIEE)
+      thisAEE.append(AEE)
+      thisME.append(ME)
 
       # Plot series, line thinner for large ensembles. 
       # Legend only if first member
   mylab = info[j_sub][0] + " " + info[j_sub][3]
   
-  mean = np.mean(np.array(submission), axis = 0)
-  plt.plot(time, mean, color = col[j_sub], lw = 1.5, label = mylab)
+  
+  # IIEE
+  meanIIEE = np.mean(np.array(thisIIEE), axis = 0)
+  ax[0].plot(time, meanIIEE, color = col[j_sub], lw = 1.5, label = mylab)
+  # Add submission ID
+  ax[0].text(time[0], meanIIEE[0], str(j_sub), fontsize = 4)
   # Plot range as shading
-  mymax = np.max(np.array(submission), axis = 0)
-  mymin = np.min(np.array(submission), axis = 0)
-  plt.fill_between(time, mymin, mymax, color = [1.0 * c for c in col[j_sub]], \
-                   alpha = 0.5, lw = 0)
+  mymaxIIEE = np.max(np.array(thisIIEE), axis = 0)
+  myminIIEE = np.min(np.array(thisIIEE), axis = 0)
+  ax[0].fill_between(time, myminIIEE, mymaxIIEE, color = col[j_sub], \
+                  alpha = 0.5, lw = 0)
+  ax[0].set_title(period_name + " Integrated Ice Edge Error")
+  ax[0].set_ylabel("10$^6$ km$^2$")
+  
+  # NIIEE
+  meanNIIEE = np.mean(np.array(thisNIIEE), axis = 0)
+  ax[1].plot(time, meanNIIEE, color = col[j_sub], lw = 1.5, label = mylab)
+  # Add submission ID
+  ax[1].text(time[0], meanNIIEE[0], str(j_sub), fontsize = 4)
+  # Plot range as shading
+  mymaxNIIEE = np.max(np.array(thisNIIEE), axis = 0)
+  myminNIIEE = np.min(np.array(thisNIIEE), axis = 0)
+  ax[1].fill_between(time, myminNIIEE, mymaxNIIEE, color = col[j_sub], \
+                  alpha = 0.5, lw = 0)
+  ax[1].set_title(period_name + " Normalized Integrated Ice Edge Error")
+  ax[1].set_ylabel("%")
+  
+  # AEE
+  meanAEE = np.mean(np.array(thisAEE), axis = 0)
+  ax[2].plot(time, meanAEE, color = col[j_sub], lw = 1.5, label = mylab)
+  # Add submission ID
+  ax[2].text(time[0], meanAEE[0], str(j_sub), fontsize = 4)
+  # Plot range as shading
+  mymaxAEE = np.max(np.array(thisAEE), axis = 0)
+  myminAEE = np.min(np.array(thisAEE), axis = 0)
+  ax[2].fill_between(time, myminAEE, mymaxAEE, color = col[j_sub], \
+                  alpha = 0.5, lw = 0)
+  ax[2].set_title(period_name + " Absolute Extent Error")
+  ax[2].set_ylabel("10$^6$ km$^2$")
+  
 
-plt.title(period_name + " Integrated Ice Edge Error")
-plt.ylabel("10$^6$ km$^2$")
-import matplotlib.dates as mdates
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
-plt.grid()
-plt.legend()
+  # ME
+  meanME = np.mean(np.array(thisME), axis = 0)
+  ax[3].plot(time, meanME, color = col[j_sub], lw = 1.5, label = mylab)
+  # Add submission ID
+  ax[3].text(time[0], meanME[0], str(j_sub), fontsize = 4)
+  # Plot range as shading
+  mymaxME = np.max(np.array(thisME), axis = 0)
+  myminME = np.min(np.array(thisME), axis = 0)
+  ax[3].fill_between(time, myminME, mymaxME, color = col[j_sub], \
+                  alpha = 0.5, lw = 0)
+  ax[3].set_title(period_name + "Misplacement Error")
+  ax[3].set_ylabel("10$^6$ km$^2$")
+
+for a in ax:
+  a.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+  a.set_xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
+  a.grid()
+  a.set_axisbelow(True)
+  a.legend(loc=(1.04,0))
+
+fig.tight_layout()
+
 for fmt in ["png",]:# "eps", "pdf"]:
-    plt.savefig("../figs/iiee." + fmt, dpi = 300)
+    fig.savefig("../figs/iiee." + fmt, dpi = 300)
+    
+

@@ -40,7 +40,7 @@ myyear = "2021-2022"
 plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = False
+postseason = True
 
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
@@ -145,7 +145,7 @@ for j_sub in range(n_sub):
 
 # Repeat with observations, if needed
 if plotobs:
-021    # A list of 1-D numpy arrays, each of dimensions {time}
+    # A list of 1-D numpy arrays, each of dimensions {time}
     data_obs= list()
     
     for obsname in obs:
