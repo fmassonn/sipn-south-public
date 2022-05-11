@@ -204,8 +204,8 @@ if plotobs:
                  linestyle = lst[j_obs], label = "OBS " + obsname)
 # Figure polishing
 plt.title(period_name + " total Antarctic sea ice area")
-plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
-plt.ylim(0.0, 14)
+#plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
+#plt.ylim(0.0, 18)
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 plt.legend(fontsize = 7)
 plt.ylabel("10$^6$ km$^2$")
