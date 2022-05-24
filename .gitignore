@@ -18,7 +18,7 @@ bin-release/
 
 # Other files and folders
 .settings/
-
+*DS_Store
 # Executables
 *.swf
 *.air
