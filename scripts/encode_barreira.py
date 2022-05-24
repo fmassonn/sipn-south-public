@@ -6,7 +6,12 @@ import os
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-myyear = "2021-2022"
+myyear = "TOP2022"
+
+if myyear == "TOP2022":
+  nday = 123
+else:
+  nday = 90
 
 R = 6378000.0
 
@@ -21,12 +26,12 @@ ny, nx = lon_out.shape
 areacello = R * np.cos( (lat_out * 2.0 * np.pi / 360.0 )) * (dlon * 2.0 * np.pi / 360.0)  * R * (dlat * 2.0 * np.pi / 360.0)
 
 root = "../data/" + myyear + "/barreira/"
-nmemb = 3
+nmemb = 1
 
 for jmemb in np.arange(1, nmemb + 1):
   jjmemb = str(jmemb).zfill(3)
 
-  files = ["./memb" + jjmemb + "/SHN_ " + str(j) + " concentracion_c" + str(jmemb) + ".txt" for j in range(1, 90 + 1)]
+  files = ["./memb" + jjmemb + "/SHN_" + str(j) + " concentracion_c" + str(jmemb) + ".txt" for j in range(1, nday + 1)]
 
   nt = len(files)
 
@@ -85,7 +90,6 @@ for jmemb in np.arange(1, nmemb + 1):
   x =  f.createDimension('x', nx)
   # Create variables
   times = f.createVariable('time', np.int32, ('time',))
-  times.units = "days since 2018 " + myyear[:4]  + "-" + "12" + "-" + "01"
 
   h = f.createVariable("siconc", np.float32, ('time', 'y', 'x'))
   h.units = "%"

@@ -30,8 +30,8 @@ def compute_area(concentration, cellarea, mask = 1):
   return are
 
 
-myyear = "2021-2022"
-nmemb = 3
+myyear = "TOP2022"
+nmemb = 1
 
 for jmemb in np.arange(1, nmemb + 1):
 
