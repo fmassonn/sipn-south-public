@@ -16,11 +16,11 @@ set -o nounset
 set -o errexit
 set -x
 
-yearb=2020
-yeare=2021
+yearb=2015
+yeare=2022
 ftype="multi" # multi (= operational, OSI-401b) 
 
-rootdir="../data/"
+rootdir=$TECLIM_CLIMATE_DATA
 outdir=${rootdir}/obs/ice/siconc/OSI-SAF/OSI-401-b/raw
 
 mkdir -p $outdir
