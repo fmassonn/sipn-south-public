@@ -8,20 +8,16 @@ library(ncdf4)
 #
 #
 
-yearb <- 2021          # The first year to process
+yearb <- 2022          # The first year to process
+yeare <- 2022
 
+TECLIMDIR <- Sys.getenv(x = "TECLIM_CLIMATE_DATA")
 
+rootdir <- paste(TECLIMDIR, "/obs/ice/siconc/NSIDC/NSIDC-0081/raw/", sep = "/") # The base directory
+
+outdir <- paste(TECLIMDIR, "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/", sep = "/") # Where to save the files
 
 # ==================
-
-# dont touch, leave year + 1 (two years because NCO does a cut afterward
-yeare <- yearb + 1       # The last  year to process
-
-datadir <- "../data/"
-
-rootdir <- paste(datadir, "/obs/ice/siconc/NSIDC/NSIDC-0081/raw/", sep = "/") # The base directory
-
-outdir <- paste(datadir, "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/", sep = "/") # Where to save the files
 
 # Create if not exists
 dir.create(outdir, showWarnings = FALSE, recursive = TRUE)

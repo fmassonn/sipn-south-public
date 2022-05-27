@@ -18,13 +18,13 @@ set -o nounset
 set -o errexit
 #set -x 
 
-source ~/module_load.txt
-#./retrieve_NSIDC-0081.bash
-#./retrieve_OSI-401b.bash
+#source ~/module_load.txt
+./retrieve_NSIDC-0081.bash
+./retrieve_OSI-401b.bash
 Rscript format_NSIDC-0081.R
 python ./format_OSI-401b.py
 
-# Year of 1 Dec of initialization
+# The year of 1 Dec of initialization
 yearb=2021
 yearbp1=$(( $yearb + 1 ))
 isleap() { date -d $1-02-29 &>/dev/null && true  || false ; }

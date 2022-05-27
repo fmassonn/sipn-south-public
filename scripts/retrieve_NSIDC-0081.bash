@@ -10,7 +10,7 @@ outdir=${rootdir}/obs/ice/siconc/NSIDC/NSIDC-0081/raw/
 
 mkdir -p $outdir
 
-yearb=2015
+yearb=2022
 yeare=2022
 
 for hemi in south 

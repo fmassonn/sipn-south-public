@@ -1,11 +1,14 @@
 #!/usr/bin/python
 #
 # Script to convert NetCDF observational references of SIC to
-# SIPN South compliant format (CSV)
+# SIPN South compliant format (CSV), i.e. text files with
+# areas for the period 1 Dec year -- 28 Feb year + 1
+
 # NSIDC 0081 and OSI-401b
 #
 # Author - F. Massonnet
 # Date   - March 5, 2018
+#        - January 2022: update to work on 2015-now data
 
 # Imports, modules, etc.
 import numpy as np
@@ -16,26 +19,28 @@ import matplotlib.pyplot as plt
 from datetime import date, timedelta
 import os
 
+
+# The (machine-dependent) location of CLIMDATA folder
+data_dir = os.environ["TECLIM_CLIMATE_DATA"]
+
 # Name of obs to process
 #        OBS LABEL      OBS DIRECTORY
 obs = [ 
-        ["OSI-401-b" , "../data/" + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
-        ["NSIDC-0081", "../data/" + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
+        ["OSI-401-b" , data_dir + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
+        ["NSIDC-0081", data_dir + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
       ]
 
 # Date parameters
-yearb = 2021
-yearbp1= yearb + 1
-target = str(yearb) + "-" + str(yearbp1)    # Where to place the output file (../data/$target/txt)
+# Years for which a CSV file need to be created
+# The years always refer to the year of the month of December of the summer season
 
-d0 = date(1850, 1, 1)    # Zero-time reference of the input file (should not change)
-d1 = date(yearb, 12, 1)   # Start investigated period
-d2 = date(yearbp1, 2, 28)   # End investigated period (included)
+yearb = 2022
+yeare = 2022
 
 
-# ========================================
 
 
+# =================
 
 # Function to compute sea ice area from sea ice concentation
 # -----
@@ -66,58 +71,79 @@ def compute_area(concentration, cellarea, mask = 1):
 # ------
 
 
-daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
+for year in np.arange(yearb, yeare + 1):
+    if year >= 2017: # No need to do 2015 and 2016 since no forecasts
 
-# For internal check
-plt.figure(figsize = (4, 4))
-
-for j_obs in range(len(obs)):
-    print(obs[j_obs][0])
-    # Input file, following CMIP conventions
-    filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_" + str(yearb) + "0101-" + str(yearbp1) + "1231_sh.nc"
-    print(filein)
-
-    f = Dataset(filein, mode = "r")
-    siconc = f.variables["siconc"][:]
-    time   = f.variables["time"][:]
-    cellarea = f.variables["areacello"][:]
-    sftof    = f.variables["sftof"][:]
-    lat      = f.variables["latitude"][:]
-    lon      = f.variables["longitude"][:]
-    # Re-range longitude to [0, 360.0]
-    lon[lon < 0.0] = lon[lon < 0.0] + 360.0
-    f.close()
+        yearp1 = year + 1
+        print(str(year) + "-" + str(yearp1))
+        target = "TOP2022"  # Where to place the output file (../data/$target/txt)
+        
+        d0 = date(1850,   1, 1 )   # Zero-time reference of the input file
+        if year == 2017: # The 2017-2018 (first) forecast season only asked for data from 1 Feb
+        	d1 = date(yearp1, 2, 1)	
+        else:
+            d1 = date(year,  5, 1 )   # Start investigated period
+        d2 = date(year, 8, 31)   # End investigated period (include)
+        
     
-    # Subset to the month of February 2018
-    # ------------------------------------
-    t1 = (d1 - d0).days - time[0]
-    t2 = (d2 - d0).days - time[0]
+        daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
     
-    # Compute sea ice area for that period
-    # ------------------------------------
-    areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
-    print(areatot)
-    # Save as CSV file
-    # ----------------
-    # Total area
-    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "w") as file:
-        file.write(",".join(["{0:.4f}".format(a) for a in areatot]))  
-        file.write("\n")
+        # For internal check
+        plt.figure(figsize = (4, 4))
     
-    # Per longitude
-    with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "w") as file:
-        # Per longitude bin
-        for j_bin in np.arange(36):
-          print(j_bin)
-          area = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0) * (sftof == 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
-          file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
-          file.write("\n")
+        for j_obs in range(len(obs)):
+            
+            print(obs[j_obs][0])
+            # Input file, following CMIP conventions
+            filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_" + str(yeare) + "0101-" + str(yeare) + "1231_sh.nc"
+            print("Source file: " + filein)
     
-    # Plot for internal check
-    # -----------------------
-    plt.plot(daterange, areatot, label = obs[j_obs][0])
+            f = Dataset(filein, mode = "r")
+            siconc = f.variables["siconc"][:]
+            time   = f.variables["time"][:]
+            cellarea = f.variables["areacello"][:]
+            sftof    = f.variables["sftof"][:]
+            lat      = f.variables["latitude"][:]
+            lon      = f.variables["longitude"][:]
+            # Re-range longitude to [0, 360.0]
+            lon[lon < 0.0] = lon[lon < 0.0] + 360.0
+            f.close()
+            
+            # Subset to the forecasting season
+            # --------------------------------
+            t1 = (d1 - d0).days - time[0]
+            t2 = (d2 - d0).days - time[0]
+            
+            # Compute sea ice area for that period
+            # ------------------------------------
+            areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
+            print(areatot)
+            # Save as CSV file
+            # ----------------
+    
+    	#
+            # Total area
+            print("  Doing global")
+            with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "w") as file:
+                file.write(",".join(["{0:.4f}".format(a) for a in areatot]))  
+                file.write("\n")
+            
+            # Per longitude
+            print("  Doing regional")
+            with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "w") as file:
+                # Per longitude bin
+                for j_bin in np.arange(36):
+                  # print(j_bin)
+                  area = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0) * (sftof == 100.0) * (lon >= j_bin * 10.0) * (lon < (j_bin + 1) * 10.0))
+                  file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
+                  file.write("\n")
+            
+            # Plot for internal check
+            # -----------------------
+            plt.plot(daterange, areatot, label = obs[j_obs][0])
 
 plt.legend()
 plt.ylim(0.0, 17.0)
 plt.savefig("../figs/obs.png", dpi = 300)
+print("Check ../figs/obs.png")
     
