@@ -33,7 +33,7 @@ plt.close("all")
 
 # Record all ensemble forecast values
 
-nMemb = 50
+nMemb = 2
 t1 = 62
 t2 = 90
 
@@ -42,7 +42,7 @@ t2 = 90
 siaForecasts = list()
 
 for jMemb in np.arange(1, nMemb + 1):
-  fileIn = "/Users/massonnetf/git/sipn-south-public/data/2021-2022/txt/cmcc_" \
+  fileIn = "/Users/massonnetf/git/sipn-south-public/data/2021-2022/txt/ucl_" \
       + str(jMemb).zfill(3) + "_total-area.txt"
   
   csvFile = open(fileIn,)
@@ -83,14 +83,24 @@ listXpoints = [0] + siaForecasts + [100]
 listCDF     = [0] + [i / len(siaForecasts) for i in range(1, len(siaForecasts) + 1 )] + [1]
 [ax.plot((listXpoints[i], listXpoints[i + 1]), (listCDF[i], listCDF[i]), 'b-') for i in range(len(siaForecasts) + 1)]
 [ax.plot((listXpoints[i + 1], listXpoints[i + 1]), (listCDF[i], listCDF[i + 1]), "b-") for i in range(len(siaForecasts) + 1) ]
-ax.set_title("Cumulative forecast distribution for\nucl sea ice area February 2022")
 
 
 # Plot obs
 ax.plot((obsRef, obsRef), (-1000, 1000), "r-")
 
-ax.set_xlim(1.2, 2.7)
-ax.set_ylim(0.0, 1.0)
+
+# Compute CRPS. We do this incrementally
+
+
+
+CRPS = np.sum(( 1 / len(siaForecasts) *  (np.array(siaForecasts) - obsRef)) ** 2)
+
+ax.set_title("Cumulative forecast distribution for\nucl sea ice area February 2022\n CRPS : " \
+             + str(np.round(CRPS, 2)) + "(10^6 km^2)^2")
+
+
+ax.set_xlim(0.0, 2.7)
+ax.set_ylim(-0.05, 1.05)
 fig.tight_layout()
 fig.savefig("./CRPS.png", dpi = 300)
 
