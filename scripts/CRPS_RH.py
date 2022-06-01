@@ -6,6 +6,7 @@ Created on Tue May 31 13:29:28 2022
 @author: massonnetf
 """
 
+
 # CRPS and rank histograms for SIPN South
 
 import pandas            as pd
@@ -22,6 +23,8 @@ from datetime import timedelta
 from netCDF4  import Dataset
 from datetime import date
 from scipy    import stats
+
+matplotlib.rcParams['font.family'] = "Arial Narrow"
 
 # Script parameters
 # -----------------
@@ -158,15 +161,47 @@ for j_sub in range(n_sub):
     
   # CRPS
   dH = 1 / n_for[j_sub]
-  CRPS[j_sub] = np.sum((dH * (np.array(data[j_sub]) - data_obs[0])) ** 2)
+  CRPS[j_sub] = np.sum(dH * np.abs(np.array(data[j_sub]) - data_obs[0]))
 
 
+  siaForecasts = list(np.sort(data[j_sub]))
+  
+  obsRef = data_obs[0]
+  # Plot cdf
+  fig, ax = plt.subplots(1, 1, figsize = (4, 3))
+  ax.scatter(siaForecasts, np.zeros(len(siaForecasts)), 50, marker = "x", color = "blue")
+  # Draw CDF
+  listXpoints = [0] + siaForecasts + [100]
+  listCDF     = [0] + [i / len(siaForecasts) for i in range(1, len(siaForecasts) + 1 )] + [1]
+  [ax.plot((listXpoints[i], listXpoints[i + 1]), (listCDF[i], listCDF[i]), 'b-') for i in range(len(siaForecasts) + 1)]
+  [ax.plot((listXpoints[i + 1], listXpoints[i + 1]), (listCDF[i], listCDF[i + 1]), "b-") for i in range(len(siaForecasts) + 1) ]
 
-zipped = zip(sub_id, CRPS)
+  # Plot obs
+  ax.plot((obsRef, obsRef), (-1000, 1000), "r-")
+  ax.set_ylim(-0.05, 1.05)
+  ax.set_xlim(-0.05, 5.0)
+  
+  ax.set_title(sub_id[j_sub])
+  
+  fig.savefig("./CDF_" + sub_id[j_sub] + ".png", dpi = 300)
 
-res = sorted(zipped, key = lambda x: x[1])
+  
+zipped = zip(sub_id, CRPS, col, sub_id)
 
+zipped_sorted = sorted(zipped, key = lambda x: x[1])
 
+# Plot result
+
+fig, ax = plt.subplots(1, 1, figsize = (5, 4))
+for j, z in enumerate(zipped_sorted):
+    
+    ax.fill_between((0, z[1]), (n_sub - j, n_sub - j), color = z[2], alpha = 1.0)
+    ax.text(z[1], n_sub - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center")
+ax.set_xlim(0.0, 2.5)
+ax.set_title("Continuous rank probability score\nfor total sea ice area")
+ax.set_yticklabels("")
+fig.tight_layout()
+fig.savefig("./CRPS.png", dpi = 300)
 
 
 
