@@ -183,7 +183,7 @@ for j_sub in range(n_sub):
   
   ax.set_title(sub_id[j_sub])
   
-  fig.savefig("./CDF_" + sub_id[j_sub] + ".png", dpi = 300)
+  fig.savefig("../figs/CDF_" + sub_id[j_sub] + ".png", dpi = 300)
 
   
 zipped = zip(sub_id, CRPS, col, sub_id)
@@ -201,7 +201,7 @@ ax.set_xlim(0.0, 2.5)
 ax.set_title("Continuous rank probability score\nfor total sea ice area")
 ax.set_yticklabels("")
 fig.tight_layout()
-fig.savefig("./CRPS.png", dpi = 300)
+fig.savefig("../figs/CRPS.png", dpi = 300)
 
 
 
