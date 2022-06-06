@@ -48,7 +48,7 @@ CNRM usually submits two forecasts, one raw and one bias-corrected. For 2019, th
 
 # References
 Massonnet, F., P. Reid, J. L. Lieser, C. M. Bitz, J. Fyfe, W. Hobbs (2019). Assessment of February 2018-2019 sea-ice forecasts for the Southern Ocean. Technical
-Note, Université catholique de Louvain, available at http://acecrc.org.au/sipn-south/
+Note, Université catholique de Louvain, available at https://eprints.utas.edu.au/29984/
 
 Massonnet, F., P. Reid, J. L. Lieser, C. M. Bitz, J. Fyfe, W. Hobbs (2018). Assessment of February 2018 sea-ice forecasts for the Southern Ocean. https://eprints.utas.edu.au/27184
 
