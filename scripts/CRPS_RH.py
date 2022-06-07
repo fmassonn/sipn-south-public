@@ -161,7 +161,7 @@ for j_sub in range(n_sub):
     
   # CRPS
   dH = 1 / n_for[j_sub]
-  CRPS[j_sub] = np.sum(dH * np.abs(np.array(data[j_sub]) - data_obs[0]))
+  CRPS[j_sub] = (np.sum(dH * np.abs(np.array(data[j_sub]) - data_obs[0]))) ** 2
 
 
   siaForecasts = list(np.sort(data[j_sub]))
@@ -197,15 +197,8 @@ for j, z in enumerate(zipped_sorted):
     
     ax.fill_between((0, z[1]), (n_sub - j, n_sub - j), color = z[2], alpha = 1.0)
     ax.text(z[1], n_sub - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center")
-ax.set_xlim(0.0, 2.5)
-ax.set_title("Continuous rank probability score\nfor total sea ice area")
+ax.set_xlim(0.0, 3.5)
+ax.set_title("Continuous rank probability score\nfor " + target_period_name + " " + str(myyear[5:]) + " total sea ice area")
 ax.set_yticklabels("")
 fig.tight_layout()
 fig.savefig("../figs/CRPS.png", dpi = 300)
-
-
-
-
-
-
-
