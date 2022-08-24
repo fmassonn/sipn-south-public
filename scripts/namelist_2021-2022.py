@@ -7,7 +7,7 @@ info = [
     [ "CanSIPSv2",        range(1, 20 + 1), "#1898e0", "$^d$"    ],  \
     [ "cmcc",             range(1, 50 + 1), "#00b2ed", "$^d$"    ],  \
     [ "CNRM",             range(1, 51 + 1), "#00bb62", "$^d$"    ],  \
-    [ "EC-Earth3",        range(1, 10 + 1), "red"    , "$^d$"    ],  \
+    [ "BSC",              range(1, 10 + 1), "red"    , "$^d$"    ],  \
     [ "ecmwf",            range(1, 51 + 1)  , [0.69, 0.35, 0.16], "$^d$"    ],  \
     [ "FIO-ESM",          [1],              "#8bcd45", "$^d$"    ],  \
     [ "gfdl",             range(1, 30 + 1), "#dbe622", "$^d$"    ],  \
