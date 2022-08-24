@@ -2,7 +2,7 @@
 # Date  : 10 Jan 2022
 
 
-# Purpose: Figure with time series of SIPN South contributions
+# Purpose: Overview figure with meta-data about submissions
 
 # Data: SIPN South contributors
 
@@ -23,85 +23,17 @@ from netCDF4  import Dataset
 from datetime import date
 from scipy    import stats
 
-from seaice_commondiags import *
+#from seaice_commondiags import *
 
 matplotlib.rcParams['font.family'] = "Arial Narrow"
 
 plt.close("all")
 
 
-# Open sector information file
-# ----------------------------
+
+# Open Namelist file
+# ------------------
 exec(open("./namelist.py").read())
-nSectors = len(sectors)
-# Script parameters
-# -----------------
-
-# Years for the long-term record and the climatology
-yearbClim = 1979
-yeareClim = 2015
-
-targetMonth = 1 # February (Python convention)
-
-fileObsLong = "/Users/massonnetf/CLIMDATA/obs/ice/siconc/OSI-SAF" + \
-              "/OSI-450/processed/native/siconc_SImon_OSI-450_r1i1p1_"   + \
-              str(yearbClim) + "01-" + str(yeareClim) + "12_sh.nc"
-
-yearsClim = np.arange(yearbClim, yeareClim  + 1)
-
-
-
-# Open file
-# ---------
-f = Dataset(fileObsLong)
-sic = f.variables["siconc"][:]
-lat = f.variables["lat"][:]
-lon = f.variables["lon"][:]
-lon[lon > 180] = lon[lon > 180] - 360
-f.close()
-
-cellarea = 25000 ** 2
-
-# Mean sea ice area for the target month
-
-sia = compute_area(sic[targetMonth::12], cellarea, lat < 0.0)
-
-
-
-fig, ax = plt.subplots(3, 2, dpi = 300, figsize = (8, 8) )
-
-
-for s, a in zip(sectors, ax.flatten()):
-
-    lonW, lonE = s[1], s[2]
-    
-    # Create mask
-    if lonE > lonW:
-        mask = (lat < 0.0) * (lon > lonW) * (lon <= lonE)
-    else:
-        mask = (lat < 0.0) * ( (lon > lonW) + (lon <= lonE))
-    # Compute area
-    sia_sector = compute_area(sic[targetMonth::12], cellarea, mask)
-    
-    # Fit a PDF
-    x_pdf = np.linspace(0, 5, 1000)
-    kernel0 = stats.gaussian_kde(sia_sector)
-    pdf = kernel0(x_pdf).T
-    
-    
-    # Rescale for viz purposes.
-    pdf /= np.max(pdf) 
-    
-    
-    a.plot(yearsClim, sia_sector)#label = "OSI-450 (OBS)")
-    a.fill_between(2016 + pdf, x_pdf, facecolor = "black", alpha = 0.4, edgecolor = "black")
-    
-    a.set_title(s[0])
-
-
-
-# Add the two verification products
-# ---------------------------------
 
 
 # Fetch starting dates and their number
@@ -120,249 +52,58 @@ nameSeasons = [str(s) + "-" + str(e) for s, e in zip(startYears, endYears)]
 # Number of identified contributors to SIPN South
 nContributors = len(namelistContributions)
 
+# How many contributors (at least one file submitted) as a function of
+# start date?
 
+nCount = list()
+nFiles = list()
 
-# 
-obsVerif = ["NSIDC-0081", "OSI-401-b"]
-
-for s, season in enumerate(nameSeasons):
-    for obsname in obsVerif:
+for s in range(nStartDates):
+    # We are in a start date. Let's create two counters, one that 
+    # accumulates how many of the identified contributors have indeed
+    # submitted at least one file, and one that accumulates the total
+    # number of files
+    nCountTmp = 0
+    nFilesTmp = 0
+    
+    for c in range(nContributors):
+        if max(namelistContributions[c][s + 1]) > 0:
+            nCountTmp += 1
         
-        for j, (_, a) in enumerate(zip(sectors, ax.flatten())):
-            if sectors[j][0] == "Southern Ocean":
-                filein = "../data/" + season + "/txt/" + obsname + \
-                 "_000_total-area.txt"
-        
-                # Read the CSV file
-                csv = pd.read_csv(filein, header = None)
-                series = csv.iloc[0][:]
-                
-                # if more than 2 days missing, do nothing
-                
-                if np.sum(np.isnan(series[-28:])) > 2:
-                    pass
-                else:
-                    obsMean = np.nanmean(series[-28:])
-               
-                    # Plot it
-                    a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
-                    
-            else:
-                filein = "../data/" + season + "/txt/" + obsname + \
-                         "_000_regional-area.txt"
-                csv = pd.read_csv(filein, header = None)
-                arrayTmp = np.array(csv.iloc[:][:])
-                
-                lonMin = sectors[j][1]
-                lonMax = sectors[j][2]
-                
-                # Recast everything into 0, 360
-                if lonMin < 0:
-                    lonMin += 360
-                if lonMax < 0:
-                    lonMax +=360
-                
+        nFilesTmp += sum(namelistContributions[c][s + 1])
 
-                     
-                # Sum over relevant rows to accumulate regional average
-                # The data comes by 10° increments
-                
-                if lonMin > lonMax: # This can happen for e.g. weddell sea
+    nCount.append(nCountTmp)
+    nFiles.append(nFilesTmp)
+    
 
-                    row0 = int(lonMax / 10.0)
-                    row1 = int(lonMin / 10.0)
-                    seriesTmp = np.sum(arrayTmp, axis = 0) - np.sum(arrayTmp[row0:row1, :], axis = 0)
-                    #if i == 1 and j == 0 and k == 12 and l ==6:
-                    #    stop()
-                else:
-                    row0 = int(lonMin / 10.0)
-                    row1 = int(lonMax / 10.0)
-                    seriesTmp = np.sum(arrayTmp[row0:row1, :], axis = 0)
   
-                # Time (monthly) mean:
-                t1 = (namelistOutlooks[s][2] -  namelistOutlooks[s][4]).days
-                t2 = (namelistOutlooks[s][3] -  namelistOutlooks[s][4]).days + 1
-                    
-                # Do the time monthly-mean over target month
-                if np.sum(np.isnan(seriesTmp[-28:])) > 2:
-                    obsMean = np.nan
-                else:
-                    obsMean = np.nanmean(seriesTmp[t1:t2])
-                print(sectors[j][0] + " " + season + ": " + str(obsMean))
-           
-                a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
+fig, ax1 = plt.subplots(1, 1, figsize = (4, 3), dpi = 300)
+
+# Instantiate new axis system based on ax2
+color1 = "#4189DD"
+ax1.bar(startYears, nCount, color = color1, label = "Nb. contributing groups", alpha = 0.9)
+ax1.tick_params(axis = "y", color = color1, labelcolor = color1)
+ax1.set_ylim(bottom = 0, top = 20)
+
+ax2 = ax1.twinx()
+
+color2 = "#381D59"
+ax2.plot(startYears, nFiles, "-bs", color = color2, label = "Nb. files contributed")
+ax2.set_ylim(bottom = 0, top = 1000)
+ax1.set_yticks(np.arange(0, 25, 5))
+ax2.tick_params(axis = "y", color = color2, labelcolor = color2)
+
+ax1.set_xticks(startYears)
+ax1.set_xticklabels(nameSeasons, rotation = 20)
 
 
+ax2.set_xlim(2016, 2022)
 
-# Complete with the SIPN South forecast data
-# ----------------------------------------------
+ax1.set_title("Evolution of input statistics to SIPN South")
+ax1.grid(axis = "y")
+ax1.set_axisbelow(True)
+fig.legend(ncol = 1, bbox_to_anchor=(0.04, 0.78, 0.5, .102))
 
-# We are creating a list with as many elements as there are startDates
-#
-myData = list()
-
-# myData : 1 / Which startDate
-#          2 / Which sector
-#          3 / Which contributor
-#          4 / Which forecast
-
-for i in range(nStartDates):
-    print("Loading " + nameSeasons[i])
-    
-    iList = list()
-    for j in range(nSectors):
-        jList = list()
-        
-        for k in range(nContributors):
-            nameContributor = namelistContributions[k][0]
-            kList = list()
-            
-            
-            if sectors[j][0] == "Southern Ocean": # total area
-                nForecasts = namelistContributions[k][i + 1][0] # 0 since total area, i+ 1 since first item is name
-            
-                for l in range(nForecasts):
-                                
-                    # Fetch the relevant file
-                    filein = "../data/" + nameSeasons[i] + "/txt/" + nameContributor + "_" + \
-                     str(l + 1).zfill(3) + "_total-area.txt"
-                    
-                    
-                    csv = pd.read_csv(filein, header = None)
-                    seriesTmp = csv.iloc[0][:]
-                    
-                    kList.append(seriesTmp)
-                    
-            else:
-                
-                # Read regional file
-                nForecasts = namelistContributions[k][i + 1][1] # 1 since regional area, i+ 1 since first item is name
-                
-                
-                lonMin = sectors[j][1]
-                lonMax = sectors[j][2]
-                
-                # Recast everything into 0, 360
-                if lonMin < 0:
-                    lonMin += 360
-                if lonMax < 0:
-                    lonMax +=360
-                
-
-                # Fetch relevant file
-                for l in range(nForecasts):
-                     filein = "../data/" + nameSeasons[i] + "/txt/" + nameContributor + "_" + \
-                     str(l + 1).zfill(3) + "_regional-area.txt"
-                     
-                     csv = pd.read_csv(filein, header = None)
-                     arrayTmp = np.array(csv.iloc[:][:])
-                     
-                     # Sum over relevant rows to accumulate regional average
-                     # The data comes by 10° increments
-                     
-                     if lonMin > lonMax: # This can happen for e.g. weddell sea
-
-                         row0 = int(lonMax / 10.0)
-                         row1 = int(lonMin / 10.0)
-                         seriesTmp = np.sum(arrayTmp, axis = 0) - np.sum(arrayTmp[row0:row1, :], axis = 0)
-                         #if i == 1 and j == 0 and k == 12 and l ==6:
-                         #    stop()
-                     else:
-                         row0 = int(lonMin / 10.0)
-                         row1 = int(lonMax / 10.0)
-                         seriesTmp = np.sum(arrayTmp[row0:row1, :], axis = 0)
-                         
-                     kList.append(seriesTmp)
-                         
-            
-            jList.append(kList)
-        
-        iList.append(jList)
-        
-    myData.append(iList)
-    
-    
-# Plot the grand distribution statistics. For each start date, and sector, we 
-# want to end up with a distribution of monthly-mean February sea ice area
-# forecasts. The number of contributors varies from one year to the next,
-# so we need a list of list of arrays.
-
-sipnAreas = list()
-
-for i in range(nStartDates):
-    iList = list()
-    for j in range(nSectors):
-        jList = list()
-        
-        
-        for k in range(nContributors):
-            
-            thisInput = myData[i][j][k]
-            
-            if len(thisInput) == 0: # If no contribution for that year
-                pass
-            else:
-                nForecasts = len(myData[i][j][k])
-                arrayTmp = np.full(nForecasts, np.nan)
-                for l in range(nForecasts):
-                    seriesTmp = myData[i][j][k][l]
-                    t1 = (namelistOutlooks[i][2] -  namelistOutlooks[i][4]).days
-                    t2 = (namelistOutlooks[i][3] -  namelistOutlooks[i][4]).days + 1
-                    
-                    # Do the time monthly-mean over target month
-                    arrayTmp[l] = np.mean(seriesTmp[t1:t2])
-                    
- 
-                    
-                # Ensemble mean
-                jList.append(np.mean(arrayTmp))
-
-        iList.append(jList)
-        
-    sipnAreas.append(iList)
-
-
-# Plot
-for i in range(nStartDates):
-    for j, (_, a) in enumerate(zip(sectors, ax.flatten())):
-        
-        #a.scatter(endYears[i], np.mean(sipnAreas[i][j]), 50, color = "red", marker = "x")
-        # Plot PDF
-        box = a.boxplot( sipnAreas[i][j], positions = [endYears[i] + 0.3], patch_artist=True)
-        #[b.set_facecolor("#4189DD") for b in box["boxes"]]
-        #[b.set_markeredgecolor("#381D59") for b in box ["fliers"]]
-        #box["boxes"][0].set_facecolor("#4189DD")
-        #box["fliers"][0].set_markeredgecolor("#381D59")
-        #box["fliers"][0].set_markeredgecolor("red")
-        
-        #box["medians"][0].set_markeredgecolor("white")
-        plt.setp(box["medians"], color = "#381D59")
-        for element in ['boxes', 'whiskers', 'fliers', 'means', 'caps']:
-            plt.setp(box[element], color = "#381D59")
-        for patch in box['boxes']:
-            patch.set(facecolor = "#4189DD")
-   
-maxS = [2, 0.5, 1.0, 1.2    , 1.0, 4]
-    
-for j, a in enumerate(ax.flatten()):
-     a.set_xlim(2016, 2023)
-     a.set_axisbelow(True)
-     a.set_ylabel("Million km$^2$")
-     
-     a.set_xticks([2016] + endYears)
-     a.set_xticklabels([str(yearbClim) + "-" + str(yeareClim) + "\nobs. climatology"] + endYears, rotation = 20)
-
-     a.set_yticks(np.arange(0, 5, 0.5))     
-     a.set_xlim(2015, 2023) 
- 
-     myMax = maxS[j]
-     a.set_ylim(-0.0, myMax * 1.1)
-     a.grid()
-     
-plt.suptitle("Observed and SIPN South forecast February mean sea ice area")
-
+# Legend
 fig.tight_layout()
 fig.savefig("../figs/fig2_paper.png", dpi = 300)
- 
-
-
