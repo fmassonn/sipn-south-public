@@ -71,6 +71,9 @@ sia = compute_area(sic[targetMonth::12], cellarea, lat < 0.0)
 fig, ax = plt.subplots(3, 2, dpi = 300, figsize = (8, 8) )
 
 
+# counter for putting letters
+jLett = 0
+
 for s, a in zip(sectors, ax.flatten()):
 
     lonW, lonE = s[1], s[2]
@@ -94,11 +97,14 @@ for s, a in zip(sectors, ax.flatten()):
     
     
     a.plot(yearsClim, sia_sector)#label = "OSI-450 (OBS)")
-    a.fill_between(2016 + pdf, x_pdf, facecolor = "black", alpha = 0.4, edgecolor = "black")
+    a.fill_between(2016 + pdf, x_pdf, facecolor = "#E16E79", alpha = 0.4, edgecolor = "#E16E79")
+
+    myClim = np.mean(sia_sector)
+    a.plot((2016, 2030), (myClim, myClim), color = "#E16E79", linestyle = "--", lw = 1)
     
-    a.set_title(s[0])
+    a.set_title("(" + "abcdefghijkl"[jLett] + ") " + s[0])
 
-
+    jLett += 1
 
 # Add the two verification products
 # ---------------------------------
@@ -145,7 +151,7 @@ for s, season in enumerate(nameSeasons):
                     obsMean = np.nanmean(series[-28:])
                
                     # Plot it
-                    a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
+                    a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black", lw = 1)
                     
             else:
                 filein = "../data/" + season + "/txt/" + obsname + \
@@ -328,7 +334,8 @@ for i in range(nStartDates):
         
         #a.scatter(endYears[i], np.mean(sipnAreas[i][j]), 50, color = "red", marker = "x")
         # Plot PDF
-        box = a.boxplot( sipnAreas[i][j], positions = [endYears[i] + 0.3], patch_artist=True)
+        box = a.boxplot( sipnAreas[i][j], positions = [endYears[i] + 0.3], patch_artist=True, \
+               whis = 1.5)
         #[b.set_facecolor("#4189DD") for b in box["boxes"]]
         #[b.set_markeredgecolor("#381D59") for b in box ["fliers"]]
         #box["boxes"][0].set_facecolor("#4189DD")
@@ -336,11 +343,12 @@ for i in range(nStartDates):
         #box["fliers"][0].set_markeredgecolor("red")
         
         #box["medians"][0].set_markeredgecolor("white")
-        plt.setp(box["medians"], color = "#381D59")
+        colbox = "#364EB9"
+        plt.setp(box["medians"], color = colbox)
         for element in ['boxes', 'whiskers', 'fliers', 'means', 'caps']:
-            plt.setp(box[element], color = "#381D59")
+            plt.setp(box[element], color = colbox)
         for patch in box['boxes']:
-            patch.set(facecolor = "#4189DD")
+            patch.set(facecolor = "#228FCF")
    
 maxS = [2, 0.5, 1.0, 1.2    , 1.0, 4]
     
@@ -362,7 +370,7 @@ for j, a in enumerate(ax.flatten()):
 plt.suptitle("Observed and SIPN South forecast February mean sea ice area")
 
 fig.tight_layout()
-fig.savefig("../figs/fig2_paper.png", dpi = 300)
+fig.savefig("../figs/fig3_paper.png", dpi = 300)
  
 
 
