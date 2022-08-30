@@ -17,9 +17,10 @@ from datetime import date, timedelta
 import os
 
 # Date parameters
-yearb = 2021
-yearbp1= yearb + 1
-target = str(yearb) + "-" + str(yearbp1)    # Where to place the output file (../data/$target/txt)
+yearb = 2022
+yearbp1= 2022
+#target = str(yearb) + "-" + str(yearbp1)    # Where to place the output file (../data/$target/txt)
+target = "TOP2022"
 
 # Name of obs to process
 #        OBS LABEL      OBS DIRECTORY
@@ -30,8 +31,8 @@ obs = [
 
 
 d0 = date(1850, 1, 1)    # Zero-time reference of the input file (should not change)
-d1 = date(yearb, 12, 1)   # Start investigated period
-d2 = date(yearbp1, 2, 28)   # End investigated period (included)
+d1 = date(yearb, 5, 1)   # Start investigated period
+d2 = date(yearbp1, 8, 31)   # End investigated period (included)
 
 
 # ========================================
