@@ -17,8 +17,12 @@ set -o errexit
 set -x
 
 yearb=2022
+monb=1
+
 yeare=2022
-ftype="multi" # multi (= operational, OSI-401b) 
+mone=8
+
+ftype="multi" # multi (= operational, OSI-401-b) 
 
 rootdir=$TECLIM_CLIMATE_DATA
 outdir=${rootdir}/obs/ice/siconc/OSI-SAF/OSI-401-b/raw
@@ -29,8 +33,20 @@ mkdir -p $outdir
 
 for year in `seq $yearb $yeare`
 do
-  for month in 01 02 03 04 05 06 07 08 09 10 11 12
+  firstMonth=1
+  lastMonth=12
+  if [[ $year == $yearb ]]
+  then
+    firstMonth=$monb
+  fi
+  if [[ $year == $yeare ]]
+  then
+    lastMonth=$mone
+  fi
+
+  for month in `seq $firstMonth $lastMonth`
   do
+    month=$(printf "%02d" $month)
     rootaddress="ftp://osisaf.met.no/archive/ice/conc/"
     wget -N -c $rootaddress/${year}/${month}/ice_conc_sh_polstere-100_${ftype}_${year}${month}??1200.nc -P $outdir
   done # month
