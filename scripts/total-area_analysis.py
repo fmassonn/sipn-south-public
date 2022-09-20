@@ -200,6 +200,7 @@ for j_sub in range(n_sub):
 # Plot observations if required
 if plotobs:
     for j_obs, obsname in enumerate(obs):
+        print(data_obs[j_obs])
         plt.plot(time, data_obs[j_obs], color = [0.1, 0.1, 0.1], lw = 1.5, \
                  linestyle = lst[j_obs], label = "OBS " + obsname)
 # Figure polishing
