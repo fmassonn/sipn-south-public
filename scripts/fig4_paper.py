@@ -2,14 +2,14 @@
 # Date  : 10 Jan 2022
 
 
-# Purpose: Figure with Continuous Rank Probability Scores for each region
-# and per submission
+# Purpose: Figure with daly sea ice area for one particular season 
+#          highlighting the bias at initial day and the excessive melt rates
 
 # Data: SIPN South contributors
 
 # Imports and clean-up
 # --------------------
-import csv
+import pandas            as pd
 import matplotlib; matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import matplotlib.dates  as mdates
@@ -31,78 +31,101 @@ matplotlib.rcParams['font.family'] = "Arial Narrow"
 plt.close("all")
 
 
-# Record all ensemble forecast values
+# Open namelist information file
+# ------------------------------
+exec(open("./namelist.py").read())
 
-nMemb = 2
-t1 = 62
-t2 = 90
+# Script parameters
+# -----------------
 
-# Load forecast
+seasonId = 4 # Which season to look at
+diagId   = 0 # Which diag (currently only works with total SIA so 0)
 
-siaForecasts = list()
+# ----
+nDaysWeek = 7 # how many days in a week
 
-for jMemb in np.arange(1, nMemb + 1):
-  fileIn = "/Users/massonnetf/git/sipn-south-public/data/2021-2022/txt/ucl_" \
-      + str(jMemb).zfill(3) + "_total-area.txt"
-  
-  csvFile = open(fileIn,)
-  csvReader = csv.reader(csvFile, delimiter = ",")
-    
-  for row in csvReader:
-    dataTmp = [float(d) for d in row]
-    
-    # Make mean over period
-    timeMeanTmp = np.mean(dataTmp[t1:t2])
-    siaForecasts.append(timeMeanTmp)
-    
-  csvFile.close()
-  
-# Sort sia forecasts (important for CRPS)
-siaForecasts.sort()
-  
-# Load obs
-fileIn = "/Users/massonnetf/git/sipn-south-public/data/2021-2022/txt/NSIDC-0081_000_total-area.txt"
-csvFile = open(fileIn)
-csvReader = csv.reader(csvFile, delimiter = ",")
-    
-for row in csvReader:
-  dataTmp = [float(d) for d in row]
-    
-# Make mean over period
-obsRef = np.mean(dataTmp[t1:t2])
-csvFile.close()
-print(obsRef)
+nDays    = ((namelistOutlooks[seasonId][5]) - (namelistOutlooks[seasonId][4])).days + 1
 
+daysAxis = [namelistOutlooks[seasonId][4] + timedelta(days = float(d)) for d in np.arange(nDays)]
 
+fig, ax = plt.subplots(1, 2, figsize = (10, 4))
 
-# Compute CRPS
-fig, ax = plt.subplots(1, 1, figsize = (4, 3))
-ax.scatter(siaForecasts, np.zeros(len(siaForecasts)), 50, marker = "x", color = "blue")
-# Draw CDF
-listXpoints = [0] + siaForecasts + [100]
-listCDF     = [0] + [i / len(siaForecasts) for i in range(1, len(siaForecasts) + 1 )] + [1]
-[ax.plot((listXpoints[i], listXpoints[i + 1]), (listCDF[i], listCDF[i]), 'b-') for i in range(len(siaForecasts) + 1)]
-[ax.plot((listXpoints[i + 1], listXpoints[i + 1]), (listCDF[i], listCDF[i + 1]), "b-") for i in range(len(siaForecasts) + 1) ]
+# Run through all forecasts
+seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlooks[seasonId][1].year)
 
+for j, n in enumerate(namelistContributions):
+	print(n)
+	thisName = n[0]
+	thisNbForecasts	= n[seasonId + 1][diagId]
+	thisType = n[-1] # Statistical or dynamical
 
-# Plot obs
-ax.plot((obsRef, obsRef), (-1000, 1000), "r-")
+	if thisNbForecasts > 0:
+		thisList = list()
+		for jFor in np.arange(thisNbForecasts):
+			# Locate the file
+			fileIn = "../data/" + seasonName + "/txt/" + thisName + "_" + str(jFor + 1).zfill(3) + "_total-area.txt"
 
+			# Read file content
+			csv = pd.read_csv(fileIn, header = None)
+			seriesTmp = csv.iloc[0][:nDays]
+			thisList.append(seriesTmp)
 
-# Compute CRPS. We do this incrementally
+			#print(j / len(namelistContributions) * 255)
+			
+			#ax.plot(daysAxis, seriesTmp, color = plt.cm.gnuplot( int(j / len(namelistContributions) * 255)))
+		# Compute ensemble median
+		thisMedian = np.median(np.array(thisList), axis = 0)
+		thisMin = np.max(np.array(thisList), axis = 0)
+		thisMax = np.min(np.array(thisList), axis = 0)
+		if thisType == "s":
+			thisColor = plt.cm.YlOrRd( int(j / len(namelistContributions) * 128))
+		elif thisType == "d":
+			thisColor = plt.cm.PuBuGn( int(128 + j / len(namelistContributions) * 128))
+		else:
+			stop("Type not known")
+		ax[0].plot(daysAxis, thisMedian, color = thisColor, label = thisName + " (" +  thisType + ")")
 
+		# Display range
+		#ax.fill_between(daysAxis, thisMin, thisMax, color = thisColor, alpha = 0.5, lw = 0)
 
-
-CRPS = np.sum(( 1 / len(siaForecasts) *  (np.array(siaForecasts) - obsRef)) ** 2)
-
-ax.set_title("Cumulative forecast distribution for\nucl sea ice area February 2022\n CRPS : " \
-             + str(np.round(CRPS, 2)) + "(10^6 km^2)^2")
+		# Plot melt rate
+		meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
+		ax[1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = thisName)
 
 
-ax.set_xlim(0.0, 2.7)
-ax.set_ylim(-0.05, 1.05)
+
+
+# Plot observational references
+obsVerif = ["NSIDC-0081", "OSI-401-b"]
+obsLine  = ["--", ":"]
+for j, obsname in enumerate(obsVerif):
+	seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlooks[seasonId][1].year)
+
+	fileIn = "../data/" + seasonName + "/txt/" + obsname + \
+                         "_000_total-area.txt"
+
+	csv = pd.read_csv(fileIn, header = None)
+	seriesTmp = csv.iloc[0][:nDays]
+
+	ax[0].plot(daysAxis, seriesTmp, label = obsVerif[j], linestyle = obsLine[j], color = "k")
+
+	meltRate = np.array(seriesTmp[nDaysWeek:]) - np.array(seriesTmp[:-nDaysWeek])
+
+
+	ax[1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2)
+
+ax[1].plot((namelistOutlooks[seasonId][4], namelistOutlooks[seasonId][5]), (0, 0), color = "grey")
+ax[0].legend(ncol = 2, fontsize = 9)
+
+for a in ax:
+	a.set_xlim(namelistOutlooks[seasonId][4], namelistOutlooks[seasonId][5])
+	a.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+ax[0].set_title("Daily mean Southern Ocean sea ice area, " + seasonName)
+ax[0].set_ylabel("Million km$^2$")
+ax[1].set_title("Weekly running melt rates, " + seasonName)
+ax[1].set_ylabel("Million km$^2$/week")
+
 fig.tight_layout()
-fig.savefig("./CRPS.png", dpi = 300)
 
-
+plt.savefig("./fig4_paper.png", dpi = 300)
 
