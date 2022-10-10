@@ -78,7 +78,7 @@ for j, n in enumerate(namelistContributions):
 		thisMin = np.max(np.array(thisList), axis = 0)
 		thisMax = np.min(np.array(thisList), axis = 0)
 		if thisType == "s":
-			thisColor = plt.cm.YlOrRd( int(j / len(namelistContributions) * 128))
+			thisColor = plt.cm.YlOrRd( int(128 + j / len(namelistContributions) * 128))
 		elif thisType == "d":
 			thisColor = plt.cm.PuBuGn( int(128 + j / len(namelistContributions) * 128))
 		else:
