@@ -99,7 +99,7 @@ for j, n in enumerate(namelistContributions):
 		elif thisType == "d":
 			thisColor = plt.cm.PuBuGn_r( int(j / len(namelistContributions) * 128))
 		else:
-			stop("Type not known")
+			thisColor = "black"
 		
 		# Compute CRPS
 		# Rationale for this formula can be seen from a simple sketch:

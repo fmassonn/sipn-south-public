@@ -6,7 +6,9 @@ Created on Wed Jun  1 15:15:47 2022
 @author: massonnetf
 """
 
-# Creates benchmark climatology file by downloading the daily 
+# Creates benchmark climatology forecasts by retrieving the 
+# observations of previous years
+
 
 import numpy as np
 from datetime import datetime
@@ -41,7 +43,7 @@ def compute_area(concentration, cellarea, mask = 1):
   return are
 
 
-
+# Source dir
 climDir = "/Users/massonnetf/CLIMDATA/"
 
 # Year of the 1st of December starting the summer season
