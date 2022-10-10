@@ -136,7 +136,7 @@ for j, s in enumerate(sortedList):
 
 	#Plot dots
 	ax[0].scatter(theseAreas, j * np.ones(thisNbForecasts), 3, marker = "x", color = thisColor, lw = 0.5)
-	ax[0].text(-0.5, j, thisName, ha = "right", va = "center")
+	ax[0].text(-0.5, j, thisName + " (" + thisType + ")", ha = "right", va = "center")
 
 
 	ax[0].set_yticklabels("")
