@@ -98,8 +98,6 @@ for year in np.arange(yearb, yeare + 1):
 
             listSia.append(compute_area(sic, cellArea)[0])
             f.close()
-            
-         
         else:
            print("File not found: " + dirData + fileName)
            listSia.append(np.nan)
