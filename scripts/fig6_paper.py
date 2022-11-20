@@ -175,4 +175,6 @@ for j, n in enumerate(namelistContributions):
 
 ax.legend()
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+ax.set_ylabel("Million km$^2$")
+ax.set_title("Integrated Ice Edge Error (" + seasonName + ")")
 fig.savefig("./fig6_paper.png", dpi = 300)
