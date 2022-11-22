@@ -52,7 +52,7 @@ climDir = "/Users/massonnetf/CLIMDATA/"
 # !!! ATTENTION !!!!
 # The year is referenced to the 1st of December of the summer season, so
 # 2020 --> 2020-2021 = the last season before 2021-2022
-target = "2021-2022"
+target = "2017-2018"
 yeare = int(target[:4]) - 1
 
 # Year to start the collection of climatology. ATTENTION to the convention
@@ -68,7 +68,11 @@ for year in np.arange(yearb, yeare + 1):
     print(year)
     
     #  Create date axis
-    d0 = datetime(year, 12, 1    )
+    if target == "2017-2018":
+      d0 = datetime(year + 1, 2, 1)
+    else:
+      d0 = datetime(year, 12, 1    )
+
     d1 = datetime(year + 1, 2, 28)
     nd = (d1 - d0).days + 1
     
