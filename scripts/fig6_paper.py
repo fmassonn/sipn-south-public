@@ -166,12 +166,17 @@ for j, n in enumerate(namelistContributions):
 			thisColor = plt.cm.YlOrRd( int(128 + j / len(namelistContributions) * 128))
 		elif thisType == "d":
 			thisColor = plt.cm.PuBuGn( int(128 + j / len(namelistContributions) * 128))
+		else:
+			thisColor = "black"
 
 		ax.plot(daysAxis, IIEE, color = thisColor, label = thisName)
 		mymaxIIEE = np.max(np.array(thisIIEE), axis = 0)
 		myminIIEE = np.min(np.array(thisIIEE), axis = 0)
 		ax.fill_between(daysAxis, myminIIEE, mymaxIIEE, color = thisColor, \
                 alpha = 0.2, lw = 0)
+
+		# Add text to locate contributions
+		ax.text(daysAxis[0] - timedelta(days  = 1), IIEE[0], thisName[0], ha = "right", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
 
 ax.legend()
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))

@@ -52,7 +52,7 @@ climDir = "/Users/massonnetf/CLIMDATA/"
 # !!! ATTENTION !!!!
 # The year is referenced to the 1st of December of the summer season, so
 # 2020 --> 2020-2021 = the last season before 2021-2022
-target = "2017-2018"
+target = "2021-2022"
 yeare = int(target[:4]) - 1
 
 # Year to start the collection of climatology. ATTENTION to the convention
@@ -129,8 +129,13 @@ for year in np.arange(yearb, yeare + 1):
     siconcVar = f.createVariable("siconc", np.float64, ("time", "y", "x"))
     sftofVar  = f.createVariable("sftof", np.float64, ("y", "x"))
     areacelloVar  = f.createVariable("areacello", np.float64, ("y", "x"))
+    latVar        = f.createVariable("latitude", np.float64, ("y", "x"))
+    lonVar        = f.createVariable("longitude", np.float64, ("y", "x"))
+   
     siconcVar[:] = siconcOut
     sftofVar[:]  = 100 * (flag != 1) # Land-sea mask
+    latVar[:] = lat
+    lonVar[:] = lon
     areacelloVar[:] = np.full((ny, nx), cellArea)
     f.close()
     jMemb += 1

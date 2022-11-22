@@ -2,7 +2,8 @@
 #          name
 np.random.seed(10)
 info = [ 
-	  ["BSC",        range(1, 10 + 1), "red", "$^d$"], \
+          ["benchClim", range(1, 30 + 1), "grey", ""], \
+#	  ["BSC",        range(1, 10 + 1), "red", "$^d$"], \
 #          ["MetOffice",  range(1, 42 + 1), "#1898e0",   "$^d$"   ],  \
 #          ["ucl",        range(1, 10 + 1), [0.00, 0.84, 0.95],   "$^d$"   ],  \
 #          ["CNRM",       range(1, 51 + 1), [0.00, 0.94, 0.95],   "$^d$"   ],  \
