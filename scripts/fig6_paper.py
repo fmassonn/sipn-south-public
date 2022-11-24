@@ -102,7 +102,7 @@ exec(open("./namelist.py").read())
 # Script parameters
 # -----------------
 
-seasonId = 1 # Which season to look at
+seasonId = 0 # Which season to look at
 diagId   = 2 # We look at sea ice concentration
 
 # ----
