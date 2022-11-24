@@ -11,8 +11,7 @@ from datetime import date, timedelta
 import os
 
 # The (machine-dependent) location of CLIMDATA folder
-data_dir = "../data/"
-
+data_dir = os.environ["TECLIM_CLIMATE_DATA"]
 
 yearb=2021        # First year to process
 

@@ -5,7 +5,7 @@
 set -o nounset
 set -o errexit
 set -x 
-rootdir=../data/ #$TECLIM_CLIMATE_DATA
+rootdir=$TECLIM_CLIMATE_DATA
 outdir=${rootdir}/obs/ice/siconc/NSIDC/NSIDC-0081/raw/
 
 mkdir -p $outdir

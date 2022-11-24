@@ -17,7 +17,7 @@ yearb <- 2021          # The first year to process
 # dont touch, leave year + 1 (two years because NCO does a cut afterward
 yeare <- yearb + 1       # The last  year to process
 
-datadir <- "../data/"
+datadir <- Sys.getenv("TECLIM_CLIMATE_DATA")
 
 rootdir <- paste(datadir, "/obs/ice/siconc/NSIDC/NSIDC-0081/raw/", sep = "/") # The base directory
 

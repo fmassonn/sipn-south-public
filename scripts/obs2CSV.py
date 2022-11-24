@@ -2,7 +2,7 @@
 #
 # Script to convert NetCDF observational references of SIC to
 # SIPN South compliant format (CSV)
-# NSIDC 0081 and OSI-401b
+# NSIDC 0081 and OSI-401-b
 #
 # Author - F. Massonnet
 # Date   - March 5, 2018
@@ -16,17 +16,18 @@ import matplotlib.pyplot as plt
 from datetime import date, timedelta
 import os
 
-# Name of obs to process
-#        OBS LABEL      OBS DIRECTORY
-obs = [ 
-        ["OSI-401-b" , "../data/" + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"], \
-        ["NSIDC-0081", "../data/" + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"], \
-      ]
-
 # Date parameters
 yearb = 2021
 yearbp1= yearb + 1
 target = str(yearb) + "-" + str(yearbp1)    # Where to place the output file (../data/$target/txt)
+
+# Name of obs to process
+#        OBS LABEL      OBS DIRECTORY
+obs = [ 
+        ["OSI-401-b" , "../data/" + target +  "/netcdf/"], \
+        ["NSIDC-0081", "../data/" + target +  "/netcdf/"], \
+      ]
+
 
 d0 = date(1850, 1, 1)    # Zero-time reference of the input file (should not change)
 d1 = date(yearb, 12, 1)   # Start investigated period
@@ -74,7 +75,7 @@ plt.figure(figsize = (4, 4))
 for j_obs in range(len(obs)):
     print(obs[j_obs][0])
     # Input file, following CMIP conventions
-    filein = obs[j_obs][1] + "siconc_SIday_" + obs[j_obs][0] + "_r1i1p1_" + str(yearb) + "0101-" + str(yearbp1) + "1231_sh.nc"
+    filein = obs[j_obs][1] + obs[j_obs][0] + "_000_concentration.nc"
     print(filein)
 
     f = Dataset(filein, mode = "r")
