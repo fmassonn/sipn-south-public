@@ -102,7 +102,7 @@ exec(open("./namelist.py").read())
 # Script parameters
 # -----------------
 
-seasonId = 4 # Which season to look at
+seasonId = 1 # Which season to look at
 diagId   = 2 # We look at sea ice concentration
 
 # ----
@@ -182,4 +182,4 @@ ax.legend()
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 ax.set_ylabel("Million km$^2$")
 ax.set_title("Integrated Ice Edge Error (" + seasonName + ")")
-fig.savefig("./fig6_paper.png", dpi = 300)
+fig.savefig("../figs/fig6_paper.png", dpi = 300)

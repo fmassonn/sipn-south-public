@@ -73,7 +73,6 @@ verifValue = listVerif[0]
 # Prepare lists for plotting
 listInfo = list()
 for j, n in enumerate(namelistContributions):
-	print(n)
 	thisName = n[0]
 	thisNbForecasts	= n[seasonId + 1][diagId]
 	thisType = n[-1] # Statistical or dynamical
@@ -140,7 +139,7 @@ for j, s in enumerate(sortedList):
 
 
 	ax[0].set_yticklabels("")
-	ax[0].set_title("February mean sea ice area\nforecast distributions")
+	ax[0].set_title("February mean sea ice area\nforecast distributions (" + seasonName + ")")
 	ax[0].set_xlabel("Million km$^2$")
 	# Plot PDF
 	if thisNbForecasts > 1:
@@ -153,7 +152,7 @@ for j, s in enumerate(sortedList):
 
 	# Plot CRPS
 	ax[1].fill_between((0, thisCRPS), (j - 0.45, j - 0.45), (j + 0.45, j + 0.45), color = thisColor, alpha = 0.5, lw = 0)
-
+	
 
 
 ax[1].set_yticklabels("")
@@ -165,4 +164,4 @@ ax[0].set_xlabel("Million km$^2$")
 ax[0].set_xlim(0, 4)
 ax[0].legend(fontsize = 8)
 fig.tight_layout()
-fig.savefig("./fig5_paper.png", dpi = 300)
+fig.savefig("../figs/fig5_paper.png", dpi = 300)

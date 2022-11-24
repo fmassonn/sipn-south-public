@@ -38,7 +38,7 @@ exec(open("./namelist.py").read())
 # Script parameters
 # -----------------
 
-seasonId = 4 # Which season to look at
+seasonId = 4 # Which season to look at: 0 = 2017-2018, 1 = 2018- 2019, 2 = 2019-2020, 3 = 2020-2021, 4 = 2021-2022
 diagId   = 0 # Which diag (currently only works with total SIA so 0)
 
 # ----
@@ -81,6 +81,8 @@ for j, n in enumerate(namelistContributions):
 			thisColor = plt.cm.YlOrRd( int(128 + j / len(namelistContributions) * 128))
 		elif thisType == "d":
 			thisColor = plt.cm.PuBuGn( int(128 + j / len(namelistContributions) * 128))
+		elif thisType == "b":
+			thisColor = [0.2, 0.2, 0.2]
 		else:
 			stop("Type not known")
 		ax[0].plot(daysAxis, thisMedian, color = thisColor, label = thisName + " (" +  thisType + ")")
@@ -127,5 +129,5 @@ ax[1].set_ylabel("Million km$^2$/week")
 
 fig.tight_layout()
 
-plt.savefig("./fig4_paper.png", dpi = 300)
+plt.savefig("../figs/fig4_paper.png", dpi = 300)
 
