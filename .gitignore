@@ -10,6 +10,7 @@ data/obs/
 scripts/__pycache__
 figs/
 data/2018-2019/netcdf
+data/TOP2022/netcdf
 data/2018-2019/netcdf.on.home/
 data/2020-2021/netcdf
 
