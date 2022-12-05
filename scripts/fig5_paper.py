@@ -101,20 +101,13 @@ for j, n in enumerate(namelistContributions):
 			thisColor = "black"
 		
 		# Compute CRPS
-		# Rationale for this formula can be seen from a simple sketch:
-		#
-		#                                    ____________________
-		# - 1   - |                          |
-		# - 2/3 - |                          |    ----------
-		# - 1/3 - |             -------------|----
-		# - 0   - |_____________x____________|____x_________x______
-		#                      1           Obs   3         2
-		#
-		# Each member is responsible for an area of penalty that can be expressed as the height of the
-		# rectangle (1 / nb Forecasts) times the difference to the verification in absolute value
-		# The total area is the sum of all rectangles, and then we take the square of the total area.
+		step = 0.01
+		x = np.arange(0, 100.0, step) # x-axis
+		cdfVerif = (x > verifValue) * 1
+		cdfForecast = np.sum([(x > f) * 1 / thisNbForecasts for f in thisList], axis = 0)
 
-		thisCRPS = (np.sum(np.abs((np.array(thisList) - verifValue) * 1 / thisNbForecasts))) ** 2
+
+		thisCRPS = np.sum((cdfForecast - cdfVerif) ** 2 * step)
 
 		listInfo.append([thisName, thisCRPS, thisList, thisType, thisColor])
 

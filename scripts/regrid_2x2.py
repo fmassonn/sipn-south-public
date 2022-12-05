@@ -23,7 +23,7 @@ from   glob import glob
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
 
-myyear = "2017-2018"
+myyear = "2020-2021"
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
