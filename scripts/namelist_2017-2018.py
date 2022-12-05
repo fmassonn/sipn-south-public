@@ -2,7 +2,7 @@
 #          name
 np.random.seed(10)
 info = [ ["nrl",              range(1, 6 + 1),  "#92B558",  ""         ], \
-         ["Nico-Sun",         [1],              "#DC4C46",  ""         ], \
+         ["NicoSun",          [1],              "#DC4C46",  ""         ], \
          ["FIO-ESM",          [1],              "#672E3B",  ""         ], \
          ["ecmwf",            range(1, 50 + 1), "#F3D6E4",  ""         ], \
          ["Gateway",          [1],              "#C48F65",  ""         ], \

@@ -34,13 +34,13 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2021-2022"   
+myyear = "TOP2022"   
 
 # Add obs as reference or not (False if forecast mode)
-plotobs = True
+plotobs = False
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = True
+postseason = False
 
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
@@ -66,7 +66,16 @@ if myyear == "2017-2018":
   period_name = "February 2018"
   # Starting and ending time indices (Python conventions)
   t1, t2 = 0, 0 + ndays
-
+elif myyear == "TOP2022":
+  # Initialization date
+  inidate = myyear[-4:] + "0501"
+  # Number of days in the forecast period
+  ndays   = 123
+  # Label for period that is forecasted
+  period_name = "May-Jun-Jul-Aug " + myyear[-4:] 
+  # Starting and ending time indices (Python conventions)
+  t1, t2 = 93 - 1, 93 - 1 + 31
+  target_period_name = "August"
 else:
   # Initialization date
   inidate = myyear[:4] + "1201"
