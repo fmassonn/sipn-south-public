@@ -34,7 +34,7 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "TOP2022"   
+myyear = "2022-2023"   
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = False
