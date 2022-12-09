@@ -16,7 +16,7 @@ info = [
 #    [ "Meier-NSIDC",      [1],              "#f89e13", "$^s$"    ],
     [ "MetOffice",        range(1, 42 + 1), "#ff8040", "$^d$"    ],  \
 #    [ "NASA-GSFC",        [1],              "#fb4c27", "$^{s}$"  ],  \
-#    [ "NicoSun",          range(1, 3 + 1),  "#fb4865", "$^s$"    ],  \
+    [ "NicoSun",          range(1, 3 + 1),  "#fb4865", "$^s$"    ],  \
 #    [ "SINTEX-F2",        range(1, 24 + 1), "#d24493", "$^d$"    ],  \
 #    [ "SYSU"    ,         [1],              "#8f57bf", "$^s$"    ],  \
 #    [ "ucl",              range(1, 10 + 1), "#645ccc", "$^d$"    ],  \
