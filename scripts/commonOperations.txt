@@ -1,0 +1,6 @@
+# -- Trimming a CSV file with commas
+
+for i in `seq 1 42`;
+do
+cat MetOffice_$(printf "%03d" $i)_total-area-long-forecast.txt | cut -d ',' -f 1-90 > MetOffice_$(printf "%03d" $i)_total-area.txt
+done
