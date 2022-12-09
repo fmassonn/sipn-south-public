@@ -272,7 +272,7 @@ ax.set_xlabel("Million km$^2$")
 ax.set_xlim(0, 4)
 ax.set_ylim(0.0, n_sub + 6)
 ax.grid()
-ax.set_yticks([],[])
+ax.set_yticks([])
 plt.tight_layout()
 for fmt in ["png", "pdf"]:
     plt.savefig("../figs/fig2." + fmt, dpi = dpi)
