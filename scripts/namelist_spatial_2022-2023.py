@@ -13,4 +13,5 @@ info = [
 #          ["SYSU"      , [1]             , "#FF963B",   "$^s$"    ],  \
            ["SYSU_SML_ConvLSTM", [1],              "#12AD2B", "$^s$"    ],
            ["SYSU-SML-MLM",      [1],              "#5E53C7", "$^s$"    ],
+	   ["SYSU-SML-KNN",      [1],              "#005BC3", "$^s$"    ],
        ]

@@ -21,6 +21,7 @@ info = [
 #    [ "SYSU"    ,         [1],              "#8f57bf", "$^s$"    ],  \
      ["SYSU-SML-ConvLSTM", [1],              "#12AD2B", "$^s$"    ],
      ["SYSU-SML-MLM",      [1],              "#5E53C7", "$^s$"    ],
+     ["SYSU-SML-KNN",      [1],              "#005BC3", "$^s$"    ],
 #    [ "ucl",              range(1, 10 + 1), "#645ccc", "$^d$"    ],  \
      [ "UW" ,              range(1, 15 + 1), "#820063", "$^d$"    ],
        ]
