@@ -17,7 +17,7 @@ from datetime import date, timedelta
 import os
 
 # Date parameters
-yearb = 2021
+yearb = 2022
 yearbp1= yearb + 1
 target = str(yearb) + "-" + str(yearbp1)    # Where to place the output file (../data/$target/txt)
 

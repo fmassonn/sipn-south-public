@@ -37,7 +37,7 @@ plt.close("all")
 myyear = "2022-2023"   
 
 # Add obs as reference or not (False if forecast mode)
-plotobs = False
+plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
 postseason = False

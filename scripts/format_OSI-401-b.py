@@ -13,7 +13,7 @@ import os
 # The (machine-dependent) location of CLIMDATA folder
 data_dir = os.environ["TECLIM_CLIMATE_DATA"]
 
-yearb=2021        # First year to process
+yearb=2022        # First year to process
 
 # =========================
 

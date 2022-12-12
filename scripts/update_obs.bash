@@ -23,13 +23,15 @@ then
   source ~/module_load.txt
 fi
 
+
+# Year of 1 Dec of initialization
+yearb=2022
+
 ./retrieve_NSIDC-0081.bash
 ./retrieve_OSI-401-b.bash
 Rscript format_NSIDC-0081.R
 python3 ./format_OSI-401-b.py
 
-# Year of 1 Dec of initialization
-yearb=2021
 yearbp1=$(( $yearb + 1 ))
 isleap() { date -d $1-02-29 &>/dev/null && true  || false ; }
 
