@@ -117,7 +117,13 @@ sourceColors = ["#1898e0", "#00b2ed", "#00bb62", \
              "#8bcd45", "#dbe622", "#f9c410", \
              "#f89e13", "#fb4c27", "#fb4865", \
              "#d24493", "#8f57bf", "#645ccc",]
+
 col = colInterpolatOr(sourceColors, nTarget = n_sub, colorCode = "HEX")
+
+# Change clim's color to black
+for j_sub in range(n_sub):
+  if sub_id[j_sub] == "climatology":
+    col[j_sub] = "black"
 
 # Store the raw data
 # ------------------
@@ -184,14 +190,14 @@ if plotobs:
 fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
 
 for j_sub in range(n_sub):
-    median = np.median(data[j_sub], axis = 1)
+    median = np.nanmedian(data[j_sub], axis = 1)
 
     plt.plot(time, median, color = col[j_sub], lw = 1.5, 
              label = info[j_sub][0] + " " + info[j_sub][2])
     
     # Plot range as shading
-    mymax = np.max(data[j_sub], axis = 1)
-    mymin = np.min(data[j_sub], axis = 1)
+    mymax = np.nanmax(data[j_sub], axis = 1)
+    mymin = np.nanmin(data[j_sub], axis = 1)
     
 
     plt.fill_between(time, mymin, mymax, 

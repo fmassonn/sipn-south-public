@@ -103,7 +103,7 @@ for year in np.arange(yearb, yeare + 1):
            listSia.append(np.nan)
             
     # Write to txt file
-    with open("../data/" + target + "/txt/benchClim_" + str(jMemb).zfill(3) + "_total-area.txt", "w") as file:
+    with open("../data/" + target + "/txt/climatology_" + str(jMemb).zfill(3) + "_total-area.txt", "w") as file:
         file.write(",".join(["{0:.4f}".format(a) for a in listSia]))  
         file.write("\n")
         
