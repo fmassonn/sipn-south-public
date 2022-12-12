@@ -28,6 +28,8 @@ from netCDF4  import Dataset
 from datetime import date
 from scipy    import stats
 
+from colInterpolatOr import *
+
 plt.close("all")
 
 # Script parameters
@@ -110,13 +112,12 @@ range_for = [info[j_sub][1] for j_sub in range(n_sub)]
 # Number of forecasts for each submission
 n_for    = [len(l) for l in range_for]
 
-# Colors for each submission
-col = [info[j_sub][2] for j_sub in range(n_sub)]
-
-# Convert to RGB if necessary
-for j_sub in range(n_sub):
-    if type(col[j_sub]) is str:
-        col[j_sub] = matplotlib.colors.to_rgb(col[j_sub])
+# Create colors
+sourceColors = ["#1898e0", "#00b2ed", "#00bb62", \
+             "#8bcd45", "#dbe622", "#f9c410", \
+             "#f89e13", "#fb4c27", "#fb4865", \
+             "#d24493", "#8f57bf", "#645ccc",]
+col = colInterpolatOr(sourceColors, nTarget = n_sub, colorCode = "HEX")
 
 # Store the raw data
 # ------------------
@@ -186,7 +187,7 @@ for j_sub in range(n_sub):
     median = np.median(data[j_sub], axis = 1)
 
     plt.plot(time, median, color = col[j_sub], lw = 1.5, 
-             label = info[j_sub][0] + " " + info[j_sub][3])
+             label = info[j_sub][0] + " " + info[j_sub][2])
     
     # Plot range as shading
     mymax = np.max(data[j_sub], axis = 1)
@@ -194,7 +195,7 @@ for j_sub in range(n_sub):
     
 
     plt.fill_between(time, mymin, mymax, 
-                     color = [c * 1.0 for c in col[j_sub]], 
+                     color = col[j_sub], 
                      alpha = 0.2, lw = 0)
     
 # Plot observations if required
@@ -233,7 +234,7 @@ for j_sub in range(n_sub):
     
     ax.scatter(monmean, np.full(n_for[j_sub], n_sub - j_sub), 
                15, color = col[j_sub], 
-               label = info[j_sub][0] + " " + info[j_sub][3],
+               label = info[j_sub][0] + " " + info[j_sub][2],
                edgecolor = "white", lw = 0.2)
         
     # Plot associated PDF

@@ -2,28 +2,28 @@
 #          name [string]       list [list]
 np.random.seed(10)
 info = [ 
-#    [ "barreira",         range(1, 3  + 1),               [0.65, 0.81, 0.89], "$^{s}$"  ],  \
-#    [ "benchClim",        range(1, 30  + 1),               [0.2, 0.2, 0.2]   , "$^{b}$"  ],
-#    [ "CanSIPSv2",        range(1, 20 + 1), "#1898e0", "$^d$"    ],  \
-    [ "cmcc",             range(1, 50 + 1), "#00b2ed", "$^d$"    ],  \
-#    [ "CNRM",             range(1, 51 + 1), "#00bb62", "$^d$"    ],  \
-#    [ "BSC",              range(1, 10 + 1), "red"    , "$^d$"    ],  \
-#    [ "ecmwf",            range(1, 51 + 1)  , [0.69, 0.35, 0.16], "$^d$"    ],  \
-     ["emc",              range(1, 10 + 1), "#004B8D",  ""],
-#    [ "FIO-ESM",          [1],              "#8bcd45", "$^d$"    ],  \
-    [ "gfdl",             range(1, 30 + 1), "#dbe522", "$^d$"    ],  \
-    [ "Lamont",           [1],              "#f9c410", "$^{s,i}$"],  \
-#    [ "Meier-NSIDC",      [1],              "#f89e13", "$^s$"    ],
-    [ "MetOffice",        range(1, 42 + 1), "#ff8040", "$^d$"    ],  \
-#    [ "NASA-GSFC",        [1],              "#fb4c27", "$^{s}$"  ],  \
-    [ "NicoSun",          range(1, 3 + 1),  "#fb4865", "$^s$"    ],  \
-#    [ "SINTEX-F2",        range(1, 24 + 1), "#d24493", "$^d$"    ],  \
-#    [ "SYSU"    ,         [1],              "#8f57bf", "$^s$"    ],  \
-     ["SYSU-SML-ConvLSTM", [1],              "#12AD2B", "$^s$"    ],
-     ["SYSU-SML-MLM",      [1],              "#5E53C7", "$^s$"    ],
-     ["SYSU-SML-KNN",      [1],              "#005BC3", "$^s$"    ],
-#    [ "ucl",              range(1, 10 + 1), "#645ccc", "$^d$"    ],  \
-     [ "UW" ,              range(1, 15 + 1), "#820063", "$^d$"    ],
+#    [ "barreira",         range(1, 3  + 1) ,  "$^{s}$"  ],  \
+#    [ "benchClim",        range(1, 30  + 1),  "$^{b}$"  ],
+#    [ "CanSIPSv2",        range(1, 20 + 1) ,  "$^d$"    ],  \
+    [ "cmcc",             range(1, 50 + 1)  ,  "$^d$"    ],  \
+#    [ "CNRM",             range(1, 51 + 1) ,  "$^d$"    ],  \
+#    [ "BSC",              range(1, 10 + 1) ,  "$^d$"    ],  \
+#    [ "ecmwf",            range(1, 51 + 1) ,  "$^d$"    ],  \
+     ["emc",              range(1, 10 + 1)  ,   ""],
+#    [ "FIO-ESM",          [1],                 "$^d$"    ],  \
+    [ "gfdl",             range(1, 30 + 1),    "$^d$"    ],  \
+    [ "Lamont",           [1],                 "$^{s,i}$"],  \
+#    [ "Meier-NSIDC",      [1],                "$^s$"    ],
+    [ "MetOffice",        range(1, 42 + 1),    "$^d$"    ],  \
+#    [ "NASA-GSFC",        [1],                "$^{s}$"  ],  \
+    [ "NicoSun",          range(1, 3 + 1),     "$^s$"    ],  \
+#    [ "SINTEX-F2",        range(1, 24 + 1),   "$^d$"    ],  \
+#    [ "SYSU"    ,         [1],                "$^s$"    ],  \
+     ["SYSU-SML-ConvLSTM", [1],                "$^s$"    ],
+     ["SYSU-SML-MLM",      [1],                "$^s$"    ],
+     ["SYSU-SML-KNN",      [1],                "$^s$"    ],
+#    [ "ucl",              range(1, 10 + 1),   "$^d$"    ],  \
+     [ "UW" ,              range(1, 15 + 1),   "$^d$"    ],
        ]
 
 

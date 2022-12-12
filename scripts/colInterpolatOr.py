@@ -65,7 +65,6 @@ def colInterpolatOr(sourceColors, nTarget, colorCode = "RGB"):
     else:   
       outputColor = [r, g, b]
 
-    print(outputColor)
     targetColors.append(outputColor)
   
 
@@ -74,39 +73,41 @@ def colInterpolatOr(sourceColors, nTarget, colorCode = "RGB"):
 
 # Example
 
-# List of colors that we want to pass through
-sourceColors = ["#1898e0", "#00b2ed", "#00bb62", \
-             "#8bcd45", "#dbe622", "#f9c410", \
-             "#f89e13", "#fb4c27", "#fb4865", \
-             "#d24493", "#8f57bf", "#645ccc",]
-nSource = len(sourceColors)
+
+def example():
+  # List of colors that we want to pass through
+  sourceColors = ["#1898e0", "#00b2ed", "#00bb62", \
+               "#8bcd45", "#dbe622", "#f9c410", \
+               "#f89e13", "#fb4c27", "#fb4865", \
+               "#d24493", "#8f57bf", "#645ccc",]
+  nSource = len(sourceColors)
 
 
-# Number of colors desired
-nTargets = [2, 16, 30]
+  # Number of colors desired
+  nTargets = [2, 16, 30]
 
-fig, ax = plt.subplots(len(nTargets) + 1, 1, figsize = (6, 9))
+  fig, ax = plt.subplots(len(nTargets) + 1, 1, figsize = (6, 9))
 
-for j in np.arange(nSource):
-  xStart = j / nSource
-  xEnd   = (j + 1) / nSource
+  for j in np.arange(nSource):
+    xStart = j / nSource
+    xEnd   = (j + 1) / nSource
 
-  ax[0].fill_between((xStart, xEnd), (1, 1), color = sourceColors[j], edgecolor = "white")
-  ax[0].set_title("Original colors (" + str(nSource) + ")")
+    ax[0].fill_between((xStart, xEnd), (1, 1), color = sourceColors[j], edgecolor = "white")
+    ax[0].set_title("Original colors (" + str(nSource) + ")")
 
-for f, n in enumerate(nTargets):
-  targetColors = colInterpolatOr(sourceColors, colorCode = "HEX", nTarget = n)
+  for f, n in enumerate(nTargets):
+    targetColors = colInterpolatOr(sourceColors, colorCode = "HEX", nTarget = n)
   
-  for j in np.arange(n):
-    xStart = j / n
-    xEnd   = (j + 1) / n
+    for j in np.arange(n):
+      xStart = j / n
+      xEnd   = (j + 1) / n
 
-    ax[f + 1].fill_between((xStart, xEnd), (1, 1), color = targetColors[j], edgecolor = "white")
-    ax[f + 1].set_title("Interpolated colors (" + str(n) + ")")
+      ax[f + 1].fill_between((xStart, xEnd), (1, 1), color = targetColors[j], edgecolor = "white")
+      ax[f + 1].set_title("Interpolated colors (" + str(n) + ")")
 
 
 
-  figOut = "./colInterpolatOr.png"
-  fig.tight_layout()
-  fig.savefig(figOut, dpi = 300)
-  print(figOut + " printed")
+    figOut = "./colInterpolatOr.png"
+    fig.tight_layout()
+    fig.savefig(figOut, dpi = 300)
+    print(figOut + " printed")
