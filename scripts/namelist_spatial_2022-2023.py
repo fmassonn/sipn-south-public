@@ -12,4 +12,5 @@ info = [
           [ "gfdl"   ,   range(1, 30 + 1), "#0047B6",   "$^d$"    ],  \
 #          ["SYSU"      , [1]             , "#FF963B",   "$^s$"    ],  \
            ["SYSU_SML_ConvLSTM", [1],              "#12AD2B", "$^s$"    ],
+           ["SYSU-SML-MLM",      [1],              "#5E53C7", "$^s$"    ],
        ]
