@@ -3,13 +3,13 @@
 np.random.seed(10)
 info = [ 
 #    [ "barreira",         range(1, 3  + 1) ,  "$^{s}$"  ],  \
-     [ "climatology",        range(1, 30  + 1),  "$^{b}$"  ],
+     [ "climatology",        range(1, 30  + 1),  ""  ],
 #    [ "CanSIPSv2",        range(1, 20 + 1) ,  "$^d$"    ],  \
     [ "cmcc",             range(1, 50 + 1)  ,  "$^d$"    ],  \
 #    [ "CNRM",             range(1, 51 + 1) ,  "$^d$"    ],  \
 #    [ "BSC",              range(1, 10 + 1) ,  "$^d$"    ],  \
 #    [ "ecmwf",            range(1, 51 + 1) ,  "$^d$"    ],  \
-     ["emc",              range(1, 10 + 1)  ,   ""],
+     ["emc",              range(1, 10 + 1)  ,   "$^d$"],
 #    [ "FIO-ESM",          [1],                 "$^d$"    ],  \
     [ "gfdl",             range(1, 30 + 1),    "$^d$"    ],  \
     [ "Lamont",           [1],                 "$^{s,i}$"],  \
