@@ -8,7 +8,7 @@ info = [
     [ "cmcc",             range(1, 50 + 1)  ,  "$^d$"    ],  \
 #    [ "CNRM",             range(1, 51 + 1) ,  "$^d$"    ],  \
 #    [ "BSC",              range(1, 10 + 1) ,  "$^d$"    ],  \
-#    [ "ecmwf",            range(1, 51 + 1) ,  "$^d$"    ],  \
+    [ "ecmwf",            range(1, 51 + 1) ,  "$^d$"    ],  \
      ["emc",              range(1, 10 + 1)  ,   "$^d$"],
 #    [ "FIO-ESM",          [1],                 "$^d$"    ],  \
     [ "gfdl",             range(1, 30 + 1),    "$^d$"    ],  \
@@ -22,7 +22,7 @@ info = [
      ["SYSU-SML-ConvLSTM", [1],                "$^s$"    ],
      ["SYSU-SML-MLM",      [1],                "$^s$"    ],
      ["SYSU-SML-KNN",      [1],                "$^s$"    ],
-#    [ "ucl",              range(1, 10 + 1),   "$^d$"    ],  \
+     [ "ucl",              range(1, 10 + 1),   "$^d$"    ],  \
      [ "UW" ,              range(1, 15 + 1),   "$^d$"    ],
        ]
 

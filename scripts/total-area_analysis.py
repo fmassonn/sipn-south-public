@@ -210,7 +210,7 @@ if plotobs:
         plt.plot(time, data_obs[j_obs], color = [0.1, 0.1, 0.1], lw = 1.5, \
                  linestyle = lst[j_obs], label = "OBS " + obsname)
 # Figure polishing
-plt.title(period_name + " total Antarctic sea ice area")
+plt.title(period_name + " Antarctic sea ice area")
 plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
 plt.ylim(0.0, 14)
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
@@ -228,7 +228,7 @@ plt.close(fig)
 
 
 # Figure 2: monthly means 
-fig, ax = plt.subplots(figsize = (8, 6), dpi = dpi)
+fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
 
 for j_sub in range(n_sub):
     print(sub_id[j_sub])
@@ -273,8 +273,8 @@ if plotobs and postseason:
         
 # Figure polishing
 ax.set_axisbelow(True)
-ax.set_title(str(myyear[5:]) + " " + target_period_name + " mean sea ice area")
-ax.legend(loc = "upper center", ncol = 6, fontsize = 7)
+ax.set_title(str(myyear[5:]) + " " + target_period_name + " mean Antarctic sea ice area")
+ax.legend(loc = "upper center", ncol = 4, fontsize = 7)
 ax.set_xlabel("Million km$^2$")
 ax.set_xlim(0, 4)
 ax.set_ylim(0.0, n_sub + 6)
