@@ -2,8 +2,9 @@
 #          name [string]       list [list]
 np.random.seed(10)
 info = [ 
-#    [ "barreira",         range(1, 3  + 1) ,  "$^{s}$"  ],  \
-     [ "climatology",        range(1, 30  + 1),  ""  ],
+    [ "climatology",        range(1, 30  + 1),  ""  ],
+    [ "barreiraOrig",         range(1, 2  + 1) ,  "$^{s}$"  ],  \
+    [ "barreiraNew",          range(1, 2  + 1) ,  "$^{s}$"  ],  \
     [ "CanSIPSv2",        range(1, 20 + 1) ,  "$^d$"    ],  \
     [ "cmcc",             range(1, 50 + 1)  ,  "$^d$"    ],  \
 #    [ "CNRM",             range(1, 51 + 1) ,  "$^d$"    ],  \
@@ -13,7 +14,7 @@ info = [
 #    [ "FIO-ESM",          [1],                 "$^d$"    ],  \
     [ "gfdl",             range(1, 30 + 1),    "$^d$"    ],  \
     [ "Lamont",           [1],                 "$^{s,i}$"],  \
-#    [ "Meier-NSIDC",      [1],                "$^s$"    ],
+    [ "Meier-NSIDC",      [1],                "$^s$"    ],
     [ "MetOffice",        range(1, 42 + 1),    "$^d$"    ],  \
 #    [ "NASA-GSFC",        [1],                "$^{s}$"  ],  \
     [ "NicoSun",          range(1, 3 + 1),     "$^s$"    ],  \

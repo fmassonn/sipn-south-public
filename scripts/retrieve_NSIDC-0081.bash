@@ -22,6 +22,9 @@ do
     for year in `seq $yearb $yeare`
     do
 
+      for day in `seq 1 31`
+      do
+
         thisDate=`date -j  -f "%F" ${year}-${month}-${day} +"%Y%m%d"`
         threDate=`date -j  -f "%F" 2016-04-01 +"%Y%m%d"`
 
@@ -34,8 +37,9 @@ do
         fi
         
         dday=$(printf "%02d" $day)
+  
         wget -ncd --save-cookies ~/.urs_cookies --keep-session-cookies --no-check-certificate --auth-no-challenge=on -r --reject "index.html*" -np -e robots=off https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.001/${year}.${month}.${dday}/nt_${year}${month}${dday}_${sensor}_nrt_s.bin -P $outdir
-
+      done
     done
   done
 done

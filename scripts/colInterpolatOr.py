@@ -76,10 +76,10 @@ def colInterpolatOr(sourceColors, nTarget, colorCode = "RGB"):
 
 def example():
   # List of colors that we want to pass through
-  sourceColors = ["#1898e0", "#00b2ed", "#00bb62", \
+  sourceColors = ["#000075", "#645ccc", "#4363d8", "#1898e0", "#00b2ed", "#00bb62", \
                "#8bcd45", "#dbe622", "#f9c410", \
                "#f89e13", "#fb4c27", "#fb4865", \
-               "#d24493", "#8f57bf", "#645ccc",]
+               "#d24493", "#8f57bf", "#911eb4"]
   nSource = len(sourceColors)
 
 
@@ -111,3 +111,6 @@ def example():
     fig.tight_layout()
     fig.savefig(figOut, dpi = 300)
     print(figOut + " printed")
+
+if __name__ == "__main__":
+  example()

@@ -113,11 +113,10 @@ range_for = [info[j_sub][1] for j_sub in range(n_sub)]
 n_for    = [len(l) for l in range_for]
 
 # Create colors
-sourceColors = ["#1898e0", "#00b2ed", "#00bb62", \
-             "#8bcd45", "#dbe622", "#f9c410", \
-             "#f89e13", "#fb4c27", "#fb4865", \
-             "#d24493", "#8f57bf", "#645ccc",]
-
+sourceColors = ["#000075", "#645ccc", "#4363d8", "#1898e0", "#00b2ed", "#00bb62", \
+               "#8bcd45", "#dbe622", "#f9c410", \
+               "#f89e13", "#fb4c27", "#fb4865", \
+               "#d24493", "#8f57bf", "#911eb4"]
 col = colInterpolatOr(sourceColors, nTarget = n_sub, colorCode = "HEX")
 
 # Change clim's color to black
@@ -214,7 +213,7 @@ plt.title(period_name + " Antarctic sea ice area")
 plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
 plt.ylim(0.0, 14)
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.legend(fontsize = 7)
+plt.legend(fontsize = 6)
 plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
@@ -228,7 +227,7 @@ plt.close(fig)
 
 
 # Figure 2: monthly means 
-fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
+fig, ax = plt.subplots(figsize = (6, 6), dpi = dpi)
 
 for j_sub in range(n_sub):
     print(sub_id[j_sub])
@@ -274,7 +273,7 @@ if plotobs and postseason:
 # Figure polishing
 ax.set_axisbelow(True)
 ax.set_title(str(myyear[5:]) + " " + target_period_name + " mean Antarctic sea ice area")
-ax.legend(loc = "upper center", ncol = 4, fontsize = 7)
+ax.legend(loc = "upper center", ncol = 4, fontsize = 6)
 ax.set_xlabel("Million km$^2$")
 ax.set_xlim(0, 4)
 ax.set_ylim(0.0, n_sub + 6)

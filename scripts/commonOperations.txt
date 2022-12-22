@@ -11,3 +11,9 @@ for i in `seq 1 10`; do i=$(printf "%03d" $i); cdo daymean emc_${i}_concentratio
 
 # --- trim 1/12--28/2
 for i in `seq 1 10`; do i=$(printf "%03d" $i); ncks -F -O -d time,-91,-2 emc_${i}_concentration_daymean.nc emc_${i}_concentration_daymean.nc ; done
+
+# Create area cello --> see python script
+
+# Dump area cello
+
+for i in `seq 1 10`; do ncks -F -A -v areacello,sftof areacello.nc emc_$(printf "%03d" $i)_concentration_daymean.nc ; done
