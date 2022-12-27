@@ -6,9 +6,9 @@ import numpy as np
 # From SIPN-South compliant sea ice concentration fields, produces 
 # sea ice areas (circumpolar + regional) text files
 
-subId = "barreiraOrig"
+subId = "BSC"
 myyear = "2022-2023"
-nmemb = 2
+nmemb = 10
 
 
 def compute_area(concentration, cellarea, mask = 1):

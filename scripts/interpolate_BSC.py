@@ -30,8 +30,8 @@ import numpy as np
 from netCDF4 import Dataset
 
 
-thisSeason = "2021-2022" ; yearStart = thisSeason[:4]
-subId = "EC-Earth3"
+thisSeason = "2022-2023" ; yearStart = thisSeason[:4]
+subId = "BSC"
 nMemb = 10
 
 def A(t1,t2,nd):
@@ -65,12 +65,17 @@ for iMemb in np.arange(1, nMemb + 1):
     sic = f.variables["siconc"][:]
     lat = f.variables["latitude"][:]
     lon = f.variables["longitude"][:]
-    sft = f.variables["sftof"][:]
-    are = f.variables["areacello"][:]
     
     nt, ny, nx = sic.shape
     f.close()
-    
+ 
+    # Read the geometric variables from mask
+    f = Dataset("/Users/massonnetf/CLIMDATA/grid/mesh_mask_nemo.N3.6_ORCA1L75.nc", mode = "r")
+    sft = np.squeeze(f.variables["tmaskutil"][:] * 100.0)
+    e1t = np.squeeze(f.variables["e1t"][:])
+    e2t = np.squeeze(f.variables["e2t"][:])
+    are = e1t * e2t
+    f.close()
     time = np.arange(90)
     
     sic_out = np.empty((90, ny, nx))

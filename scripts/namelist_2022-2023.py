@@ -8,7 +8,7 @@ info = [
     [ "CanSIPSv2",        range(1, 20 + 1) ,  "$^d$"    ],  \
     [ "cmcc",             range(1, 50 + 1)  ,  "$^d$"    ],  \
 #    [ "CNRM",             range(1, 51 + 1) ,  "$^d$"    ],  \
-#    [ "BSC",              range(1, 10 + 1) ,  "$^d$"    ],  \
+    [ "BSC",              range(1, 10 + 1) ,  "$^d$"    ],  \
     [ "ecmwf",            range(1, 51 + 1) ,  "$^d$"    ],  \
      ["emc",              range(1, 10 + 1)  ,   "$^d$"],
 #    [ "FIO-ESM",          [1],                 "$^d$"    ],  \
@@ -19,7 +19,6 @@ info = [
 #    [ "NASA-GSFC",        [1],                "$^{s}$"  ],  \
     [ "NicoSun",          range(1, 3 + 1),     "$^s$"    ],  \
 #    [ "SINTEX-F2",        range(1, 24 + 1),   "$^d$"    ],  \
-#    [ "SYSU"    ,         [1],                "$^s$"    ],  \
      ["SYSU-SML-ConvLSTM", [1],                "$^s$"    ],
      ["SYSU-SML-MLM",      [1],                "$^s$"    ],
      ["SYSU-SML-KNN",      [1],                "$^s$"    ],

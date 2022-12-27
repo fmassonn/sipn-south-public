@@ -17,3 +17,11 @@ for i in `seq 1 10`; do i=$(printf "%03d" $i); ncks -F -O -d time,-91,-2 emc_${i
 # Dump area cello
 
 for i in `seq 1 10`; do ncks -F -A -v areacello,sftof areacello.nc emc_$(printf "%03d" $i)_concentration_daymean.nc ; done
+
+
+
+# BSC (EC-Earth3)
+
+! BSC delivers the data from November not December
+for i in `seq 1 10`; do ncks -F -O -d time,2,4 siconc_SImon_EC-Earth3_dcppB-forecast_s2022-r${i}i4p1f1_gn_202211-202310.nc ~/git/sipn-south-public/data/2022-2023/netcdf/BSC_$(printf "%03d" ${i})_concentration_monthly.nc ; done
+for i in `seq 1 10`; do ncks -F -O -d time,2,4 sivol_SImon_EC-Earth3_dcppB-forecast_s2022-r${i}i4p1f1_gn_202211-202310.nc ~/git/sipn-south-public/data/2022-2023/netcdf/BSC_$(printf "%03d" ${i})_volume_monthly.nc ; done
