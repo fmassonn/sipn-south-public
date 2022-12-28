@@ -96,7 +96,7 @@ for j_obs in range(len(obs)):
     
     # Compute sea ice area for that period
     # ------------------------------------
-    areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
+    areatot = compute_area(siconc[t1:t2 + 1, :, :], cellarea, mask = 1.0 * (sftof == 100.0) * (lat < 0.0)) # + 1 because of Python indexing convention
     print(areatot)
     # Save as CSV file
     # ----------------
