@@ -6,6 +6,8 @@ Created on Tue Jun 15 10:57:54 2021
 @author: massonnetf
 """
 
+# Fig. 1 of the SIPN paper with anomalies of sea ice extent from the OSISAF SH sea ice index
+
 from netCDF4 import Dataset
 from datetime import date, datetime, timedelta
 import matplotlib
@@ -13,6 +15,9 @@ matplotlib.rcParams['font.family'] = "Arial Narrow"
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+# To update:
+# wget https://thredds.met.no/thredds/fileServer/osisaf/met.no/ice/index/v2p1/sh/osisaf_sh_sie_monthly.nc
 
 filein = "./osisaf_sh_sie_monthly.nc"
 
@@ -71,4 +76,6 @@ ax.set_title("Antarctic monthly sea ice extent\nanomalies relative to " + \
 ax.set_ylabel("10$^6$ km$^2$")
 #ax.text(dates[-1] + timedelta(days = 930), -2.3, "Data: OSISAF sea ice index ; Figure: @FMassonnet", va = 'bottom', rotation = 90, fontsize = 6)
 fig.tight_layout()
-fig.savefig("../figs/fig1_paper.png")
+figName = "../figs/fig1_paper.png"
+fig.savefig(figName)
+print("Figure " + figName + " printed")
