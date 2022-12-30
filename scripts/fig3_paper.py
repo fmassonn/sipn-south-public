@@ -95,12 +95,21 @@ for s, a in zip(sectors, ax.flatten()):
     # Rescale for viz purposes.
     pdf /= np.max(pdf) 
     
+    myClim = np.median(sia_sector)
     
-    a.plot(yearsClim, sia_sector)#label = "OSI-450 (OBS)")
-    a.fill_between(2016 + pdf, x_pdf, facecolor = "#E16E79", alpha = 0.4, edgecolor = "#E16E79")
+    #a.plot(yearsClim, sia_sector)
+    #a.fill_between(2016 + pdf, x_pdf, facecolor = "#E16E79", alpha = 0.4, edgecolor = "#E16E79")
 
-    myClim = np.mean(sia_sector)
-    a.plot((2016, 2030), (myClim, myClim), color = "#E16E79", linestyle = "--", lw = 1)
+    a.scatter((2016, 2016), (myClim, myClim), 30, marker = "s", color = "#D02433")
+    a.plot((2016, 2016), (np.percentile(sia_sector, 10), np.percentile(sia_sector, 90)), color = "#D02433", lw = 2)
+    a.scatter(np.ones(len(sia_sector)) * 2016, sia_sector, 5, marker = ".", color = "#D02433")
+    a.plot((2016 - 0.1, 2016 + 0.1), (np.percentile(sia_sector, 90), np.percentile(sia_sector, 90)), color = "#D02433", lw = 2)
+    a.plot((2016 - 0.1, 2016 + 0.1), (np.percentile(sia_sector, 10), np.percentile(sia_sector, 10)), color = "#D02433", lw = 2)
+
+    myClim = np.median(sia_sector)
+
+    a.plot((2016, 2030), (myClim, myClim), color = "#D02433", linestyle = ":", lw = 1)
+
     
     a.set_title("(" + "abcdefghijkl"[jLett] + ") " + s[0])
 
@@ -151,7 +160,7 @@ for s, season in enumerate(nameSeasons):
                     obsMean = np.nanmean(series[-28:])
                
                     # Plot it
-                    a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black", lw = 1)
+                    a.scatter(endYears[s], obsMean, 15, marker = "x", color = "black", lw = 1)
                     
             else:
                 filein = "../data/" + season + "/txt/" + obsname + \
@@ -196,7 +205,7 @@ for s, season in enumerate(nameSeasons):
                     obsMean = np.nanmean(seriesTmp[t1:t2])
                 print(sectors[j][0] + " " + season + ": " + str(obsMean))
            
-                a.scatter(endYears[s], obsMean, 5, marker = "x", color = "black")
+                a.scatter(endYears[s], obsMean, 15, marker = "x", color = "black")
 
 
 
@@ -332,10 +341,18 @@ for i in range(nStartDates):
 for i in range(nStartDates):
     for j, (_, a) in enumerate(zip(sectors, ax.flatten())):
         
-        #a.scatter(endYears[i], np.mean(sipnAreas[i][j]), 50, color = "red", marker = "x")
+        #a.scatter(endYears[i], 
+        a.scatter(endYears[i] + 0.3, np.median(sipnAreas[i][j]), 30, color = "#3878DB", marker = "s")
+        a.plot((endYears[i] + 0.3, endYears[i] + 0.3), (np.percentile(sipnAreas[i][j], 10), np.percentile(sipnAreas[i][j], 90)), \
+               lw = 2, color = "#3878DB")
+        a.plot((endYears[i] + 0.2, endYears[i]+ 0.4), (np.percentile(sipnAreas[i][j], 10), np.percentile(sipnAreas[i][j], 10)), \
+                 color = "#3878DB", lw = 2)
+        a.plot((endYears[i] + 0.2, endYears[i]+ 0.4), (np.percentile(sipnAreas[i][j], 90), np.percentile(sipnAreas[i][j], 90)), \
+                 color = "#3878DB", lw = 2)
+        a.scatter(np.ones(len(sipnAreas[i][j])) * (endYears[i] + 0.3), sipnAreas[i][j], 5, color = "#3878DB", marker = ".")
         # Plot PDF
-        box = a.boxplot( sipnAreas[i][j], positions = [endYears[i] + 0.3], patch_artist=True, \
-               whis = 1.5)
+        #box = a.boxplot( sipnAreas[i][j], positions = [endYears[i] + 0.3], patch_artist=True, \
+        #       whis = 1.5)
         #[b.set_facecolor("#4189DD") for b in box["boxes"]]
         #[b.set_markeredgecolor("#381D59") for b in box ["fliers"]]
         #box["boxes"][0].set_facecolor("#4189DD")
@@ -343,12 +360,12 @@ for i in range(nStartDates):
         #box["fliers"][0].set_markeredgecolor("red")
         
         #box["medians"][0].set_markeredgecolor("white")
-        colbox = "#364EB9"
-        plt.setp(box["medians"], color = colbox)
-        for element in ['boxes', 'whiskers', 'fliers', 'means', 'caps']:
-            plt.setp(box[element], color = colbox)
-        for patch in box['boxes']:
-            patch.set(facecolor = "#228FCF")
+        #colbox = "#364EB9"
+        #plt.setp(box["medians"], color = colbox)
+        #for element in ['boxes', 'whiskers', 'fliers', 'means', 'caps']:
+        #    plt.setp(box[element], color = colbox)
+        #for patch in box['boxes']:
+        #    patch.set(facecolor = "#228FCF")
    
 maxS = [2, 0.5, 1.0, 1.2    , 1.0, 4]
     
@@ -365,12 +382,18 @@ for j, a in enumerate(ax.flatten()):
  
      myMax = maxS[j]
      a.set_ylim(-0.0, myMax * 1.1)
+
+     print(sectors[j])
+     if sectors[j][0] == "Southern Ocean":
+       a.set_yticks([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
      a.grid()
      
 plt.suptitle("Observed and SIPN South forecast February mean sea ice area")
 
 fig.tight_layout()
-fig.savefig("../figs/fig3_paper.png", dpi = 300)
- 
+figName = "../figs/fig3_paper.png"
+
+fig.savefig(figName, dpi = 300)
+print("Figure " + figName + " printed") 
 
 
