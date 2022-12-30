@@ -117,7 +117,7 @@ for year in np.arange(yearb, yeare + 1):
             listSic.append(np.full((ny, nx), np.nan))
             
     # Write to txt file
-    with open("../data/" + target + "/txt/benchClim_" + str(jMemb).zfill(3) + "_total-area.txt", "w") as file:
+    with open("../data/" + target + "/txt/climatology_" + str(jMemb).zfill(3) + "_total-area.txt", "w") as file:
         file.write(",".join(["{0:.4f}".format(a) for a in listSia]))  
         file.write("\n")
         
@@ -126,7 +126,7 @@ for year in np.arange(yearb, yeare + 1):
     siconcOut[siconcOut < 0.0] = np.nan
     siconcOut[siconcOut > 100.0] = np.nan
 
-    f = Dataset("../data/" + target + "/netcdf/benchClim_" + str(jMemb).zfill(3) + "_concentration.nc", mode = "w")
+    f = Dataset("../data/" + target + "/netcdf/climatology_" + str(jMemb).zfill(3) + "_concentration.nc", mode = "w")
     timeDim = f.createDimension("time", None)
     yDim  =   f.createDimension("y", ny)
     xDim  = f.createDimension("x", nx)

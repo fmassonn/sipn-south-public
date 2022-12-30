@@ -133,7 +133,7 @@ for j_sub in range(n_sub):
     # is stored for that cell that corresponds to the grid cells of the
     # *input* (submission) grid that are within the current target grid
     # cell
-    # We do that for every year, because sometimes (benchClim) the grid 
+    # We do that for every year, because sometimes (climatology) the grid 
     # changes over time
     list_mask = [list() for jxy in range(ny * nx)]
     for jy in np.arange(ny):

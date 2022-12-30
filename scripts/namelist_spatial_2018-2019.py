@@ -2,7 +2,7 @@
 #          name
 np.random.seed(10)
 info = [ 
-         ["benchClim", range(1, 30 + 1), "grey", ""], \
+         ["climatology", range(1, 30 + 1), "grey", ""], \
          ["nrl",        range(1, 10 + 1), [0.00, 0.44, 0.75],   "$^d$"              ],  \
          ["Lamont",     [1],              [0.89, 0.42, 0.04],   "$^{s,i}$"],  \
          ["barreira",   [1],              [0.89, 0.42, 0.04],   "$^{s,i}$"],  \

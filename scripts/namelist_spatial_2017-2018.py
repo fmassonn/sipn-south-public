@@ -1,7 +1,7 @@
 #          Group     Nb forecasts  Color for plots     Comment
 #          name
 np.random.seed(10)
-info = [ #["benchClim", range(1, 30 + 1), "grey", ""], \
+info = [ #["climatology", range(1, 30 + 1), "grey", ""], \
 #         ["nrl"      , range(1, 6  + 1), "#92B558",   ""],  \
 #         ["Lamont"   , [1]             , "#9C9A40",  "(monthly)"],\
 #         ["nasa-gmao", range(1, 10 + 1)    , "#4F84C4", ""],\
