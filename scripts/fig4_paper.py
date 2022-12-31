@@ -48,10 +48,13 @@ nDays    = ((namelistOutlooks[seasonId][5]) - (namelistOutlooks[seasonId][4])).d
 
 daysAxis = [namelistOutlooks[seasonId][4] + timedelta(days = float(d)) for d in np.arange(nDays)]
 
-fig, ax = plt.subplots(1, 2, figsize = (10, 4))
+fig, ax = plt.subplots(2, 2, figsize = (8, 6))
 
 # Run through all forecasts
 seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlooks[seasonId][1].year)
+
+firstDyn = False
+firstSta = False
 
 for j, n in enumerate(namelistContributions):
 	print(n)
@@ -74,32 +77,47 @@ for j, n in enumerate(namelistContributions):
 			
 			#ax.plot(daysAxis, seriesTmp, color = plt.cm.gnuplot( int(j / len(namelistContributions) * 255)))
 		# Compute ensemble median
-		thisMedian = np.median(np.array(thisList), axis = 0)
-		thisMin = np.max(np.array(thisList), axis = 0)
-		thisMax = np.min(np.array(thisList), axis = 0)
+		thisMedian = np.nanmedian(np.array(thisList), axis = 0)
+		thisMin = np.nanmax(np.array(thisList), axis = 0)
+		thisMax = np.nanmin(np.array(thisList), axis = 0)
 		if thisType == "s":
-			thisColor = plt.cm.YlOrRd( int(128 + j / len(namelistContributions) * 128))
+			if not firstSta:
+				firstSta = True
+				label = "statistical contributions"
+			else:
+				label = None
+			thisColor = "#008579"
+			ax[0, 0].plot(daysAxis, thisMedian, color = thisColor, label = label, lw = 1)
+			meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
+			ax[0, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 1)
 		elif thisType == "d":
-			thisColor = plt.cm.PuBuGn( int(128 + j / len(namelistContributions) * 128))
+			if not firstDyn:
+				firstDyn = True
+				label = "dynamical contributions"
+			else:
+				label = None
+
+			thisColor = "#FF7200"
+			ax[1, 0].plot(daysAxis, thisMedian, color = thisColor, label = label, lw = 1)
+			meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
+			ax[1, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 1)
 		elif thisType == "b":
 			thisColor = [0.2, 0.2, 0.2]
+			[ax[jj, 0].plot(daysAxis, thisMedian, color = thisColor, label = thisName, linestyle = ":", lw = 2, zorder = 1000) for jj in [0, 1]]
+			# Plot melt rate
+			meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
+			[ax[jj, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = thisName, lw = 2, linestyle = ":", zorder = 1000) for jj in [0, 1]]
 		else:
 			stop("Type not known")
-		ax[0].plot(daysAxis, thisMedian, color = thisColor, label = thisName + " (" +  thisType + ")")
-
-		# Display range
-		#ax.fill_between(daysAxis, thisMin, thisMax, color = thisColor, alpha = 0.5, lw = 0)
-
-		# Plot melt rate
-		meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
-		ax[1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = thisName)
 
 
 
 
 # Plot observational references
 obsVerif = ["NSIDC-0081", "OSI-401-b"]
-obsLine  = ["--", ":"]
+obsLine  = ["-", "-"]
+firstObs = False
+
 for j, obsname in enumerate(obsVerif):
 	seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlooks[seasonId][1].year)
 
@@ -109,23 +127,33 @@ for j, obsname in enumerate(obsVerif):
 	csv = pd.read_csv(fileIn, header = None)
 	seriesTmp = csv.iloc[0][:nDays]
 
-	ax[0].plot(daysAxis, seriesTmp, label = obsVerif[j], linestyle = obsLine[j], color = "k")
+	if not firstObs:
+		firstObs = True
+		label = "observational references"
+	else:
+		label = None
+
+	ax[0, 0].plot(daysAxis, seriesTmp, label = label, linestyle = obsLine[j], color = "k")
+	ax[1, 0].plot(daysAxis, seriesTmp, label = label, linestyle = obsLine[j], color = "k")
 
 	meltRate = np.array(seriesTmp[nDaysWeek:]) - np.array(seriesTmp[:-nDaysWeek])
 
 
-	ax[1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2)
+	ax[0, 1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2)
+	ax[1, 1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2)
 
-ax[1].plot((namelistOutlooks[seasonId][4], namelistOutlooks[seasonId][5]), (0, 0), color = "grey")
-ax[0].legend(ncol = 2, fontsize = 9)
+[a.legend(fontsize = 9) for a in ax.flatten()]
 
-for a in ax:
+for a in ax.flatten():
 	a.set_xlim(namelistOutlooks[seasonId][4], namelistOutlooks[seasonId][5])
 	a.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-ax[0].set_title("Daily mean Southern Ocean sea ice area, " + seasonName)
-ax[0].set_ylabel("Million km$^2$")
-ax[1].set_title("Weekly running melt rates, " + seasonName)
-ax[1].set_ylabel("Million km$^2$/week")
+for j in [0, 1]:
+  ax[j, 0].set_ylim(0.0, 15)
+  ax[j, 1].set_ylim(-2.5, 1.0)
+  ax[j, 0].set_title("Daily mean Southern Ocean sea ice area, " + seasonName)
+  ax[j, 0].set_ylabel("Million km$^2$")
+  ax[j, 1].set_title("Weekly running melt rates, " + seasonName)
+  ax[j, 1].set_ylabel("Million km$^2$/week")
 
 fig.tight_layout()
 
