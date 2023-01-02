@@ -123,6 +123,7 @@ col = colInterpolatOr(sourceColors, nTarget = n_sub, colorCode = "HEX")
 for j_sub in range(n_sub):
   if sub_id[j_sub] == "climatology":
     col[j_sub] = "black"
+    orderSub = 1000
 
 # Store the raw data
 # ------------------
@@ -158,6 +159,11 @@ for j_sub in range(n_sub):
     # Delete temporary data for that submission
     del sub_data
 
+# Add the multi-model ensemble forecast
+mmef = np.array([np.mean(d, axis=1) for j, d in enumerate(data) if sub_id[j] != "climatology"])
+
+
+
 # Repeat with observations, if needed
 if plotobs:
     # A list of 1-D numpy arrays, each of dimensions {time}
@@ -185,14 +191,19 @@ if plotobs:
 # and plot them
 # -------------------------------------------  
         
-# Figure 1: daily ensemble median and range
+# Figure 1: daily ensemble mean and range
 fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
 
 for j_sub in range(n_sub):
-    median = np.nanmedian(data[j_sub], axis = 1)
+    mean = np.nanmean(data[j_sub], axis = 1)
 
-    plt.plot(time, median, color = col[j_sub], lw = 1.5, 
-             label = info[j_sub][0] + " " + info[j_sub][2])
+    if info[j_sub][0] == "climatology":
+      zorder = 1000
+    else:
+      zorder = 0
+
+    plt.plot(time, mean, color = col[j_sub], lw = 1.0, 
+             label = info[j_sub][0] + " " + info[j_sub][2], zorder = zorder)
     
     # Plot range as shading
     mymax = np.nanmax(data[j_sub], axis = 1)
@@ -202,7 +213,10 @@ for j_sub in range(n_sub):
     plt.fill_between(time, mymin, mymax, 
                      color = col[j_sub], 
                      alpha = 0.2, lw = 0)
-    
+
+# Plot model ensemble median
+plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 2, label = "median forecast")    
+
 # Plot observations if required
 if plotobs:
     for j_obs, obsname in enumerate(obs):
@@ -213,7 +227,7 @@ plt.title(period_name + " Antarctic sea ice area")
 plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
 plt.ylim(0.0, 14)
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.legend(fontsize = 6)
+plt.legend(fontsize = 6, ncol = 2)
 plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
@@ -243,7 +257,7 @@ for j_sub in range(n_sub):
                edgecolor = "white", lw = 0.2)
         
     # Plot associated PDF
-    scale = 0.5
+    scale = 1.0
     if n_for[j_sub] >= 3:
         
         xpdf = np.linspace(0, 10, 1000)
@@ -252,8 +266,18 @@ for j_sub in range(n_sub):
         
         pdf = kernel(xpdf).T
         
-        ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf, 
+        ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf * scale, 
                  color = col[j_sub], alpha = 0.2, lw = 0)
+
+# Plot mmef
+xpdf = np.linspace(0, 10, 1000)
+mmef_monmean = np.nanmean(mmef[:, t1:t2], axis = 1)
+kernel = stats.gaussian_kde(mmef_monmean)
+pdf = kernel(xpdf).T
+ax.scatter(mmef_monmean, np.full(len(mmef_monmean), 0), 15, color = "blue", \
+           label = "model ensemble", lw = 0.2, edgecolor = "white")
+ax.fill_between(xpdf, 0 , 0 + 0.5 * pdf * scale,
+                 color = "blue", alpha = 0.4, lw = 0)
 
 # Plot observations if required
 if plotobs and postseason:
@@ -276,7 +300,7 @@ ax.set_title(str(myyear[5:]) + " " + target_period_name + " mean Antarctic sea i
 ax.legend(loc = "upper center", ncol = 4, fontsize = 6)
 ax.set_xlabel("Million km$^2$")
 ax.set_xlim(0, 4)
-ax.set_ylim(0.0, n_sub + 6)
+ax.set_ylim(-1.0, n_sub + 6)
 ax.grid()
 ax.set_yticks([])
 plt.tight_layout()
