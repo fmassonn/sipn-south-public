@@ -47,6 +47,23 @@ seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlook
 
 
 
+# ---
+# Function CRPS
+def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0):
+	""" 	forecast is a list of ensemble forecasts
+		verifValue is the verifying observation
+		step is the spacing to estimate the CDFs
+		minVal and maxVal are the domain limits of the variables
+	"""
+	thisNbForecasts = len(forecast)
+	x = np.arange(minVal, maxVal, step) # x-axis
+	cdfVerif = (x > verifValue) * 1
+	cdfForecast = np.sum([(x > f) * 1 / thisNbForecasts for f in forecast], axis = 0)
+
+	CRPS = np.sum((cdfForecast - cdfVerif) ** 2 * step)
+
+	return x, CRPS
+
 fig, ax = plt.subplots(1, 2, figsize = (6, 5))
 
 # Get value from observations
@@ -101,31 +118,25 @@ for j, n in enumerate(namelistContributions):
 			thisColor = "black"
 		
 		# Compute CRPS
-		step = 0.01
-		x = np.arange(0, 100.0, step) # x-axis
-		cdfVerif = (x > verifValue) * 1
-		cdfForecast = np.sum([(x > f) * 1 / thisNbForecasts for f in thisList], axis = 0)
-
-
-		thisCRPS = np.sum((cdfForecast - cdfVerif) ** 2 * step)
+		x, thisCRPS = computeCRPS(thisList, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0)
 
 		listInfo.append([thisName, thisCRPS, thisList, thisType, thisColor])
 
 		# Plot PDF to check
-		figTmp, axTmp = plt.subplots(2, 1, figsize = (4, 8))
-		axTmp[0].plot(x, cdfForecast, label = thisName)
-		axTmp[0].plot(x, cdfVerif, color = "k", label = "OBS")
-		axTmp[1].set_title("cumulative distribution functions")
-		axTmp[0].legend()
-		axTmp[0].set_xlim(0.0, 4.0)
-		axTmp[0].set_ylim(0.0, 1.1)
+		#figTmp, axTmp = plt.subplots(2, 1, figsize = (4, 8))
+		#axTmp[0].plot(x, cdfForecast, label = thisName)
+		#axTmp[0].plot(x, cdfVerif, color = "k", label = "OBS")
+		#axTmp[1].set_title("cumulative distribution functions")
+		#axTmp[0].legend()
+		#axTmp[0].set_xlim(0.0, 4.0)
+		#axTmp[0].set_ylim(0.0, 1.1)
 
-		axTmp[1].plot(x, (cdfForecast - cdfVerif) ** 2)
-		axTmp[1].set_title("(forecast CDF - obs CDF)$^2$")
-		axTmp[1].set_xlim(0.0, 4.0)
-		axTmp[1].set_ylim(0.0, 1.1)
-		figTmp.savefig(thisName + ".png")
-		plt.close(figTmp)
+		#axTmp[1].plot(x, (cdfForecast - cdfVerif) ** 2)
+		##axTmp[1].set_title("(forecast CDF - obs CDF)$^2$")
+		#axTmp[1].set_xlim(0.0, 4.0)
+		#axTmp[1].set_ylim(0.0, 1.1)
+		#figTmp.savefig(thisName + ".png")
+		#plt.close(figTmp)
 
 
 # Print result
@@ -136,6 +147,12 @@ for l in listInfo:
 
 # Sort by CRPS
 sortedList = sorted(listInfo, key = lambda x: x[1])
+
+# Create the multi-model-median forecast
+mmForecast = [np.mean(l[2]) for l in listInfo if l[0] != "climatology"]
+# Compute CRPS
+_, mmCRPS = computeCRPS(mmForecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0)
+print("MM forecast: " + str(mmCRPS)) 
 
 
 # Plots
