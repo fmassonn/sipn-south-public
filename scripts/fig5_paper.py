@@ -64,7 +64,7 @@ def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0)
 
 	return x, CRPS
 
-fig, ax = plt.subplots(1, 2, figsize = (6, 5))
+fig, ax = plt.subplots(1, 1, figsize = (4, 5))
 
 # Get value from observations
 # Plot observational references
@@ -82,7 +82,7 @@ for j, obsname in enumerate(obsVerif):
 	thisValue = np.mean(seriesTmp[t1: t2])
 	listVerif.append(thisValue)
 
-	ax[0].plot((thisValue, thisValue), (-1e9, 1e9), label = obsVerif[j], linestyle = obsLine[j], color = "k", lw = 1, zorder = -100)
+	ax.plot((thisValue, thisValue), (-1e9, 1e9), label = obsVerif[j], linestyle = obsLine[j], color = "k", lw = 1, zorder = -100)
 
 verifValue = listVerif[0]
 # Run through all forecasts
@@ -111,9 +111,9 @@ for j, n in enumerate(namelistContributions):
 			thisValue = np.mean(seriesTmp[t1: t2])
 			thisList.append(thisValue)
 		if thisType == "s":
-			thisColor = plt.cm.YlOrRd_r( int(j / len(namelistContributions) * 128))
+			thisColor = "#008579"
 		elif thisType == "d":
-			thisColor = plt.cm.PuBuGn_r( int(j / len(namelistContributions) * 128))
+			thisColor = "#FF7200"
 		else:
 			thisColor = "black"
 		
@@ -145,8 +145,6 @@ print(seasonName)
 for l in listInfo:
 	print("{:<16} {:} {:<16}".format(l[0], l[3], str(np.round(l[1], 2))))
 
-# Sort by CRPS
-sortedList = sorted(listInfo, key = lambda x: x[1])
 
 # Create the multi-model-median forecast
 mmForecast = [np.mean(l[2]) for l in listInfo if l[0] != "climatology"]
@@ -156,7 +154,7 @@ print("MM forecast: " + str(mmCRPS))
 
 
 # Plots
-for j, s in enumerate(sortedList):
+for j, s in enumerate(listInfo):
 	thisName   = s[0]
 	thisNbForecasts = len(s[2])
 	thisCRPS   = s[1]
@@ -165,13 +163,17 @@ for j, s in enumerate(sortedList):
 	thisColor =  s[4]
 
 	#Plot dots
-	ax[0].scatter(theseAreas, j * np.ones(thisNbForecasts), 3, marker = "x", color = thisColor, lw = 0.5)
-	ax[0].text(-0.5, j, thisName + " (" + thisType + ")", ha = "right", va = "center")
+	if len(theseAreas) == 1:
+		lw = 1
+	else:
+		lw = 0.5
+	ax.scatter(theseAreas, (len(listInfo) - j) * np.ones(thisNbForecasts), 5, marker = "x", color = thisColor, lw = lw, edgecolor = "white")
+	ax.text(-0.5, (len(listInfo) - j), thisName + " (" + thisType + ")", ha = "right", va = "center")
 
 
-	ax[0].set_yticklabels("")
-	ax[0].set_title("February mean sea ice area\nforecast distributions (" + seasonName + ")")
-	ax[0].set_xlabel("Million km$^2$")
+	ax.set_yticklabels("")
+	ax.set_title("February mean sea ice area\nforecast distributions (" + seasonName + ")")
+	ax.set_xlabel("Million km$^2$")
 	# Plot PDF
 	if thisNbForecasts > 1:
 		xpdf = np.linspace(0, 10, 1000)
@@ -179,21 +181,12 @@ for j, s in enumerate(sortedList):
 		pdf = kernel(xpdf).T
 		# Normalize PDF max for visual
 		pdf /= np.max(pdf)
-		ax[0].fill_between(xpdf, j, j + 0.5 * pdf, color = thisColor, alpha = 0.2, lw = 0)
+		ax.fill_between(xpdf,  (len(listInfo) - j), (len(listInfo) - j) + 0.5 * pdf, color = thisColor, alpha = 0.4, lw = 0)
 
-	# Plot CRPS
-	ax[1].fill_between((0, thisCRPS), (j - 0.45, j - 0.45), (j + 0.45, j + 0.45), color = thisColor, alpha = 0.5, lw = 0)
-	
-
-
-ax[1].set_yticklabels("")
-ax[1].set_title("Continuous rank probability score")
-ax[1].set_xlabel("(Million km$^2$)$^2$")
-for a in ax:
-	a.set_ylim(-0.5, len(sortedList))
-ax[0].set_xlabel("Million km$^2$")
-ax[0].set_xlim(0, 4)
-ax[0].legend(fontsize = 8)
+ax.set_ylim(0.5, len(listInfo) + 1)
+ax.set_xlabel("Million km$^2$")
+ax.set_xlim(0, 4)
+ax.legend(fontsize = 7)
 fig.tight_layout()
 figName = "../figs/fig5_paper.png"
 fig.savefig(figName, dpi = 300)
