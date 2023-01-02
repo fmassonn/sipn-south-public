@@ -127,6 +127,13 @@ for j, n in enumerate(namelistContributions):
 		figTmp.savefig(thisName + ".png")
 		plt.close(figTmp)
 
+
+# Print result
+
+print(seasonName)
+for l in listInfo:
+	print("{:<16} {:} {:<16}".format(l[0], l[3], str(np.round(l[1], 2))))
+
 # Sort by CRPS
 sortedList = sorted(listInfo, key = lambda x: x[1])
 
@@ -171,4 +178,6 @@ ax[0].set_xlabel("Million km$^2$")
 ax[0].set_xlim(0, 4)
 ax[0].legend(fontsize = 8)
 fig.tight_layout()
-fig.savefig("../figs/fig5_paper.png", dpi = 300)
+figName = "../figs/fig5_paper.png"
+fig.savefig(figName, dpi = 300)
+print("Figure " + figName + " printed")
