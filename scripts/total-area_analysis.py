@@ -209,10 +209,10 @@ for j_sub in range(n_sub):
     mymax = np.nanmax(data[j_sub], axis = 1)
     mymin = np.nanmin(data[j_sub], axis = 1)
     
-
-    plt.fill_between(time, mymin, mymax, 
-                     color = col[j_sub], 
-                     alpha = 0.2, lw = 0)
+    if info[j_sub][0] == "climatology":
+	    plt.fill_between(time, mymin, mymax, 
+	                     color = col[j_sub], 
+	                     alpha = 0.2, lw = 0)
 
 # Plot model ensemble median
 plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 2, label = "median forecast")    
