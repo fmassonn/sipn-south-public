@@ -16,7 +16,7 @@ info = [
     [ "Lamont",           [1],               "$^{s,i}$"], \
     [ "Meier-NSIDC",      [1],               "$^s$"    ], \
     [ "MetOffice",        range(1, 42 + 1),  "$^d$"    ], \
-#    [ "NASA-GSFC",        [1],                "$^{s}$"  ],  \
+    [ "NASA-GSFC",        [1],                "$^{s}$"  ],  \
     [ "NicoSun",          range(1, 3 + 1),   "$^s$"    ], \
 #    [ "SINTEX-F2",       range(1, 24 + 1),   "$^d$"    ],  \
     [ "SYSU-SML-ConvLSTM",[1],               "$^s$"    ], \
