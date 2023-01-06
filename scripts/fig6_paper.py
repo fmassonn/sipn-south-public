@@ -132,7 +132,10 @@ nt = f.dimensions["time"].size
 f.close()
 
 # Run through all forecasts
+firstStat = True
+firstDyn  = True
 
+sicMM = list() # Multi model median
 for j, n in enumerate(namelistContributions):
 	print(n)
 	thisName = n[0]
@@ -145,6 +148,8 @@ for j, n in enumerate(namelistContributions):
 		thisAEE   = list()
 		thisME    = list()
 
+		sicThisContrib = list()
+
 		for jFor in np.arange(thisNbForecasts):
 			filein = "../data/" + seasonName + "/netcdf/regrid/" + thisName + "_" \
 				  + str(jFor + 1).zfill(3) + "_concentration_2x2.nc"
@@ -152,32 +157,62 @@ for j, n in enumerate(namelistContributions):
 			f = Dataset(filein, mode = "r")
 			sic = f.variables["siconc"][:]
 			f.close()
+
+			# Save SIC for future model ensemble median calculation
+			if thisName != "climatology":
+				sicThisContrib.append(sic)
+
 			IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * \
 				(mask_obs == 100.0) * (latitude < 0), threshold = 15.0, 
 				lat = latitude, lon = longitude, plot = False)
+
 
 			thisIIEE.append(IIEE)
 			thisNIIEE.append(NIIEE)
 			thisAEE.append(AEE)
 			thisME.append(ME)
-		
+	
+		# Save ensemble mean of SIC
+		if thisName != "climatology":
+			sicMean = np.mean(np.array(sicThisContrib), axis = 0)
+			sicMM.append(sicMean)
+			del sicMean
+		del sicThisContrib
+
 		# Plot series
 		if thisType == "s":
-			thisColor = plt.cm.YlOrRd( int(128 + j / len(namelistContributions) * 128))
+			thisColor = "#008579"
 		elif thisType == "d":
-			thisColor = plt.cm.PuBuGn( int(128 + j / len(namelistContributions) * 128))
+			thisColor = "#FF7200"
 		else:
 			thisColor = "black"
 
-		ax.plot(daysAxis, IIEE, color = thisColor, label = thisName)
-		mymaxIIEE = np.max(np.array(thisIIEE), axis = 0)
-		myminIIEE = np.min(np.array(thisIIEE), axis = 0)
-		ax.fill_between(daysAxis, myminIIEE, mymaxIIEE, color = thisColor, \
-                alpha = 0.2, lw = 0)
+		if firstStat:
+			firstStat = False
+			label = "statistical contributions"
+		elif firstDyn:
+			firstDyn = False
+			label = "dynamical contributions"
+		elif thisName == "climatology":
+			label = thisName
+		else:
+			label = None
+
+		ax.plot(daysAxis, np.nanmean(np.array(thisIIEE), axis = 0), color = thisColor, label = label, lw = 2)
+		mymaxIIEE = np.nanmax(np.array(thisIIEE), axis = 0)
+		myminIIEE = np.nanmin(np.array(thisIIEE), axis = 0)
+		#ax.fill_between(daysAxis, myminIIEE, mymaxIIEE, color = thisColor, \
+                #alpha = 0.2, lw = 0)
 
 		# Add text to locate contributions
-		ax.text(daysAxis[0] - timedelta(days  = 1), IIEE[0], thisName[0], ha = "right", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
+		#ax.text(daysAxis[0] - timedelta(days  = 1), IIEE[0], thisName[0], ha = "right", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
 
+# Compute SIC Median
+sicMedian = np.median(sicMM, axis = 0)
+iieeMM, _, _, _, _, _ = iiee(sicMedian, sic_obs, cellarea, mask = 1.0 * \
+                                (mask_obs == 100.0) * (latitude < 0), threshold = 15.0,
+                                lat = latitude, lon = longitude, plot = False)
+ax.plot(daysAxis, iieeMM, color = "blue", lw = 3, linestyle = "--", label = "median forecast")
 ax.legend()
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 ax.set_ylabel("Million km$^2$")
