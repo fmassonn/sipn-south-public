@@ -178,7 +178,11 @@ for j, s in enumerate(listInfo):
 	if thisNbForecasts > 1:
 		xpdf = np.linspace(0, 10, 1000)
 		kernel = stats.gaussian_kde(theseAreas)
-		pdf = kernel(xpdf).T
+		if thisName == "NicoSun":
+			# Nico Sun gives a range, not equally plausible values
+			pdf = 1.0 * (xpdf > np.min(theseAreas)) * (xpdf < np.max(theseAreas))
+		else:
+			pdf = kernel(xpdf).T
 		# Normalize PDF max for visual
 		pdf /= np.max(pdf)
 		ax.fill_between(xpdf,  (len(listInfo) - j), (len(listInfo) - j) + 0.5 * pdf, color = thisColor, alpha = 0.4, lw = 0)
