@@ -13,6 +13,7 @@ import matplotlib; matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import matplotlib.dates  as mdates
 import matplotlib.colors
+from matplotlib.lines import Line2D
 import numpy             as np
 import os
 import random
@@ -25,70 +26,116 @@ from scipy    import stats
 
 from seaice_commondiags import *
 
+thresholdSeaIcePresence = 15.0 # When a grid cell is said to have ice
+
+# Note that there is some trickiness in the computation of the IIEE, to be well understood.
+#
+# The core idea of the IIEE is to compare two *contours* of sea ice defined by sea ice presence, defined as SIC > 15%
+
+# How do we do that?
+
+# 1/ We binarize the verifying SIC, i.e., we turn it to 0 and 1 based on some accepted threshold of sea ice presence, 15%
+
+# 2/ We binarize the forecast SIC the same way. We do that for each ensemble member separately
+
+# 3/ We average (in case of ensemble members) the fields in 2/ to obtain a probability of ice presence, SIP
+
+# 4/ We compute the IIEE as the sum of grid cells where either the obs says there ice (> 15%) but the forecast says there is not (SIP < 50%), or the obs says there is no ice (<15%) and the forecast says there is (SIP > 50%)
+
+# Note that if only one ensemble member is available, SIC > 15% <-> SIP=1 > 50% and SIC < 15% <-> SIP=0 < 50% so it's equivalent
+
+# An example:
+
+#			cell 1		cell2		cell3
+
+# SIC fields
+# Obs:     		10%		20%		100%
+
+# Forecast member 1:	30%		70%		90%
+# Forecast member 2:	50%		80%		20%
+# Forecast member 3:	60%		0%		10%
+# -----------------
+
+# Binarized/sea ice presence fields:
+# Obs:			0		1		1
+
+# Forecast member 1:	1		1		1
+# Forecast member 2:	1		1		1
+# Forecast member 3:	1		0		0
+
+# Forecast average:	1		0.66		0.66
+# -----------------
+
+# In all grid cells the forecast predicts more likely than not that there will be ice (>0.5 probability)
+# In obs there is ice in 2 out of 3 grid cells
+# --> The IIEE is the area of cell 1, where a disagreement exists.
+
+# Note that if the forecast was only member 1, the IIEE would be also cell1 . If the forecast was only one member (member 3), the IIEE would be cell1 + cell2 + cell3
+
+
+# --> These numbers may be different, see correspondence with H. Goessling (e-mail 10 Jan 2023):
+# The following example should show that these seemingly inconsistent thresholds are actually consistent: Imagine the ensemble size is 1. In that case, the 50% SIP contour will be identical with the 15% SIC contour of the single ensemble member, so it obviously makes sense to compare that against the observed 15%-SIC contour. And it remains consistent for actual ensembles with more members. The 50%-SIP contour is simply the „median“ of all individual 15%-SIC contours
+
 # Functions
 # ---------
 
-def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None, 
-         lon = None, plot = False):
+def iiee(sipForecast, sicVerif, cellarea, mask = 1, thresholdProbability = 0.5, thresholdSeaIcePresence = 15.0, timeDim = True):
   """
-  sic_ref -> reference field [%]
-  sic_eva -> evaluated field    [%]
-  cellarea -> grid cell area [m2]
-  mask -> 1 where data has to be included
-  threshold -> sea ice edge imit
-  lat, lon, plot: to plot what's going on
-  returns iiee, that is, sum of grid cell
-    areas where sic1 and sic2 disagree on the
-    event "> 15%" or " < 15%" (units million km2)
+  Arguments:
+    - sipForecast  -> probability of sea ice presence in forecast field (binary if one ensemble member, fractional else)
+                      numpy array of values between 0.0 and 1.0
+    - sicVerif     -> sea ice concentration in verification field, in %
+                      numpy array of values between 0.0 and 100.0, same shape as sipForecast
+
+    - cellarea     -> areas of grid cells in m2
+
+    - mask         -> mask (1 or 0) to account e.g. for land and ocean distribution
+
+    - thresholdProbability -> a value between 0 and 1 to define above what threshold sea ice is considered to be present in the forecast. Typically 0.5 ("more likely than not").
+
+    - thresholdSeaIcePresence -> for obervations or one individual physical forecast, the threshold above which there is enough ice to declare ice presence. Typically 15%
+
+    - timeDim -> Boolean to state if the first dimension of the arrays is a time dimension
+   
+
+  Returns: IIEE in million km2
+
   """
 
-  if sic_ref.shape != sic_eva.shape:
-    sys.exit("iiee: sic_ref and sic_eva have different shapes")
+  if sipForecast.shape != sicVerif.shape:
+    sys.exit("iiee: sipForecast and sicVerif have different shapes")
 
-  nt, _, _ = sic_ref.shape
-  
-  overestim = np.array([np.sum(1.0 * (sic_eva[jt, :, :] >  threshold) * \
-                  (sic_ref[jt, :, :] <= threshold)  * mask * cellarea) \
-                  for jt in range(nt)]) / 1e12
-  underestim= np.array([np.sum(1.0 * (sic_eva[jt, :, :] <= threshold) * \
-                  (sic_ref[jt, :, :] > threshold)   * mask * cellarea) \
-                  for jt in range(nt)]) / 1e12
+  if timeDim:
+    nt, _, _ = sicVerif.shape
+ 
+    IIEE = list()
 
-  ref_area  = np.array([np.nansum(sic_ref[jt, :, :] / 100.0 * mask * cellarea)\
-                        for jt in range(nt)]) / 1e12
-  AEE = np.abs(overestim - underestim)
-  ME  = 2.0 * np.minimum(overestim, underestim)
-
-  IIEE = overestim + underestim
-  NIIEE = 100.0 * IIEE /ref_area
-
-  if np.max(np.abs((AEE + ME) - IIEE)) > 1e-14:
-    print(np.abs((AEE + ME) - IIEE))
-    sys.exit("ERROR")
+    # Create a new array with nans where there are nans in obs, 1 where there is ice, and 0 where there is not
+    presenceVerif = np.full(sicVerif.shape, np.nan)
+    presenceVerif[sicVerif >= thresholdSeaIcePresence] = 1
+    presenceVerif[sicVerif <  thresholdSeaIcePresence] = 0
 
 
-  if plot:
-    clevs = np.arange(0.0, 110.0, 10.0)
-    from   mpl_toolkits.basemap import Basemap, addcyclic
-    plt.figure(figsize = (6, 6))
-    map = Basemap(projection = "spstere", boundinglat = - 50, 
-                  lon_0 = 180, resolution = 'l')
-    x, y = map(lon, lat)
-    plt.subplot(1, 1, 1)
-    cs = map.contourf(x, y, sic_ref[0, :, :], clevs, cmap = plt.cm.Blues_r, 
-                      latlon = False, extend = "neither")
-    map.fillcontinents(color = 'grey', lake_color = 'w')
-    map.drawcoastlines(linewidth = 1.0)
-    map.drawmeridians(np.arange(0, 360, 30), color = [0.7, 0.7, 0.7])
-    map.drawparallels(np.arange(-90, 90, 10), color = [0.7, 0.7, 0.7])
-    cbar = map.colorbar(cs, location = 'bottom', pad = "5%")
-    cbar.set_label("%")
-    plt.title("REF")
-    plt.savefig("../figs/map.png")
-    plt.close("fig")
+    # Create a new arrray with nans where there are nans in forecast, 1 where there is ice and 0 else
+    presenceForecast = np.full(sipForecast.shape, np.nan)
+    presenceForecast[sipForecast >= thresholdProbability] = 1
+    presenceForecast[sipForecast <  thresholdProbability] = 0
+     
+    # Sum these fields. Only where the sum is equal to 1, we have a disagreement
+    disagree = ((presenceForecast + presenceVerif) == 1)
 
-  
-  return IIEE, NIIEE, AEE, ME, overestim, underestim
+    for jt in np.arange(nt):
+      if np.sum(np.isnan(presenceVerif[jt, :, :])) == presenceVerif[jt, :, :].size:
+        total = np.nan
+      else:
+        total = np.sum(disagree[jt, :, :] * cellarea * mask) / 1e12
+      
+      IIEE.append(total)
+  else:
+    print("not coded yet")
+    stop
+
+  return IIEE
 
 matplotlib.rcParams['font.family'] = "Arial Narrow"
 
@@ -105,9 +152,12 @@ exec(open("./namelist.py").read())
 seasonId = 4 # Which season to look at
 diagId   = 2 # We look at sea ice concentration
 
-# ----
-nDaysWeek = 7 # how many days in a week
+colorDict = {"statistical": "#008579", \
+             "dynamical":   "#FF7200", \
+             "climatology": "#000000", \
+             "group forecast": "#0000FF"}
 
+# ----
 nDays    = ((namelistOutlooks[seasonId][5]) - (namelistOutlooks[seasonId][4])).days + 1
 
 daysAxis = [namelistOutlooks[seasonId][4] + timedelta(days = float(d)) for d in np.arange(nDays)]
@@ -123,19 +173,18 @@ seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlook
 obs_name = "NSIDC-0081"
 f = Dataset("../data/" + seasonName + "/netcdf/regrid/" + \
             obs_name + "_000_concentration_2x2.nc")
-sic_obs = f.variables["siconc"][:]
-latitude = f.variables["latitude"][:]
-longitude = f.variables["longitude"][:]
-cellarea  = f.variables["areacello"][:]
-mask_obs  = f.variables["sftof"][:]
+sic_obs = f.variables["siconc"][:].data
+latitude = f.variables["latitude"][:].data
+longitude = f.variables["longitude"][:].data
+cellarea  = f.variables["areacello"][:].data
+mask_obs  = f.variables["sftof"][:].data
 nt = f.dimensions["time"].size
 f.close()
 
-# Run through all forecasts
-firstStat = True
-firstDyn  = True
 
-sicMM = list() # Multi model median
+siProbGroupList = list() # for group forecast: list of arrays with probability of sea ice presence
+# Run through all forecasts
+
 for j, n in enumerate(namelistContributions):
 	print(n)
 	thisName = n[0]
@@ -143,77 +192,75 @@ for j, n in enumerate(namelistContributions):
 	thisType = n[-1] # Statistical or dynamical
 
 	if thisNbForecasts > 0:
-		thisIIEE  = list()
-		thisNIIEE = list()
-		thisAEE   = list()
-		thisME    = list()
 
-		sicThisContrib = list()
-
-		for jFor in np.arange(thisNbForecasts):
+		if thisName == "AWI-SDAP":
+			# Special case for AWI-SDAP, that provides directly probability of sea ice presence basedon 15% threshold for SIC
 			filein = "../data/" + seasonName + "/netcdf/regrid/" + thisName + "_" \
-				  + str(jFor + 1).zfill(3) + "_concentration_2x2.nc"
-	
+                                  + "001_probability_2x2.nc"
+
 			f = Dataset(filein, mode = "r")
-			sic = f.variables["siconc"][:]
+			siProb = f.variables["siprob"][:] / 100.0 # since provided as %
 			f.close()
 
-			# Save SIC for future model ensemble median calculation
-			if thisName != "climatology":
-				sicThisContrib.append(sic)
 
-			IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * \
-				(mask_obs == 100.0) * (latitude < 0), threshold = 15.0, 
-				lat = latitude, lon = longitude, plot = False)
+		else:
+			siPresContribList = list()
 
+			for jFor in np.arange(thisNbForecasts):
 
-			thisIIEE.append(IIEE)
-			thisNIIEE.append(NIIEE)
-			thisAEE.append(AEE)
-			thisME.append(ME)
+				filein = "../data/" + seasonName + "/netcdf/regrid/" + thisName + "_" \
+					  + str(jFor + 1).zfill(3) + "_concentration_2x2.nc"
 	
-		# Save ensemble mean of SIC
-		if thisName != "climatology":
-			sicMean = np.mean(np.array(sicThisContrib), axis = 0)
-			sicMM.append(sicMean)
-			del sicMean
-		del sicThisContrib
+				f = Dataset(filein, mode = "r")
+				sic = f.variables["siconc"][:]
+				f.close()
 
+				# Binarizing SIC based on 15% threshold to define sea ice presence
+				siPres = 1.0 * (sic > thresholdSeaIcePresence)
+	
+				siPresContribList.append(siPres)
+	
+				del siPres
+	
+			# Now we are out of the loop of members and we have a list of sea ice presence (binary fields)
+			# Let's average through members to obtain a probability of sea ice presence.
+			siProb = np.mean(np.array(siPresContribList), axis = 0)
+			
+			del siPresContribList
+
+		# Now we compute the IIEE for that contribution, based on the 0.5 threshold (Helge Goessling)
+
+		thisIIEE = iiee(siProb, sic_obs, cellarea, mask = (latitude < 0), thresholdProbability = 0.5, thresholdSeaIcePresence = thresholdSeaIcePresence)
+
+		# We also store the probability to compute later a group forecast
+		if thisName != "climatology":
+			siProbGroupList.append(siProb)
+		
 		# Plot series
 		if thisType == "s":
-			thisColor = "#008579"
+			thisColor = colorDict["statistical"]
 		elif thisType == "d":
-			thisColor = "#FF7200"
-		else:
-			thisColor = "black"
+			thisColor = colorDict["dynamical"]
+		elif thisType == "b": # benchmark
+			thisColor = colorDict["climatology"]
 
-		if firstStat:
-			firstStat = False
-			label = "statistical contributions"
-		elif firstDyn:
-			firstDyn = False
-			label = "dynamical contributions"
-		elif thisName == "climatology":
-			label = thisName
-		else:
-			label = None
+		ax.plot(daysAxis, thisIIEE, color = thisColor, lw = 2)
 
-		ax.plot(daysAxis, np.nanmean(np.array(thisIIEE), axis = 0), color = thisColor, label = label, lw = 2)
-		mymaxIIEE = np.nanmax(np.array(thisIIEE), axis = 0)
-		myminIIEE = np.nanmin(np.array(thisIIEE), axis = 0)
-		#ax.fill_between(daysAxis, myminIIEE, mymaxIIEE, color = thisColor, \
-                #alpha = 0.2, lw = 0)
+		#ax.text(daysAxis[-1] + timedelta(days  = 1), thisIIEE[-1], thisName, ha = "left", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
 
-		# Add text to locate contributions
-		#ax.text(daysAxis[0] - timedelta(days  = 1), IIEE[0], thisName[0], ha = "right", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
+		del siProb
 
-# Compute SIC Median
-sicMedian = np.median(sicMM, axis = 0)
-iieeMM, _, _, _, _, _ = iiee(sicMedian, sic_obs, cellarea, mask = 1.0 * \
-                                (mask_obs == 100.0) * (latitude < 0), threshold = 15.0,
-                                lat = latitude, lon = longitude, plot = False)
-ax.plot(daysAxis, iieeMM, color = "blue", lw = 3, linestyle = "--", label = "median forecast")
-ax.legend()
+# Compute group forecast
+siProbGroup = np.mean(np.array(siProbGroupList), axis = 0)
+
+iieeGroup = iiee(siProbGroup, sic_obs, cellarea, mask = (latitude < 0), thresholdProbability = 0.5, thresholdSeaIcePresence = thresholdSeaIcePresence)
+
+ax.plot(daysAxis, iieeGroup, color = colorDict["group forecast"], lw = 3, linestyle = "-")
+
+
+linesLegend = [Line2D([0], [0], color = colorDict[c], linewidth=3) for c in colorDict]
+linesLabels = [c for c in colorDict]
+ax.legend(linesLegend, linesLabels)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
 ax.set_ylabel("Million km$^2$")
 ax.set_title("Integrated Ice Edge Error (" + seasonName + ")")
