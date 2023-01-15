@@ -76,8 +76,8 @@ for j, n in enumerate(namelistContributions):
 			#print(j / len(namelistContributions) * 255)
 			
 			#ax.plot(daysAxis, seriesTmp, color = plt.cm.gnuplot( int(j / len(namelistContributions) * 255)))
-		# Compute ensemble median
-		thisMedian = np.nanmedian(np.array(thisList), axis = 0)
+		# Compute ensemble mean
+		thisMedian = np.nanmean(np.array(thisList), axis = 0)
 		thisMin = np.nanmax(np.array(thisList), axis = 0)
 		thisMax = np.nanmin(np.array(thisList), axis = 0)
 		if thisType == "s":
@@ -150,10 +150,12 @@ for a in ax.flatten():
 for j in [0, 1]:
   ax[j, 0].set_ylim(0.0, 15)
   ax[j, 1].set_ylim(-2.5, 1.0)
+  ax[j, 1].plot(daysAxis, np.zeros(len(daysAxis)), color = [0.2, 0.2, 0.2], lw = 1)
   ax[j, 0].set_title("Daily mean Southern Ocean sea ice area, " + seasonName)
   ax[j, 0].set_ylabel("Million km$^2$")
   ax[j, 1].set_title("Weekly running melt rates, " + seasonName)
   ax[j, 1].set_ylabel("Million km$^2$/week")
+
 
 fig.tight_layout()
 
