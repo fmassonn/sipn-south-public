@@ -13,13 +13,13 @@
 #
 
 set -o nounset
-set -o errexit
+#set -o errexit
 set -x
 
 yearb=2022
 monb=1
 
-yeare=2022
+yeare=2023
 mone=12
 
 ftype="multi" # multi (= operational, OSI-401-b) 

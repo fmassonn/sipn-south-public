@@ -10,12 +10,12 @@ outdir=${rootdir}/obs/ice/siconc/NSIDC/NSIDC-0081/raw/
 
 mkdir -p $outdir
 
-yearb=2022
-yeare=2022
+yearb=2023
+yeare=2023
 
 for hemi in south 
 do
-  for month in `seq 11 12`
+  for month in `seq 1 1`
   do
     month=$(printf "%02d" $month)
 
@@ -38,7 +38,10 @@ do
         
         dday=$(printf "%02d" $day)
   
-        wget -ncd --save-cookies ~/.urs_cookies --keep-session-cookies --no-check-certificate --auth-no-challenge=on -r --reject "index.html*" -np -e robots=off https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.001/${year}.${month}.${dday}/nt_${year}${month}${dday}_${sensor}_nrt_s.bin -P $outdir
+        #wget -ncd --save-cookies ~/.urs_cookies --keep-session-cookies --no-check-certificate --auth-no-challenge=on -r --reject "index.html*" -np -e robots=off https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.002/${year}.${month}.${dday}/nt_${year}${month}${dday}_${sensor}_nrt_s.bin -P $outdir
+	url=https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.002/${year}.${month}.${dday}/NSIDC0081_SEAICE_PS_S25km_${year}${month}${dday}_v2.0.nc
+
+	wget -ncd --save-cookies ~/.urs_cookies --keep-session-cookies --no-check-certificate --auth-no-challenge=on -r --reject "index.html*" -np -e robots=off $url -P $outdir
       done
     done
   done
