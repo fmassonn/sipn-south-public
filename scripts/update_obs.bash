@@ -27,12 +27,11 @@ fi
 # Year of 1 Dec of initialization
 yearb=2022
 
-#./retrieve_NSIDC-0081.bash
+./retrieve_NSIDC-0081.bash
 
 ./retrieve_OSI-401-b.bash
 
-echo "HELLO"
-#Rscript format_NSIDC-0081.R
+python3 ./format_NSIDC-0081.py
 
 python3 ./format_OSI-401-b.py
 
