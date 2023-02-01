@@ -1,6 +1,10 @@
 #!/usr/bin/python
 
 
+# !!!!
+# Run this script after format_BSC.bash
+# !!!
+
 # Script to interpolate the monthly sea ice concentration
 # data from monthly to daily
 #

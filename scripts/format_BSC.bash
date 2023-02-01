@@ -7,10 +7,13 @@
 set -o nounset
 set -o errexit
 set -x
-yearb=2021
+yearb=2022
 yeare=$(( $yearb + 1 ))
 
+# Month of initiaization
 monb=11
+
+# Month of end
 mone=10
 
 nmemb=10
