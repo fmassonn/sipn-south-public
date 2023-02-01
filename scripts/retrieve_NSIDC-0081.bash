@@ -10,12 +10,12 @@ outdir=${rootdir}/obs/ice/siconc/NSIDC/NSIDC-0081/raw/
 
 mkdir -p $outdir
 
-yearb=2023
+yearb=2022
 yeare=2023
 
 for hemi in south 
 do
-  for month in `seq 1 1`
+  for month in `seq 1 12`
   do
     month=$(printf "%02d" $month)
 
