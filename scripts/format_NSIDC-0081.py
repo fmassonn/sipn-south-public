@@ -2,34 +2,36 @@
 #
 # Francois Massonnet francois.massonnet@uclouvain.be
 # 
-# Converts near-real time OSISAF sea ice concentration data
-# (osi-401-b) to TECLIM compliant format
+# Converts near-real time NSIDC sea ice concentration data
+# (NSIDC-0081) to TECLIM compliant format
 #
 
 def formatData(dateStart, dateEnd):
   """ dateStart and dateEnd being to YYYYMMDD strings defining the period to format data
   """
 
+
   import numpy as np
   from netCDF4 import Dataset
   from datetime import datetime, timedelta
   import os
+  import struct
   
   # The (machine-dependent) location of CLIMDATA folder
   data_dir = os.environ["TECLIM_CLIMATE_DATA"]
   
   # =========================
   
-  
-  # ATTENTION, script is supposed to take end year different from
-  # first year to make NCO command extract work automatically
-  
+  scalefLat = 1e-5 # When reading binaries
+  scalefLon = 1e-5 # When reading binaries
+  scalefAre = 1e3  # When reading binaries
+
   hemi="sh"    # Hemisphere to proces ("nh" or "sh")
   
   # Where to read the data from
-  rootdir = data_dir + "/obs/ice/siconc/OSI-SAF/OSI-401-b/raw/"
+  rootdir = data_dir + "/obs/ice/siconc/NSIDC/NSIDC-0081/raw/"
   # Where to write the data to
-  outdir =  data_dir + "/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/"
+  outdir =  data_dir + "/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/"
   
   
   # Check existence of paths
@@ -42,7 +44,7 @@ def formatData(dateStart, dateEnd):
   # ========
   # Input grid dimensions
   if hemi == "sh":
-      ny, nx = 830, 790
+      ny, nx = 332, 316
   elif hemi == "nh":
       pass
   else:
@@ -51,7 +53,6 @@ def formatData(dateStart, dateEnd):
   # Create time axis
   d1 = datetime.strptime(dateStart, "%Y%m%d")
   d2 = datetime.strptime(dateEnd  , "%Y%m%d")
-  
   daterange = [d1 + timedelta(days=x) for x in range((d2-d1).days + 1)]
   nt = len(daterange)
   
@@ -75,24 +76,48 @@ def formatData(dateStart, dateEnd):
   for day in daterange:
       print(day)
       # Check file existence
-      filein = rootdir + "/ice_conc_" + hemi + "_polstere-100_multi_" + day.strftime("%Y%m%d") + "1200.nc"
+      filein = rootdir + "/NSIDC0081_SEAICE_PS_" + hemi[0].upper() + "25km_" + day.strftime("%Y%m%d") + "_v2.0.nc"
       if not os.path.exists(filein):
           print("File " + filein + " not found")
       else:
           f = Dataset(filein, mode = "r")
-          sic = f.variables["ice_conc"][:]
-          siconc[jt, :, :] = sic[:]
+          try:
+            sic = f.variables["F18_ICECON"][:]
+          except KeyError:
+            try:
+              sic = f.variables["F17_ICECON"][:]
+            except KeyError:
+              try:
+                sic = f.variables["F16_ICECON"][:]
+              except KeyError:
+                stop()
+  
+          sic[sic > 1.0] = 0.0
+          sic[sic < 0.0] = 0.0
+  	
+          siconc[jt, :, :] = sic[:] * 100 # Convert to %
   
           if read_geom:
-              lat = f.variables["lat"][:]
-              lon = f.variables["lon"][:]
-              msk = f.variables["status_flag"][:]
-              fillval = f.variables["ice_conc"]._FillValue
+              # We need to read those stupid binaries
+              fileLat = rootdir + "/" + "pss25lats_v3.dat"
+              thisArray = np.reshape(np.array(struct.unpack_from("<" + "i" * ny * nx, open(fileLat, mode="rb").read())), (ny, nx))
+              lat = thisArray * scalefLat
+  
+              fileLon = rootdir + "/" + "pss25lons_v3.dat"
+              thisArray = np.reshape(np.array(struct.unpack_from("<" + "i" * ny * nx, open(fileLon, mode="rb").read())), (ny, nx))
+              lon = thisArray * scalefLon
+  
+              fileAre = rootdir + "/" + "pss25area_v3.dat"
+              thisArray = np.reshape(np.array(struct.unpack_from("<" + "i" * ny * nx, open(fileAre, mode="rb").read())), (ny, nx))
+              are  = thisArray * scalefAre
+  
+              msk  = np.full((ny, nx), 100.0)	
   
               latitude[:] = lat
               longitude[:] = lon
-              mask[:] = 100.0 * (msk < 100.0)
-              cellarea[:] = 10.0 * 1000.0 * 10.0 * 1000.0 # grid resolution is 10km by 10km
+              cellarea[:] = are
+              mask[:]     = msk
+  
               read_geom = False
           f.close()
       jt += 1
@@ -105,7 +130,7 @@ def formatData(dateStart, dateEnd):
   # -----------------
   date_ref =  datetime(1850, 1, 1) # zero-time reference
   
-  fileout = outdir + "siconc_SIday_OSI-401-b_r1i1p1_" + dateStart + "-" + dateEnd + "_" + hemi + ".nc"
+  fileout = outdir + "siconc_SIday_NSIDC-0081_r1i1p1_" + dateStart + "-" + dateEnd + "_" + hemi + ".nc"
   # Create file
   f = Dataset(fileout, mode = "w")
   # Create dimensions
@@ -117,9 +142,8 @@ def formatData(dateStart, dateEnd):
   times[:] = np.arange((d1 - date_ref).days, (d2 - date_ref).days + 1) # + 1 because of Python indexing
   times.units = "days since " + str(date_ref.year) + "-" + str(date_ref.month) + "-" + str(date_ref.day)
   
-  s = f.createVariable('siconc', np.float32, ('time', 'y', 'x'), fill_value = fillval)
+  s = f.createVariable('siconc', np.float32, ('time', 'y', 'x'))
   s.units = "%"
-  s.missing_value = fillval
   s[:] = siconc
   
   lons = f.createVariable('longitude', np.float32, ('y', 'x'))
@@ -144,14 +168,16 @@ def formatData(dateStart, dateEnd):
   print("File produced: " + fileout)
 
 
+
 if __name__ == "__main__":
   import sys
 
   # If not two arguments are passed
   if len(sys.argv) != (2 + 1):
-    sys.exit("format_OSI-401-b.py: No argument given, two expected.")
+    sys.exit("format_NSIDC-0081.py: No argument given, two expected.")
   else:
     dateStart = sys.argv[1]
     dateEnd   = sys.argv[2]
 
     formatData(dateStart, dateEnd)
+
