@@ -17,7 +17,7 @@ fi
 # Very important to be consistent here!!!
 target="2022-2023"
 dateStart=20221201
-dateEnd=20230228
+dateEnd=20230206
 
 # Step 1 : Retrieving the raw data
 
@@ -35,7 +35,5 @@ cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/siconc_
 
 cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/siconc_SIday_OSI-401-b_r1i1p1_${dateStart}-${dateEnd}_sh.nc ../data/${target}/netcdf/OSI-401-b_000_concentration.nc
 
-
-exit
-python3 obs2CSV.py
+python3 obs2CSV.py $target
 
