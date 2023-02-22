@@ -103,7 +103,6 @@ def convert(target):
             file.write("\n")
       
   
-  plt.legend()
   plt.ylim(0.0, 17.0)
   plt.savefig("../figs/obs.png", dpi = 300)
 

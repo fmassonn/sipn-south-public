@@ -5,7 +5,7 @@
 # Update observational verification data
 
 set -o nounset
-set -o errexit
+#set -o errexit
 set -x 
 
 if [[ $HOSTNAME = pelican ]]
@@ -17,7 +17,7 @@ fi
 # Very important to be consistent here!!!
 target="2022-2023"
 dateStart=20221201
-dateEnd=20230206
+dateEnd=20230219
 
 # Step 1 : Retrieving the raw data
 
