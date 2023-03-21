@@ -24,13 +24,15 @@ from netCDF4  import Dataset
 from datetime import date
 from scipy    import stats
 
+from colInterpolatOr import *
+
 matplotlib.rcParams['font.family'] = "Arial Narrow"
 
 # Script parameters
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2021-2022"   
+myyear = "2022-2023"   
 
 
 # Name of observational products. Evaluation will be done with dataset 1   
@@ -42,6 +44,21 @@ dpi = 300
 # End script parameters
 # ---------------------
 
+# Function CRPS
+def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0):
+	""" 	forecast is a list of ensemble forecasts
+		verifValue is the verifying observation
+		step is the spacing to estimate the CDFs
+		minVal and maxVal are the domain limits of the variables
+	"""
+	thisNbForecasts = len(forecast)
+	x = np.arange(minVal, maxVal, step) # x-axis
+	cdfVerif = (x > verifValue) * 1
+	cdfForecast = np.sum([(x > f) * 1 / thisNbForecasts for f in forecast], axis = 0)
+
+	CRPS = np.sum((cdfForecast - cdfVerif) ** 2 * step)
+
+	return x, CRPS
 
 # Read or create meta-data
 # ------------------------
@@ -72,8 +89,6 @@ else:
 exec(open("./namelist_" + myyear + ".py").read())
 
 # Create time axis
-#time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), 
-#                     periods = ndays).tolist()
 time = [datetime.strptime(inidate, "%Y%m%d") + timedelta(days = x) for x in 
                     range(0, ndays)]
 nt = len(time)
@@ -91,14 +106,20 @@ range_for = [info[j_sub][1] for j_sub in range(n_sub)]
 n_for    = [len(l) for l in range_for]
 
 # Colors for each submission
-col = [info[j_sub][2] for j_sub in range(n_sub)]
+# Create colors
+sourceColors = ["#000075", "#645ccc", "#4363d8", "#1898e0", "#00b2ed", "#00bb62", \
+               "#8bcd45", "#dbe622", "#f9c410", \
+               "#f89e13", "#fb4c27", "#fb4865", \
+               "#d24493", "#8f57bf", "#911eb4"]
+col = colInterpolatOr(sourceColors, nTarget = n_sub, colorCode = "HEX")
 
-# Convert to RGB if necessary
+# Change clim's color to black
 for j_sub in range(n_sub):
-    if type(col[j_sub]) is str:
-        col[j_sub] = matplotlib.colors.to_rgb(col[j_sub])
-        
-        
+  if sub_id[j_sub] == "climatology":
+    col[j_sub] = "black"
+    orderSub = 1000
+
+
 # Load the data in
 # The daily total areas will be stored in a list. Each item of the list
 # will correspond to one submission and will be a 2-D numpy array
@@ -152,23 +173,24 @@ for obsname in obs:
     
     del series, csv,
 
-# Now compute rank histograms and CRPS
+# Now compute CRPS
 
-RH    = np.full(n_sub, np.nan)
 CRPS  = np.full(n_sub, np.nan)
 
 for j_sub in range(n_sub):
-    
-  # CRPS
-  dH = 1 / n_for[j_sub]
-  CRPS[j_sub] = (np.sum(dH * np.abs(np.array(data[j_sub]) - data_obs[0]))) ** 2
+
+  thisList = data[j_sub]
+  obsRef = data_obs[0]
+
+  x, thisCRPS = computeCRPS(thisList, obsRef, step = 0.01, minVal = 0.0, maxVal = 100.0)
+
+  CRPS[j_sub] = thisCRPS
 
 
   siaForecasts = list(np.sort(data[j_sub]))
   
-  obsRef = data_obs[0]
   # Plot cdf
-  fig, ax = plt.subplots(1, 1, figsize = (4, 3))
+  fig, ax = plt.subplots(1, 1, figsize = (4, 5))
   ax.scatter(siaForecasts, np.zeros(len(siaForecasts)), 50, marker = "x", color = "blue")
   # Draw CDF
   listXpoints = [0] + siaForecasts + [100]
@@ -179,7 +201,7 @@ for j_sub in range(n_sub):
   # Plot obs
   ax.plot((obsRef, obsRef), (-1000, 1000), "r-")
   ax.set_ylim(-0.05, 1.05)
-  ax.set_xlim(-0.05, 5.0)
+  ax.set_xlim(-0.05, 2.5)
   
   ax.set_title(sub_id[j_sub])
   
@@ -192,13 +214,14 @@ zipped_sorted = sorted(zipped, key = lambda x: x[1])
 
 # Plot result
 
-fig, ax = plt.subplots(1, 1, figsize = (5, 4))
+fig, ax = plt.subplots(1, 1, figsize = (3, 4))
 for j, z in enumerate(zipped_sorted):
     
     ax.fill_between((0, z[1]), (n_sub - j, n_sub - j), color = z[2], alpha = 1.0)
     ax.text(z[1], n_sub - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center")
-ax.set_xlim(0.0, 3.5)
+ax.set_xlim(0.0, 2.5)
 ax.set_title("Continuous rank probability score\nfor " + target_period_name + " " + str(myyear[5:]) + " total sea ice area")
+ax.set_xlabel("Million km$^2$")
 ax.set_yticklabels("")
 fig.tight_layout()
 fig.savefig("../figs/CRPS.png", dpi = 300)
