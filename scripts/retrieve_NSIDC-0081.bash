@@ -24,7 +24,7 @@ currentDate=$1
 threDate=`date -j -f "%Y%m%d" 20160401 + "%Y%m%d"` # Threshold date corresponding to sensor change
 
 
-while [ "$currentDate" != $2 ]
+while [ "$currentDate" -le "$2" ]
 do
   echo $currentDate
 

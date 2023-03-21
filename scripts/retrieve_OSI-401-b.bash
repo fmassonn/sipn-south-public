@@ -30,7 +30,7 @@ mkdir -p $outdir
 
 currentDate=$1
 
-while [ "$currentDate" != $2 ]
+while [ "$currentDate" -le "$2" ]
 do
   echo $currentDate
 
