@@ -77,7 +77,7 @@ for j, n in enumerate(namelistContributions):
 			
 			#ax.plot(daysAxis, seriesTmp, color = plt.cm.gnuplot( int(j / len(namelistContributions) * 255)))
 		# Compute ensemble mean
-		thisMedian = np.nanmean(np.array(thisList), axis = 0)
+		thisMean = np.nanmean(np.array(thisList), axis = 0)
 		thisMin = np.nanmax(np.array(thisList), axis = 0)
 		thisMax = np.nanmin(np.array(thisList), axis = 0)
 		if thisType == "s":
@@ -87,8 +87,8 @@ for j, n in enumerate(namelistContributions):
 			else:
 				label = None
 			thisColor = "#008579"
-			ax[0, 0].plot(daysAxis, thisMedian, color = thisColor, label = label, lw = 1)
-			meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
+			ax[0, 0].plot(daysAxis, thisMean, color = thisColor, label = label, lw = 1)
+			meltRate = thisMean[nDaysWeek:] - thisMean[:-nDaysWeek]
 			ax[0, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 1)
 		elif thisType == "d":
 			if not firstDyn:
@@ -98,14 +98,14 @@ for j, n in enumerate(namelistContributions):
 				label = None
 
 			thisColor = "#FF7200"
-			ax[1, 0].plot(daysAxis, thisMedian, color = thisColor, label = label, lw = 1)
-			meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
+			ax[1, 0].plot(daysAxis, thisMean, color = thisColor, label = label, lw = 1)
+			meltRate = thisMean[nDaysWeek:] - thisMean[:-nDaysWeek]
 			ax[1, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 1)
 		elif thisType == "b":
 			thisColor = [0.2, 0.2, 0.2]
-			[ax[jj, 0].plot(daysAxis, thisMedian, color = thisColor, label = thisName, linestyle = ":", lw = 2, zorder = 1000) for jj in [0, 1]]
+			[ax[jj, 0].plot(daysAxis, thisMean, color = thisColor, label = thisName, linestyle = ":", lw = 2, zorder = 1000) for jj in [0, 1]]
 			# Plot melt rate
-			meltRate = thisMedian[nDaysWeek:] - thisMedian[:-nDaysWeek]
+			meltRate = thisMean[nDaysWeek:] - thisMean[:-nDaysWeek]
 			[ax[jj, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = thisName, lw = 2, linestyle = ":", zorder = 1000) for jj in [0, 1]]
 		else:
 			stop("Type not known")
