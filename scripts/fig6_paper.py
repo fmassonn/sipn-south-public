@@ -155,7 +155,10 @@ diagId   = 2 # We look at sea ice concentration
 colorDict = {"statistical": "#008579", \
              "dynamical":   "#FF7200", \
              "climatology": "#000000", \
-             "group forecast": "#0000FF"}
+             "group forecast": "#0000FF", \
+             "alternative verification": "#808080" }
+
+plotOtherVerif = True # Whether to plot alternative dataset  IIEE to gauge obs uncertainty
 
 # ----
 nDays    = ((namelistOutlooks[seasonId][5]) - (namelistOutlooks[seasonId][4])).days + 1
@@ -170,9 +173,12 @@ seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlook
 
 # Load observational data first
 # -----------------------------
-obs_name = "NSIDC-0081"
+#mainVerif = "NSIDC-0081"
+mainVerif = "OSI-401-b"
+#alternativeVerif = "OSI-401-b"
+alternativeVerif = "NSIDC-0081"
 f = Dataset("../data/" + seasonName + "/netcdf/regrid/" + \
-            obs_name + "_000_concentration_2x2.nc")
+            mainVerif + "_000_concentration_2x2.nc")
 sic_obs = f.variables["siconc"][:].data
 latitude = f.variables["latitude"][:].data
 longitude = f.variables["longitude"][:].data
@@ -181,6 +187,9 @@ mask_obs  = f.variables["sftof"][:].data
 nt = f.dimensions["time"].size
 f.close()
 
+if plotOtherVerif:
+	# If asked to plot second product, just add it to the namelist
+	namelistContributions.append([alternativeVerif, [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], "v"])
 
 siProbGroupList = list() # for group forecast: list of arrays with probability of sea ice presence
 # Run through all forecasts
@@ -208,8 +217,12 @@ for j, n in enumerate(namelistContributions):
 
 			for jFor in np.arange(thisNbForecasts):
 
+				if thisName == alternativeVerif:
+					thisMember = "000"
+				else:
+					thisMember = str(jFor + 1).zfill(3)
 				filein = "../data/" + seasonName + "/netcdf/regrid/" + thisName + "_" \
-					  + str(jFor + 1).zfill(3) + "_concentration_2x2.nc"
+					  + thisMember + "_concentration_2x2.nc"
 	
 				f = Dataset(filein, mode = "r")
 				sic = f.variables["siconc"][:]
@@ -243,6 +256,8 @@ for j, n in enumerate(namelistContributions):
 			thisColor = colorDict["dynamical"]
 		elif thisType == "b": # benchmark
 			thisColor = colorDict["climatology"]
+		elif thisType == "v": # other verification
+			thisColor = colorDict["alternative verification"]
 
 		ax.plot(daysAxis, thisIIEE, color = thisColor, lw = 2)
 
