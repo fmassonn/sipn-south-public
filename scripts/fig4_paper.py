@@ -56,6 +56,10 @@ seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlook
 firstDyn = False
 firstSta = False
 
+# All data to make medians lter
+groupDyn = list()
+groupSta = list()
+
 for j, n in enumerate(namelistContributions):
 	print(n)
 	thisName = n[0]
@@ -87,9 +91,12 @@ for j, n in enumerate(namelistContributions):
 			else:
 				label = None
 			thisColor = "#008579"
-			ax[0, 0].plot(daysAxis, thisMean, color = thisColor, label = label, lw = 1)
+			ax[0, 0].plot(daysAxis, thisMean, color = thisColor, label = label, lw = 0.5)
 			meltRate = thisMean[nDaysWeek:] - thisMean[:-nDaysWeek]
-			ax[0, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 1)
+			ax[0, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 0.5)
+
+			groupSta.append(thisMean)
+
 		elif thisType == "d":
 			if not firstDyn:
 				firstDyn = True
@@ -98,9 +105,11 @@ for j, n in enumerate(namelistContributions):
 				label = None
 
 			thisColor = "#FF7200"
-			ax[1, 0].plot(daysAxis, thisMean, color = thisColor, label = label, lw = 1)
+			ax[1, 0].plot(daysAxis, thisMean, color = thisColor, label = label, lw = 0.5)
 			meltRate = thisMean[nDaysWeek:] - thisMean[:-nDaysWeek]
-			ax[1, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 1)
+			ax[1, 1].plot(daysAxis[nDaysWeek:], meltRate, color = thisColor, label = label, lw = 0.5)
+	
+			groupDyn.append(thisMean)
 		elif thisType == "b":
 			thisColor = [0.2, 0.2, 0.2]
 			[ax[jj, 0].plot(daysAxis, thisMean, color = thisColor, label = thisName, linestyle = ":", lw = 2, zorder = 1000) for jj in [0, 1]]
@@ -110,7 +119,18 @@ for j, n in enumerate(namelistContributions):
 		else:
 			stop("Type not known")
 
+# Plot ensemble medians
+medianSta = np.median(groupSta, axis = 0)
+medianDyn = np.median(groupDyn, axis = 0)
+ax[0, 0].plot(daysAxis, medianSta, color = "#008579", label = "Group mean", lw = 2)
+ax[1, 0].plot(daysAxis, medianDyn, color = "#FF7200", label = "Group mean", lw = 2)
 
+# Plot melt rates of ensemble medians (linear diagnostic so can be done on group means)
+
+meltRateSta = medianSta[nDaysWeek:] - medianSta[:-nDaysWeek]
+meltRateDyn = medianDyn[nDaysWeek:] - medianDyn[:-nDaysWeek]
+ax[0, 1].plot(daysAxis[nDaysWeek:], meltRateSta, color = "#008579", label = "Group mean", lw = 2)
+ax[1, 1].plot(daysAxis[nDaysWeek:], meltRateDyn, color = "#FF7200", label = "Group mean", lw = 2)
 
 
 # Plot observational references
