@@ -95,7 +95,7 @@ for j, n in enumerate(namelistContributions):
 	thisType = n[-1] # Statistical or dynamical
 
 
-	if thisNbForecasts > 0:
+	if thisNbForecasts > 0:# and thisType == "s":
 		thisList = list()
 		for jFor in np.arange(thisNbForecasts):
 			# Locate the file
