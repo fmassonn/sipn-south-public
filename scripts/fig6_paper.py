@@ -173,10 +173,10 @@ seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlook
 
 # Load observational data first
 # -----------------------------
-#mainVerif = "NSIDC-0081"
-mainVerif = "OSI-401-b"
-#alternativeVerif = "OSI-401-b"
-alternativeVerif = "NSIDC-0081"
+mainVerif = "NSIDC-0081"
+#mainVerif = "OSI-401-b"
+alternativeVerif = "OSI-401-b"
+#alternativeVerif = "NSIDC-0081"
 f = Dataset("../data/" + seasonName + "/netcdf/regrid/" + \
             mainVerif + "_000_concentration_2x2.nc")
 sic_obs = f.variables["siconc"][:].data
