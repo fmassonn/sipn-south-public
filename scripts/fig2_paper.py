@@ -88,7 +88,7 @@ ax1.set_ylim(bottom = 0, top = 20)
 ax2 = ax1.twinx()
 
 color2 = "#381D59"
-ax2.plot(startYears, nFiles, "-bs", color = color2, label = "Nb. files contributed")
+ax2.plot(startYears, nFiles, "-s", color = color2, label = "Nb. files contributed")
 ax2.set_ylim(bottom = 0, top = 1000)
 ax1.set_yticks(np.arange(0, 25, 5))
 ax2.tick_params(axis = "y", color = color2, labelcolor = color2)
@@ -97,7 +97,7 @@ ax1.set_xticks(startYears)
 ax1.set_xticklabels(nameSeasons, rotation = 20)
 
 
-ax2.set_xlim(2016, 2022)
+ax2.set_xlim(2016, 2023)
 
 ax1.set_title("Evolution of input statistics to SIPN South")
 ax1.grid(axis = "y")
