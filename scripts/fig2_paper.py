@@ -83,7 +83,7 @@ fig, ax1 = plt.subplots(1, 1, figsize = (4, 3), dpi = 300)
 color1 = "#4189DD"
 ax1.bar(startYears, nCount, color = color1, label = "Nb. contributing groups", alpha = 0.9)
 ax1.tick_params(axis = "y", color = color1, labelcolor = color1)
-ax1.set_ylim(bottom = 0, top = 20)
+ax1.set_ylim(bottom = 0, top = 25)
 
 ax2 = ax1.twinx()
 

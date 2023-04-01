@@ -37,7 +37,7 @@ exec(open("./namelist.py").read())
 # Script parameters
 # -----------------
 
-seasonId = 4 # Which season to look at
+seasonId = 5 # Which season to look at
 diagId   = 0 # Which diag (currently only works with total SIA so 0)
 
 # ----

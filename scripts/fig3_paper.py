@@ -370,7 +370,6 @@ for i in range(nStartDates):
 maxS = [2, 0.5, 1.0, 1.2    , 1.0, 4]
     
 for j, a in enumerate(ax.flatten()):
-     a.set_xlim(2016, 2023)
      a.set_axisbelow(True)
      a.set_ylabel("Million km$^2$")
      
@@ -378,7 +377,7 @@ for j, a in enumerate(ax.flatten()):
      a.set_xticklabels([str(yearbClim) + "-" + str(yeareClim) + "\nobs. climatology"] + endYears, rotation = 20)
 
      a.set_yticks(np.arange(0, 5, 0.5))     
-     a.set_xlim(2015, 2023) 
+     a.set_xlim(2015, 2024) 
  
      myMax = maxS[j]
      a.set_ylim(-0.0, myMax * 1.1)

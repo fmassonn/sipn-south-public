@@ -38,7 +38,7 @@ exec(open("./namelist.py").read())
 # Script parameters
 # -----------------
 
-seasonId = 4 # Which season to look at: 0 = 2017-2018, 1 = 2018- 2019, 2 = 2019-2020, 3 = 2020-2021, 4 = 2021-2022
+seasonId = 5 # Which season to look at: 0 = 2017-2018, 1 = 2018- 2019, 2 = 2019-2020, 3 = 2020-2021, 4 = 2021-2022, 5 = 2022-2023
 diagId   = 0 # Which diag (currently only works with total SIA so 0)
 
 # ----
