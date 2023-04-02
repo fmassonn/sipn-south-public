@@ -2,6 +2,7 @@
 #          name
 np.random.seed(10)
 info = [ 
+          ["climatology",range(1, 30 + 1), "#000000",   "$^b"     ], \
           ["MetOffice",  range(1, 42 + 1), "#0077D4",   "$^d$"    ],  \
           ["BSC"      ,  range(1, 10 + 1), "#XYZT",     "$^d$"    ],
           ["ucl",        range(1, 10 + 1), "#005BC3",   "$^d$"    ],  \
