@@ -52,7 +52,7 @@ climDir = "/Users/massonnetf/CLIMDATA/"
 # !!! ATTENTION !!!!
 # The year is referenced to the 1st of December of the summer season, so
 # 2020 --> 2020-2021 = the last season before 2021-2022
-target = "2017-2018"
+target = "2022-2023"
 yeare = int(target[:4]) - 1
 
 # Year to start the collection of climatology. ATTENTION to the convention
