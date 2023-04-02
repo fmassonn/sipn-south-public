@@ -118,7 +118,14 @@ for j_sub in range(n_sub):
     lon_in = f.variables["longitude"][:]
     lat_in = f.variables["latitude"][:]
     sic_in = f.variables["siconc"][:]
+    sftof_in = f.variables["sftof"][:]
     f.close()
+
+    # Reset land values to zero to avoid ambiguity
+    for jt in np.arange(sic_in.shape[0]):
+      sicTMP = sic_in[jt, :, :]
+      sicTMP[sftof_in == 100] = 0.0
+      sic_in[jt, :, :] = sicTMP
 
     # Recenter longitude to [-180, 180]
     lon_in[lon_in > 180.0]  = lon_in[lon_in > 180.0]  - 360.0
