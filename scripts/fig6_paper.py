@@ -189,7 +189,7 @@ f.close()
 
 if plotOtherVerif:
 	# If asked to plot second product, just add it to the namelist
-	namelistContributions.append([alternativeVerif, [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], "v"])
+	namelistContributions.append([alternativeVerif, [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], [1, 1, 1, 0], "v"])
 
 siProbGroupList = list() # for group forecast: list of arrays with probability of sea ice presence
 # Run through all forecasts
@@ -244,7 +244,7 @@ for j, n in enumerate(namelistContributions):
 		# Now we compute the IIEE for that contribution, based on the 0.5 threshold (Helge Goessling)
 
 		thisIIEE = iiee(siProb, sic_obs, cellarea, mask = (latitude < 0), thresholdProbability = 0.5, thresholdSeaIcePresence = thresholdSeaIcePresence)
-
+		print(thisIIEE)
 		# We also store the probability to compute later a group forecast
 		if thisName != "climatology":
 			siProbGroupList.append(siProb)
