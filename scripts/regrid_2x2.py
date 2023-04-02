@@ -106,7 +106,7 @@ for jy in np.arange(ny):
 
 # Interpolation of the SIC files
 
-for j_sub in range(2, n_sub):
+for j_sub in range(n_sub):
   print("Interpolating " + str(sub_id[j_sub]))
   for j_for in list_for[j_sub]:
     # Open native file
