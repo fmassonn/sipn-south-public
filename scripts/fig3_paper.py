@@ -387,7 +387,7 @@ for j, a in enumerate(ax.flatten()):
        a.set_yticks([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
      a.grid()
      
-plt.suptitle("Observed and SIPN South forecast February mean sea ice area")
+plt.suptitle("Observed and SIPN South forecast February mean sea ice areas")
 
 fig.tight_layout()
 figName = "../figs/fig3_paper.png"

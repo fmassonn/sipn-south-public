@@ -49,7 +49,7 @@ seasonName = str(namelistOutlooks[seasonId][0].year) + "-" + str(namelistOutlook
 
 # ---
 # Function CRPS
-def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0):
+def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0, name = None):
 	""" 	forecast is a list of ensemble forecasts
 		verifValue is the verifying observation
 		step is the spacing to estimate the CDFs
@@ -62,9 +62,22 @@ def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0)
 
 	CRPS = np.sum((cdfForecast - cdfVerif) ** 2 * step)
 
+
+	# Print for check
+	if name is not None:
+		print(name)
+		print(forecast)
+		fig, ax  = plt.subplots(1, 1)
+		ax.plot(x, cdfVerif, color = "k", label = "Verif")
+		ax.plot(x, cdfForecast, color = "r", label = name)
+		ax.set_xlim(0.0, 6.0)
+		ax.set_title("CRPS: " + str(CRPS))
+		ax.legend()
+		fig.savefig(name + ".png")
+
 	return x, CRPS
 
-fig, ax = plt.subplots(1, 1, figsize = (4, 5))
+fig, ax = plt.subplots(1, 1, figsize = (5, 5))
 
 # Get value from observations
 # Plot observational references
@@ -95,8 +108,9 @@ for j, n in enumerate(namelistContributions):
 	thisType = n[-1] # Statistical or dynamical
 
 
-	if thisNbForecasts > 0:# and thisType == "s":
-		thisList = list()
+	if thisNbForecasts > 0:# and thisType == "d":
+		
+		thisList = list() # Will receive forecasts by this submission
 		for jFor in np.arange(thisNbForecasts):
 			# Locate the file
 			fileIn = "../data/" + seasonName + "/txt/" + thisName + "_" + str(jFor + 1).zfill(3) + "_total-area.txt"
@@ -118,25 +132,10 @@ for j, n in enumerate(namelistContributions):
 			thisColor = "black"
 		
 		# Compute CRPS
-		x, thisCRPS = computeCRPS(thisList, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0)
+		x, thisCRPS = computeCRPS(thisList, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0, name = thisName)
 
 		listInfo.append([thisName, thisCRPS, thisList, thisType, thisColor])
 
-		# Plot PDF to check
-		#figTmp, axTmp = plt.subplots(2, 1, figsize = (4, 8))
-		#axTmp[0].plot(x, cdfForecast, label = thisName)
-		#axTmp[0].plot(x, cdfVerif, color = "k", label = "OBS")
-		#axTmp[1].set_title("cumulative distribution functions")
-		#axTmp[0].legend()
-		#axTmp[0].set_xlim(0.0, 4.0)
-		#axTmp[0].set_ylim(0.0, 1.1)
-
-		#axTmp[1].plot(x, (cdfForecast - cdfVerif) ** 2)
-		##axTmp[1].set_title("(forecast CDF - obs CDF)$^2$")
-		#axTmp[1].set_xlim(0.0, 4.0)
-		#axTmp[1].set_ylim(0.0, 1.1)
-		#figTmp.savefig(thisName + ".png")
-		#plt.close(figTmp)
 
 
 # Print result
