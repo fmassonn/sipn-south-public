@@ -252,16 +252,19 @@ for j, n in enumerate(namelistContributions):
 		# Plot series
 		if thisType == "s":
 			thisColor = colorDict["statistical"]
+			zorder = 0
 		elif thisType == "d":
 			thisColor = colorDict["dynamical"]
+			zorder = 0
 		elif thisType == "b": # benchmark
 			thisColor = colorDict["climatology"]
+			zorder = 1000
 		elif thisType == "v": # other verification
 			thisColor = colorDict["alternative verification"]
+			zorder = 0
+		ax.plot(daysAxis, thisIIEE, color = thisColor, lw = 2, zorder = zorder)
 
-		ax.plot(daysAxis, thisIIEE, color = thisColor, lw = 2)
-
-		ax.text(daysAxis[-1] + timedelta(days  = 1), thisIIEE[-1], thisName, ha = "left", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
+		#ax.text(daysAxis[-1] + timedelta(days  = 1), thisIIEE[-1], thisName, ha = "left", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
 
 		del siProb
 
