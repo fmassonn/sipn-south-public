@@ -106,7 +106,7 @@ for jy in np.arange(ny):
 
 # Interpolation of the SIC files
 
-for j_sub in range(n_sub):
+for j_sub in range(2, n_sub):
   print("Interpolating " + str(sub_id[j_sub]))
   for j_for in list_for[j_sub]:
     # Open native file
@@ -123,10 +123,9 @@ for j_sub in range(n_sub):
 
     # Reset land values to zero to avoid ambiguity
     for jt in np.arange(sic_in.shape[0]):
-      sicTMP = sic_in[jt, :, :]
-      sicTMP[sftof_in == 100] = 0.0
+      sicTMP = np.squeeze(sic_in[jt, :, :])
+      sicTMP[sftof_in == 0] = 0.0
       sic_in[jt, :, :] = sicTMP
-
     # Recenter longitude to [-180, 180]
     lon_in[lon_in > 180.0]  = lon_in[lon_in > 180.0]  - 360.0
     lon_in[lon_in < -180.0] = lon_in[lon_in < -180.0] + 360.0
