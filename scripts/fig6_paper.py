@@ -261,7 +261,7 @@ for j, n in enumerate(namelistContributions):
 
 		ax.plot(daysAxis, thisIIEE, color = thisColor, lw = 2)
 
-		#ax.text(daysAxis[-1] + timedelta(days  = 1), thisIIEE[-1], thisName, ha = "left", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
+		ax.text(daysAxis[-1] + timedelta(days  = 1), thisIIEE[-1], thisName, ha = "left", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
 
 		del siProb
 
