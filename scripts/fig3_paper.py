@@ -391,8 +391,10 @@ plt.suptitle("Observed and SIPN South forecast February mean sea ice areas")
 
 fig.tight_layout()
 figName = "../figs/fig3_paper.png"
-
 fig.savefig(figName, dpi = 300)
 print("Figure " + figName + " printed") 
+
+figName = "../figs/fig3_paper.JPEG"
+fig.savefig(figName, dpi = 300)
 
 

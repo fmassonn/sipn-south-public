@@ -107,3 +107,5 @@ fig.legend(ncol = 1, bbox_to_anchor=(0.04, 0.78, 0.5, .102))
 # Legend
 fig.tight_layout()
 fig.savefig("../figs/fig2_paper.png", dpi = 300)
+fig.savefig("../figs/fig2_paper.JPEG", dpi = 300)
+fig.savefig("../figs/fig2_paper.png", dpi = 300)

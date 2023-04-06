@@ -37,7 +37,7 @@ exec(open("./namelist.py").read())
 # Script parameters
 # -----------------
 
-seasonId = 5 # Which season to look at
+seasonId = 5# Which season to look at
 diagId   = 0 # Which diag (currently only works with total SIA so 0)
 
 # ----
@@ -192,5 +192,7 @@ ax.set_xlim(0, 4)
 ax.legend(fontsize = 7)
 fig.tight_layout()
 figName = "../figs/fig5_paper.png"
+fig.savefig(figName, dpi = 300)
+figName = "../figs/fig5_paper.JPEG"
 fig.savefig(figName, dpi = 300)
 print("Figure " + figName + " printed")

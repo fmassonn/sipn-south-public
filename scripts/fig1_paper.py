@@ -179,5 +179,6 @@ print("Figure " + figName + " printed")
 
 # Merge figures
 os.system("convert +append ../figs/fig1a_paper.png ../figs/fig1b_paper.png ../figs/fig1.png")
+os.system("convert ../figs/fig1.png ../figs/fig1.JPEG")
 figName = "../figs/fig1_paper.png"
 print("Figure " + figName + " printed")

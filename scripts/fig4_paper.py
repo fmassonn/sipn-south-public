@@ -159,8 +159,8 @@ for j, obsname in enumerate(obsVerif):
 	meltRate = np.array(seriesTmp[nDaysWeek:]) - np.array(seriesTmp[:-nDaysWeek])
 
 
-	ax[0, 1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2)
-	ax[1, 1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2)
+	ax[0, 1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2, label = label)
+	ax[1, 1].plot(daysAxis[nDaysWeek:], meltRate, linestyle = obsLine[j], color = "k", lw = 2, label = label)
 
 [a.legend(fontsize = 9) for a in ax.flatten()]
 
@@ -180,4 +180,5 @@ for j in [0, 1]:
 fig.tight_layout()
 
 plt.savefig("../figs/fig4_paper.png", dpi = 300)
+plt.savefig("../figs/fig4_paper.JPEG", dpi = 300)
 
