@@ -152,11 +152,11 @@ exec(open("./namelist.py").read())
 seasonId = 5 # Which season to look at
 diagId   = 2 # We look at sea ice concentration
 
-colorDict = {"statistical": "#008579", \
-             "dynamical":   "#FF7200", \
-             "climatology": "#000000", \
-             "group forecast": "#0000FF", \
-             "alternative verification": "#808080" }
+colorDict = {"statistical": ["#008579", "-"], \
+             "dynamical":   ["#FF7200", "-"], \
+             "climatology": ["#000000", "-"], \
+             "group forecast": ["#0000FF", "-"], \
+             "alternative verification": ["#808080", ":"] }
 
 plotOtherVerif = True # Whether to plot alternative dataset  IIEE to gauge obs uncertainty
 
@@ -251,18 +251,22 @@ for j, n in enumerate(namelistContributions):
 		
 		# Plot series
 		if thisType == "s":
-			thisColor = colorDict["statistical"]
+			thisColor = colorDict["statistical"][0]
+			thisStyle = colorDict["statistical"][1]
 			zorder = 0
 		elif thisType == "d":
-			thisColor = colorDict["dynamical"]
+			thisColor = colorDict["dynamical"][0]
+			thisStyle = colorDict["dynamical"][1]
 			zorder = 0
 		elif thisType == "b": # benchmark
-			thisColor = colorDict["climatology"]
+			thisColor = colorDict["climatology"][0]
+			thisStyle = colorDict["climatology"][1]
 			zorder = 1000
 		elif thisType == "v": # other verification
-			thisColor = colorDict["alternative verification"]
+			thisColor = colorDict["alternative verification"][0]
+			thisStyle = colorDict["alternative verification"][1]
 			zorder = 0
-		ax.plot(daysAxis, thisIIEE, color = thisColor, lw = 2, zorder = zorder)
+		ax.plot(daysAxis, thisIIEE, color = thisColor, lw = 2, zorder = zorder, linestyle = thisStyle)
 
 		#ax.text(daysAxis[-1] + timedelta(days  = 1), thisIIEE[-1], thisName, ha = "left", fontsize = 4, color = [0.5, 0.5, 0.5], va = "center")
 
@@ -273,10 +277,10 @@ siProbGroup = np.mean(np.array(siProbGroupList), axis = 0)
 
 iieeGroup = iiee(siProbGroup, sic_obs, cellarea, mask = (latitude < 0), thresholdProbability = 0.5, thresholdSeaIcePresence = thresholdSeaIcePresence)
 
-ax.plot(daysAxis, iieeGroup, color = colorDict["group forecast"], lw = 3, linestyle = "-")
+ax.plot(daysAxis, iieeGroup, color = colorDict["group forecast"][0], lw = 3, linestyle = colorDict["group forecast"][1])
 
 
-linesLegend = [Line2D([0], [0], color = colorDict[c], linewidth=3) for c in colorDict]
+linesLegend = [Line2D([0], [0], color = colorDict[c][0], linestyle = colorDict[c][1], linewidth=3) for c in colorDict]
 linesLabels = [c for c in colorDict]
 ax.legend(linesLegend, linesLabels)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))

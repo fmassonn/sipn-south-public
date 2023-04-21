@@ -111,7 +111,7 @@ for s, a in zip(sectors, ax.flatten()):
     a.plot((2016, 2030), (myClim, myClim), color = "#D02433", linestyle = ":", lw = 1)
 
     
-    a.set_title("(" + "abcdefghijkl"[jLett] + ") " + s[0])
+    #a.set_title("(" + "abcdefghijkl"[jLett] + ") " + s[0])
 
     jLett += 1
 
@@ -396,5 +396,8 @@ print("Figure " + figName + " printed")
 
 figName = "../figs/fig3_paper.JPEG"
 fig.savefig(figName, dpi = 300)
+
+figName = "../figs/fig3_paper.eps"
+fig.savefig(figName)
 
 
