@@ -47,3 +47,7 @@ bin-release/
 
 # Logs
 log*
+
+
+#
+.DS_Store
