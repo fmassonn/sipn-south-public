@@ -112,6 +112,7 @@ for s, a in zip(sectors, ax.flatten()):
 
     
     #a.set_title("(" + "abcdefghijkl"[jLett] + ") " + s[0])
+    a.set_title( s[0])
 
     jLett += 1
 
