@@ -221,7 +221,7 @@ for j, z in enumerate(zipped_sorted):
     ax.text(z[1], n_sub - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center")
 ax.set_xlim(0.0, 2.5)
 ax.set_title("Continuous rank probability score\nfor " + target_period_name + " " + str(myyear[5:]) + " total sea ice area")
-ax.set_xlabel("Million km$^2$")
+ax.set_xlabel("(Million km$^2$)$^2$")
 ax.set_yticklabels("")
 fig.tight_layout()
 fig.savefig("../figs/CRPS.png", dpi = 300)
