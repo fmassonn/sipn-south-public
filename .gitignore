@@ -44,6 +44,6 @@ bin-release/
 *.eps
 *.ps
 *.gif
-
+*.DS_Store
 # Logs
 log*
