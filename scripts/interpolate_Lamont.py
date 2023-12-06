@@ -33,7 +33,7 @@
 import numpy as np
 from netCDF4 import Dataset
 
-myyear = "2021-2022"
+myyear = "2022-2023"
 
 def A(t1, t2, nd):
   return 1.0 / 3.0 * (t2 ** 3 - t1 ** 3) / nd

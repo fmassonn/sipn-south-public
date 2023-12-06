@@ -14,40 +14,36 @@
 
 set -o nounset
 set -o errexit
-set -x
+#set -x
 
-yearb=2022
-monb=1
-
-yeare=2022
-mone=8
-
-ftype="multi" # multi (= operational, OSI-401-b) 
+if [[ $# -ne 2 ]]
+then
+        echo "./retrieve_OSI-401-b.bash YYYYMMDD YYYYMMDD"
+        echo "retrieves the raw OSI-401-b data between the two dates"
+        exit
+fi
 
 rootdir=$TECLIM_CLIMATE_DATA
-outdir=${rootdir}/obs/ice/siconc/OSI-SAF/OSI-401-b/raw
+outdir=${rootdir}/obs/ice/siconc/OSI-SAF/OSI-401-b/raw/
 
 mkdir -p $outdir
 
-#------------------------
+currentDate=$1
 
-for year in `seq $yearb $yeare`
+while [ "$currentDate" -le "$2" ]
 do
-  firstMonth=1
-  lastMonth=12
-  if [[ $year == $yearb ]]
-  then
-    firstMonth=$monb
-  fi
-  if [[ $year == $yeare ]]
-  then
-    lastMonth=$mone
-  fi
+  echo $currentDate
 
-  for month in `seq $firstMonth $lastMonth`
-  do
-    month=$(printf "%02d" $month)
-    rootaddress="ftp://osisaf.met.no/archive/ice/conc/"
-    wget -N -c $rootaddress/${year}/${month}/ice_conc_sh_polstere-100_${ftype}_${year}${month}??1200.nc -P $outdir
-  done # month
-done # year
+
+  thisYear=`date  -j -f "%Y%m%d" $currentDate "+%Y"`
+  thisMonth=`date -j -f "%Y%m%d" $currentDate "+%m"`
+  thisDay=`date   -j -f "%Y%m%d" $currentDate "+%d"`
+
+  rootaddress="ftp://osisaf.met.no/archive/ice/conc/"
+  url=$rootaddress/$thisYear/$thisMonth/ice_conc_sh_polstere-100_multi_${thisYear}${thisMonth}${thisDay}1200.nc
+
+  wget -N -c $url -P $outdir 
+
+  # Increment
+  currentDate=`date -j -v+1d -f "%Y%m%d" $currentDate "+%Y%m%d"`
+done

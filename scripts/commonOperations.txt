@@ -1,0 +1,27 @@
+# -- Trimming a CSV file with commas
+nM=3; contrib=NicoSun; domain=total; for i in `seq 1 $nM`; do i=$(printf "%03d" $i); cat ${contrib}_${i}_${domain}-area.txt | cut -d ',' -f 1-90 > ${contrib}_${i}_${domain}-area.txt.tmp ; cp ${contrib}_${i}_${domain}-area.txt.tmp ${contrib}_${i}_${domain}-area.txt ; rm -f ${contrib}_${i}_${domain}-area.txt.tmp ; done
+
+
+
+# EMC
+# --- grib to netcdf
+for i in `seq 1 10`; do i=$(printf "%03d" $i); grib_to_netcdf -o emc_${i}_concentration.nc emc_${i}_concentration.grb2 ; done
+
+for i in `seq 1 10`; do i=$(printf "%03d" $i); cdo daymean emc_${i}_concentration.nc emc_${i}_concentration_daymean.nc ; done
+
+# --- trim 1/12--28/2
+for i in `seq 1 10`; do i=$(printf "%03d" $i); ncks -F -O -d time,-91,-2 emc_${i}_concentration_daymean.nc emc_${i}_concentration_daymean.nc ; done
+
+# Create area cello --> see python script
+
+# Dump area cello
+
+for i in `seq 1 10`; do ncks -F -A -v areacello,sftof areacello.nc emc_$(printf "%03d" $i)_concentration_daymean.nc ; done
+
+
+
+# BSC (EC-Earth3)
+
+! BSC delivers the data from November not December
+for i in `seq 1 10`; do ncks -F -O -d time,2,4 siconc_SImon_EC-Earth3_dcppB-forecast_s2022-r${i}i4p1f1_gn_202211-202310.nc ~/git/sipn-south-public/data/2022-2023/netcdf/BSC_$(printf "%03d" ${i})_concentration_monthly.nc ; done
+for i in `seq 1 10`; do ncks -F -O -d time,2,4 sivol_SImon_EC-Earth3_dcppB-forecast_s2022-r${i}i4p1f1_gn_202211-202310.nc ~/git/sipn-south-public/data/2022-2023/netcdf/BSC_$(printf "%03d" ${i})_volume_monthly.nc ; done

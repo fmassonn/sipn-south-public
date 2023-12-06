@@ -23,7 +23,7 @@ from   glob import glob
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
 
-myyear = "2021-2022"
+myyear = "2022-2023"
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -118,8 +118,14 @@ for j_sub in range(n_sub):
     lon_in = f.variables["longitude"][:]
     lat_in = f.variables["latitude"][:]
     sic_in = f.variables["siconc"][:]
+    sftof_in = f.variables["sftof"][:]
     f.close()
 
+    # Reset land values to zero to avoid ambiguity
+    for jt in np.arange(sic_in.shape[0]):
+      sicTMP = np.squeeze(sic_in[jt, :, :])
+      sicTMP[sftof_in == 0] = 0.0
+      sic_in[jt, :, :] = sicTMP
     # Recenter longitude to [-180, 180]
     lon_in[lon_in > 180.0]  = lon_in[lon_in > 180.0]  - 360.0
     lon_in[lon_in < -180.0] = lon_in[lon_in < -180.0] + 360.0
@@ -128,31 +134,29 @@ for j_sub in range(n_sub):
     if len(lat_in.shape) == 1 or len(lat_in.shape) == 1:
       lon_in, lat_in = np.meshgrid(lon_in, lat_in)
 
-    # If first member, create mask for that submission (needed only once)
-    if j_for == list_for[j_sub][0]:
-        
-      # The idea here is to go through each grid cell of the target grid.
-      # If that grid cell is "ocean" in the target grid, then an array
-      # is stored for that cell that corresponds to the grid cells of the
-      # *input* (submission) grid that are within the current target grid
-      # cell
-      list_mask = [list() for jxy in range(ny * nx)]
-      for jy in np.arange(ny):
-        for jx in np.arange(nx):
-          if mask_out[jy, jx] == 100.0:
-            # linear index
-            jxy = jy * nx + jx
+    # The idea here is to go through each grid cell of the target grid.
+    # If that grid cell is "ocean" in the target grid, then an array
+    # is stored for that cell that corresponds to the grid cells of the
+    # *input* (submission) grid that are within the current target grid
+    # cell
+    # We do that for every year, because sometimes (climatology) the grid 
+    # changes over time
+    list_mask = [list() for jxy in range(ny * nx)]
+    for jy in np.arange(ny):
+      for jx in np.arange(nx):
+        if mask_out[jy, jx] == 100.0:
+          # linear index
+          jxy = jy * nx + jx
+          lonmin = lon_out[jy, jx] - dlon / 2.0
+          lonmax = lon_out[jy, jx] + dlon / 2.0
+          latmin = lat_out[jy, jx] - dlat / 2.0
+          latmax = lat_out[jy, jx] + dlat / 2.0
 
-            lonmin = lon_out[jy, jx] - dlon / 2.0
-            lonmax = lon_out[jy, jx] + dlon / 2.0
-            latmin = lat_out[jy, jx] - dlat / 2.0
-            latmax = lat_out[jy, jx] + dlat / 2.0
+          mask   = (lat_in >= latmin) * (lat_in < latmax) * \
+                   (lon_in >= lonmin) * (lon_in < lonmax)
 
-            mask   = (lat_in >= latmin) * (lat_in < latmax) * \
-                     (lon_in >= lonmin) * (lon_in < lonmax)
-
-            list_mask[jxy] = mask
-            del mask
+          list_mask[jxy] = mask
+          del mask
 
     print("Regridding " + filename)
   

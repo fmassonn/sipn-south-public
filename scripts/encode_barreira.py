@@ -6,7 +6,8 @@ import os
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-myyear = "2021-2022"
+myyear = "2022-2023"
+nameContrib = "barreiraOrig"
 
 R = 6378000.0
 
@@ -20,13 +21,18 @@ ny, nx = lon_out.shape
 
 areacello = R * np.cos( (lat_out * 2.0 * np.pi / 360.0 )) * (dlon * 2.0 * np.pi / 360.0)  * R * (dlat * 2.0 * np.pi / 360.0)
 
-root = "../data/" + myyear + "/barreira/"
-nmemb = 3
+root = "../data/" + myyear + "/" + nameContrib + "/"
+nmemb = 2
 
 for jmemb in np.arange(1, nmemb + 1):
   jjmemb = str(jmemb).zfill(3)
 
-  files = ["./memb" + jjmemb + "/SHN_ " + str(j) + " concentracion_c" + str(jmemb) + ".txt" for j in range(1, 90 + 1)]
+  files = ["./memb" + jjmemb + "/SHN_" + str(j) + "_" + str(jmemb) + ".txt" for j in range(1, 90 + 1)]
+
+  files = list()
+  for k in [["dic", 31], ["jan", 31], ["feb", 28]]:
+    thisList = ["./memb" + jjmemb + "/SHN_" + k[0] + "_" + str(dayNam) + "_" + str(jmemb) + "_original.txt" for dayNam in np.arange(1, k[1] + 1)]
+    files += thisList
 
   nt = len(files)
 
@@ -76,7 +82,7 @@ for jmemb in np.arange(1, nmemb + 1):
           print("File " + root + files[jt] + " not found, skipping")
     
   # Create file
-  fileout = "../data/" + myyear + "/netcdf/barreira_" + jjmemb + "_concentration.nc"
+  fileout = "../data/" + myyear + "/netcdf/" + nameContrib + "_" + jjmemb + "_concentration.nc"
   f = Dataset(fileout, mode = "w")
 
   # Create dimensions

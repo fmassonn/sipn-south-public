@@ -28,19 +28,21 @@ from netCDF4  import Dataset
 from datetime import date
 from scipy    import stats
 
+from colInterpolatOr import *
+
 plt.close("all")
 
 # Script parameters
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "TOP2022"   
+myyear = "2022-2023"   
 
 # Add obs as reference or not (False if forecast mode)
-plotobs = False
+plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = False
+postseason = True
 
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
@@ -110,13 +112,18 @@ range_for = [info[j_sub][1] for j_sub in range(n_sub)]
 # Number of forecasts for each submission
 n_for    = [len(l) for l in range_for]
 
-# Colors for each submission
-col = [info[j_sub][2] for j_sub in range(n_sub)]
+# Create colors
+sourceColors = ["#000075", "#645ccc", "#4363d8", "#1898e0", "#00b2ed", "#00bb62", \
+               "#8bcd45", "#dbe622", "#f9c410", \
+               "#f89e13", "#fb4c27", "#fb4865", \
+               "#d24493", "#8f57bf", "#911eb4"]
+col = colInterpolatOr(sourceColors, nTarget = n_sub, colorCode = "HEX")
 
-# Convert to RGB if necessary
+# Change clim's color to black
 for j_sub in range(n_sub):
-    if type(col[j_sub]) is str:
-        col[j_sub] = matplotlib.colors.to_rgb(col[j_sub])
+  if sub_id[j_sub] == "climatology":
+    col[j_sub] = "black"
+    orderSub = 1000
 
 # Store the raw data
 # ------------------
@@ -152,6 +159,11 @@ for j_sub in range(n_sub):
     # Delete temporary data for that submission
     del sub_data
 
+# Add the multi-model ensemble forecast
+mmef = np.array([np.mean(d, axis=1) for j, d in enumerate(data) if sub_id[j] != "climatology"])
+
+
+
 # Repeat with observations, if needed
 if plotobs:
     # A list of 1-D numpy arrays, each of dimensions {time}
@@ -179,35 +191,43 @@ if plotobs:
 # and plot them
 # -------------------------------------------  
         
-# Figure 1: daily ensemble median and range
+# Figure 1: daily ensemble mean and range
 fig, ax = plt.subplots(figsize = (6, 4), dpi = dpi)
 
 for j_sub in range(n_sub):
-    median = np.median(data[j_sub], axis = 1)
+    mean = np.nanmean(data[j_sub], axis = 1)
 
-    plt.plot(time, median, color = col[j_sub], lw = 1.5, 
-             label = info[j_sub][0] + " " + info[j_sub][3])
+    if info[j_sub][0] == "climatology":
+      zorder = 1000
+    else:
+      zorder = 0
+
+    plt.plot(time, mean, color = col[j_sub], lw = 1.0, 
+             label = info[j_sub][0] + " " + info[j_sub][2], zorder = zorder)
     
     # Plot range as shading
-    mymax = np.max(data[j_sub], axis = 1)
-    mymin = np.min(data[j_sub], axis = 1)
+    mymax = np.nanmax(data[j_sub], axis = 1)
+    mymin = np.nanmin(data[j_sub], axis = 1)
     
+    if info[j_sub][0] == "climatology":
+	    plt.fill_between(time, mymin, mymax, 
+	                     color = col[j_sub], 
+	                     alpha = 0.2, lw = 0)
 
-    plt.fill_between(time, mymin, mymax, 
-                     color = [c * 1.0 for c in col[j_sub]], 
-                     alpha = 0.2, lw = 0)
-    
+# Plot model ensemble median
+plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 2, label = "median forecast")    
+
 # Plot observations if required
 if plotobs:
     for j_obs, obsname in enumerate(obs):
         plt.plot(time, data_obs[j_obs], color = [0.1, 0.1, 0.1], lw = 1.5, \
                  linestyle = lst[j_obs], label = "OBS " + obsname)
 # Figure polishing
-plt.title(period_name + " total Antarctic sea ice area")
+plt.title(period_name + " Antarctic sea ice area")
 plt.xticks([time[j] for j in [0, 14, 31, 45, 62, 76, 89]])
 plt.ylim(0.0, 14)
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-plt.legend(fontsize = 7)
+plt.legend(fontsize = 6, ncol = 2)
 plt.ylabel("10$^6$ km$^2$")
 plt.grid()
 plt.tight_layout()
@@ -221,7 +241,7 @@ plt.close(fig)
 
 
 # Figure 2: monthly means 
-fig, ax = plt.subplots(figsize = (8, 6), dpi = dpi)
+fig, ax = plt.subplots(figsize = (6, 6), dpi = dpi)
 
 for j_sub in range(n_sub):
     print(sub_id[j_sub])
@@ -233,11 +253,11 @@ for j_sub in range(n_sub):
     
     ax.scatter(monmean, np.full(n_for[j_sub], n_sub - j_sub), 
                15, color = col[j_sub], 
-               label = info[j_sub][0] + " " + info[j_sub][3],
+               label = info[j_sub][0] + " " + info[j_sub][2],
                edgecolor = "white", lw = 0.2)
         
     # Plot associated PDF
-    scale = 0.5
+    scale = 1.0
     if n_for[j_sub] >= 3:
         
         xpdf = np.linspace(0, 10, 1000)
@@ -246,8 +266,18 @@ for j_sub in range(n_sub):
         
         pdf = kernel(xpdf).T
         
-        ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf, 
+        ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf * scale, 
                  color = col[j_sub], alpha = 0.2, lw = 0)
+
+# Plot mmef
+xpdf = np.linspace(0, 10, 1000)
+mmef_monmean = np.nanmean(mmef[:, t1:t2], axis = 1)
+kernel = stats.gaussian_kde(mmef_monmean)
+pdf = kernel(xpdf).T
+ax.scatter(mmef_monmean, np.full(len(mmef_monmean), 0), 15, color = "blue", \
+           label = "model ensemble", lw = 0.2, edgecolor = "white")
+ax.fill_between(xpdf, 0 , 0 + 0.5 * pdf * scale,
+                 color = "blue", alpha = 0.4, lw = 0)
 
 # Plot observations if required
 if plotobs and postseason:
@@ -266,13 +296,13 @@ if plotobs and postseason:
         
 # Figure polishing
 ax.set_axisbelow(True)
-ax.set_title(str(myyear[5:]) + " " + target_period_name + " mean sea ice area")
-ax.legend(loc = "upper center", ncol = 6, fontsize = 7)
+ax.set_title(str(myyear[5:]) + " " + target_period_name + " mean Antarctic sea ice area")
+ax.legend(loc = "upper center", ncol = 4, fontsize = 6)
 ax.set_xlabel("Million km$^2$")
 ax.set_xlim(0, 4)
-ax.set_ylim(0.0, n_sub + 6)
+ax.set_ylim(-1.0, n_sub + 6)
 ax.grid()
-ax.set_yticks([],[])
+ax.set_yticks([])
 plt.tight_layout()
 for fmt in ["png", "pdf"]:
     plt.savefig("../figs/fig2." + fmt, dpi = dpi)

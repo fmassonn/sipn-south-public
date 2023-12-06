@@ -6,8 +6,8 @@ import numpy as np
 # From SIPN-South compliant sea ice concentration fields, produces 
 # sea ice areas (circumpolar + regional) text files
 
-subId = "EC-Earth3"
-myyear = "2021-2022"
+subId = "BSC"
+myyear = "2022-2023"
 nmemb = 10
 
 
