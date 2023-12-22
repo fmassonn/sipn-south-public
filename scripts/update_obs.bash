@@ -15,9 +15,9 @@ fi
 
 # Dates defining the name of the SIPN South experiment and the period to analyze
 # Very important to be consistent here!!!
-target="2022-2023"
-dateStart=20221201
-dateEnd=20230228
+target="2023-2024"
+dateStart=20231201
+dateEnd=20240228
 
 # Step 1 : Retrieving the raw data
 

@@ -36,13 +36,13 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2022-2023"   
+myyear = "2023-2024"   
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = True
+postseason = False
 
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]

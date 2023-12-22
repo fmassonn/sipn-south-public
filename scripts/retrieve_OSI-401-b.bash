@@ -14,7 +14,7 @@
 
 set -o nounset
 set -o errexit
-#set -x
+set -x
 
 if [[ $# -ne 2 ]]
 then
