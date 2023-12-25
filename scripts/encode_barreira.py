@@ -6,8 +6,10 @@ import os
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-myyear = "2022-2023"
-nameContrib = "barreiraOrig"
+# Encore barreira data in the folder raw of that year
+
+myyear = "2023-2024"
+nameContrib = "barreira"
 
 R = 6378000.0
 
@@ -21,19 +23,21 @@ ny, nx = lon_out.shape
 
 areacello = R * np.cos( (lat_out * 2.0 * np.pi / 360.0 )) * (dlon * 2.0 * np.pi / 360.0)  * R * (dlat * 2.0 * np.pi / 360.0)
 
-root = "../data/" + myyear + "/" + nameContrib + "/"
-nmemb = 2
+root = "../data/" + myyear + "/raw/" + nameContrib + "/"
+nmemb = 1
 
 for jmemb in np.arange(1, nmemb + 1):
   jjmemb = str(jmemb).zfill(3)
 
-  files = ["./memb" + jjmemb + "/SHN_" + str(j) + "_" + str(jmemb) + ".txt" for j in range(1, 90 + 1)]
+  #files = ["./memb" + jjmemb + "/SHN_" + str(j) + "_" + str(jmemb) + ".txt" for j in range(1, 90 + 1)]
 
   files = list()
-  for k in [["dic", 31], ["jan", 31], ["feb", 28]]:
-    thisList = ["./memb" + jjmemb + "/SHN_" + k[0] + "_" + str(dayNam) + "_" + str(jmemb) + "_original.txt" for dayNam in np.arange(1, k[1] + 1)]
+  for k in [["dic", 31, myyear[:4]], ["Ene", 31, myyear[5:]], ["Feb", 28, myyear[5:]]]:
+  #  thisList = ["./memb" + jjmemb + "/SHN_" + k[0] + "_" + str(dayNam) + "_" + str(jmemb) + "_original.txt" for dayNam in np.arange(1, k[1] + 1)]
+    thisList = ["SHN_" + k[0] + "_" + k[2][2:] + " " + str(dayNam) + " " + "concentracion.txt" for dayNam in np.arange(1, k[1] + 1)]
     files += thisList
 
+  print(files)
   nt = len(files)
 
 
@@ -82,7 +86,7 @@ for jmemb in np.arange(1, nmemb + 1):
           print("File " + root + files[jt] + " not found, skipping")
     
   # Create file
-  fileout = "../data/" + myyear + "/netcdf/" + nameContrib + "_" + jjmemb + "_concentration.nc"
+  fileout = "../data/" + myyear + "/netcdf/" + nameContrib + "_" + jjmemb + "_" + myyear[:4] + "1201-" + str(myyear[5:]) + "0228" + "_concentration.nc"
   f = Dataset(fileout, mode = "w")
 
   # Create dimensions

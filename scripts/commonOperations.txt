@@ -3,6 +3,12 @@ nM=3; contrib=NicoSun; domain=total; for i in `seq 1 $nM`; do i=$(printf "%03d" 
 
 
 
+# Add a date to a file
+
+contrib=CanSIPSv2; nM=20; domain=total; for i in `seq 1 $nM`; do nM=$(printf "%03d" $i); echo $nM; cp ${contrib}_${nM}_${domain}-area.txt ../../txt/${contrib}_${nM}_20231201-20240228_${domain}-area.txt; done
+
+
+
 # EMC
 # --- grib to netcdf
 for i in `seq 1 10`; do i=$(printf "%03d" $i); grib_to_netcdf -o emc_${i}_concentration.nc emc_${i}_concentration.grb2 ; done

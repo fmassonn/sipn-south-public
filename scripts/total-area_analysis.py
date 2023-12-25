@@ -83,6 +83,7 @@ else:
   inidate = myyear[:4] + "1201"
   # Number of days in the forecast period
   ndays   = 90
+  enddate = str(int(myyear[:4]) + 1) + "0228"
   # Label for period that is forecasted
   period_name = "Dec-Jan-Feb " + myyear[:4] + "-" + myyear[5:]
   # Starting and ending time indices (Python conventions)  
@@ -142,7 +143,7 @@ for j_sub in range(n_sub):
     # conventions
     for j_for in range_for[j_sub]:
       filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + \
-               str(j_for).zfill(3) + "_total-area.txt"
+               str(j_for).zfill(3) + "_" + inidate + "-" + enddate + "_total-area.txt"
       # Read the CSV file
       csv = pd.read_csv(filein, header = None)
       series = csv.iloc[0][:]
