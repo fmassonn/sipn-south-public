@@ -44,13 +44,12 @@ def compute_area(concentration, cellarea, mask = 1):
 
 climDir = "/Users/massonnetf/CLIMDATA/"
 
-# Year of the 1st of December starting the summer season
-# Last year to be processed. That's the year of the forecast minus one
-#
-# !!! ATTENTION !!!!
-# The year is referenced to the 1st of December of the summer season, so
-# 2020 --> 2020-2021 = the last season before 2021-2022
-target = "2022-2023"
+
+# Current forecasting season. The season before will be the last one to create a climatologyL
+target = "2023-2024"
+# The forecasting period (to be added in the file name)
+forecastPeriod = target[:4] + "1201-" + target[5:] + "0228"
+
 yeare = int(target[:4]) - 1
 
 # Year to start the collection of climatology. ATTENTION to the convention
@@ -103,7 +102,7 @@ for year in np.arange(yearb, yeare + 1):
            listSia.append(np.nan)
             
     # Write to txt file
-    with open("../data/" + target + "/txt/climatology_" + str(jMemb).zfill(3) + "_total-area.txt", "w") as file:
+    with open("../data/" + target + "/txt/climatology_" + str(jMemb).zfill(3) + "_" + forecastPeriod + "_total-area.txt", "w") as file:
         file.write(",".join(["{0:.4f}".format(a) for a in listSia]))  
         file.write("\n")
         

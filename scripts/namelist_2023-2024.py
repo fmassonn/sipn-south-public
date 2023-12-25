@@ -2,7 +2,7 @@
 #          name [string]       list [list]
 np.random.seed(10)
 info = [ 
-#    [ "climatology",      range(1, 30  + 1),  ""  ],
+    [ "climatology",      range(1, 30  + 1),  ""  ],
      [ "AWI-CPS",          range(1, 30 + 1) ,                 "$^{d}$",  18.8333     ], \
 #    [ "barreiraOrig",     range(1, 2  + 1),  "$^{s}$"  ], \
 #    [ "barreiraNew",      range(1, 2  + 1),  "$^{s}$"  ], \
