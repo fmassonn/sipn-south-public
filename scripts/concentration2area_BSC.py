@@ -7,8 +7,9 @@ import numpy as np
 # sea ice areas (circumpolar + regional) text files
 
 subId = "BSC"
-myyear = "2022-2023"
-nmemb = 10
+myyear = "2023-2024"
+period= myyear[:4] + "1201-" + myyear[5:] + "0228"
+nmemb = 50
 
 
 def compute_area(concentration, cellarea, mask = 1):
@@ -39,7 +40,7 @@ for jmemb in np.arange(1, nmemb + 1):
 
   jjmemb = str(jmemb).zfill(3)
 
-  filein = "../data/" + myyear + "/netcdf/" + subId + "_" + jjmemb + "_concentration.nc"
+  filein = "../data/" + myyear + "/netcdf/" + subId + "_" + jjmemb + "_" + period + "_concentration.nc"
 
   # Open file
   f = Dataset(filein, mode = "r")
@@ -56,13 +57,13 @@ for jmemb in np.arange(1, nmemb + 1):
 
   area = compute_area(siconc, areacello, 1.0 * (lat < 0) * (sftof / 100.0))
 
-  with open("../data/" + myyear + "/txt/" + subId + "_" + jjmemb + "_total-area.txt", "w") as file:
+  with open("../data/" + myyear + "/txt/" + subId + "_" + jjmemb + "_" + period + "_total-area.txt", "w") as file:
     file.write(",".join(["{0:.4f}".format(a) for a in area]))  # + 1 as python does not take the last bit
     file.write("\n")
 
   del area
 
-  with open("../data/" + myyear + "/txt/" + subId + "_" + jjmemb + "_regional-area.txt", "w") as file:
+  with open("../data/" + myyear + "/txt/" + subId + "_" + jjmemb + "_" + period + "_regional-area.txt", "w") as file:
     # Per longitude bin
     for j_bin in np.arange(36):
       print(j_bin)

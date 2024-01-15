@@ -34,9 +34,10 @@ import numpy as np
 from netCDF4 import Dataset
 
 
-thisSeason = "2022-2023" ; yearStart = thisSeason[:4]
+thisSeason = "2023-2024" ; yearStart = thisSeason[:4]
+period= myyear[:4] + "1201-" + myyear[5:] + "0228"
 subId = "BSC"
-nMemb = 10
+nMemb = 50
 
 def A(t1,t2,nd):
   return 1.0 / 3.0 * (t2 ** 3 - t1 ** 3) / nd
@@ -63,7 +64,7 @@ Binv = np.linalg.inv(B)
 # For each member
 
 for iMemb in np.arange(1, nMemb + 1):
-    
+    print(str(iMemb) + "/" + str(nMemb))   
     # Read in the data
     f = Dataset("../data/" + thisSeason + "/netcdf/" + subId + "_" + str(iMemb).zfill(3) + "_concentration_monthly.nc", mode = "r")
     sic = f.variables["siconc"][:]
@@ -99,7 +100,7 @@ for iMemb in np.arange(1, nMemb + 1):
         sic_out[:, jy, jx] = tmp
     
     
-    f = Dataset("../data/" + thisSeason + "/netcdf/" + subId + "_" + str(iMemb).zfill(3) + "_concentration.nc", mode = "w")
+    f = Dataset("../data/" + thisSeason + "/netcdf/" + subId + "_" + str(iMemb).zfill(3) + "_" + period + "_concentration.nc", mode = "w")
     t_d   = f.createDimension("time", None)
     y_d   = f.createDimension("y", lon.shape[0])
     x_d   = f.createDimension("x", lon.shape[1])

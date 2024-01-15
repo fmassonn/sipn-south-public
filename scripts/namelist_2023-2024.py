@@ -9,7 +9,7 @@ info = [
      [ "CanSIPSv2",        range(1, 20 + 1),  "$^d$",   20.24169    ], \
     [ "cmcc",             range(1, 50 + 1),  "$^d$"    ], \
 #    [ "CNRM",             range(1, 51 + 1),  "$^d$"    ],  \
-#    [ "BSC",              range(1, 10 + 1),  "$^d$"    ], \
+    [ "BSC",              range(1, 50 + 1),  "$^d$"    ], \
 #    [ "ecmwf",            range(1, 51 + 1),  "$^d$"    ], \
     [ "emc",              range(1, 10 + 1),  "$^d$"    ], \
 #    [ "FIO-ESM",          range(1, 10 + 1),  "$^d$"    ], \
