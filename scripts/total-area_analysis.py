@@ -149,7 +149,7 @@ for j_sub in range(n_sub):
       series = csv.iloc[0][:]
       # Append that series to the contribution data
       if len(series) != nt:
-        print("WARNING: INPUT SERIES TOO LONG, CROPPING")
+        print(sub_id[j_sub] + " --> WARNING: INPUT SERIES TOO LONG, CROPPING")
         series = series[:nt]
       sub_data[:, j_for - 1] = series
       
