@@ -2,7 +2,7 @@
 
 
 # Script to interpolate the monthly sea ice concentration
-# data from monthly to daily (Lamont Forecast, Yuan)
+# data from monthly to daily (Lamont Forecast, Yuan; works with other submissions)
 #
 # For each grid cell, three data points are given for 
 # December, January and February average
