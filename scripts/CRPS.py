@@ -32,7 +32,8 @@ matplotlib.rcParams['font.family'] = "Arial Narrow"
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2022-2023"   
+myyear = "2023-2024"   
+stringPeriod=myyear[:4] + "1201-" + myyear[5:9] + "0228"
 
 
 # Name of observational products. Evaluation will be done with dataset 1   
@@ -136,13 +137,14 @@ for j_sub in range(n_sub):
     # conventions
     for j_for in range_for[j_sub]:
       filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + \
-               str(j_for).zfill(3) + "_total-area.txt"
+               str(j_for).zfill(3) + "_" + stringPeriod + "_total-area.txt"
       # Read the CSV file
       csv = pd.read_csv(filein, header = None)
       series = csv.iloc[0][:]
       # Append that series to the contribution data
       if len(series) != nt:
         print("WARNING: INPUT SERIES TOO LONG, CROPPING")
+        print(sub_id[j_sub])
         stop()
       
       # Compute time-mean  
