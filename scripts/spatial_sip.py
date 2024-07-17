@@ -91,6 +91,7 @@ if plotobs:
 for j_sub in range(n_sub):
   print("Doing " + str(sub_id[j_sub]))
   map = Basemap(projection = "spstere", boundinglat = - 50,lon_0 = 180, resolution = 'l')
+  #map = Basemap(projection = "npstere", boundinglat =  50 ,lon_0 = 180, resolution = 'l')
   map.fillcontinents(color = 'grey', lake_color = 'w')
 
   # Load the data into a big array "data"
@@ -231,8 +232,8 @@ for j_sub in range(n_sub):
     #for day in [1, 10, 20, 28]:
     #  plt.text(np.linspace(x1, x2, nt)[day - 1], np.linspace(y1, y2, nt)[day - 1], " " + period_name + " " + str(day).zfill(2), rotation = 90, va = "bottom", ha = "center", color = [0.7, 0.7, 0.7])
     plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
-    plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".pdf", dpi = 300)
-    plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".eps", dpi = 300)
+    #plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".pdf", dpi = 300)
+    #plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".eps", dpi = 300)
     print("  Probability " + time[jt].strftime('%d %B %Y') + " printed")
     plt.close("fig")
   

@@ -72,5 +72,5 @@ sorted_data = [x for x in sorted(zip(sie,time))]
 print(sorted_data)
 
 plt.tight_layout()
-plt.savefig("../figs/fig.png", dpi = 400)
+plt.savefig("../figs/figTimeSeries.png", dpi = 400)
 
