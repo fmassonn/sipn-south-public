@@ -46,17 +46,24 @@ dpi = 300
 # ---------------------
 
 # Function CRPS
-def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0):
+def computeCRPS(forecast, verifValue, step = 0.01, minVal = 0.0, maxVal = 100.0, isRange = False):
 	""" 	forecast is a list of ensemble forecasts
 		verifValue is the verifying observation
 		step is the spacing to estimate the CDFs
 		minVal and maxVal are the domain limits of the variables
+		isRange is False when the PDF must be reconstructed by assuming that all
+		values are realizations from an unknown PDF, while it is True when the PDF
+		must be a rectangular shape starting at the lowest member and ending at the highest member
+		(like Nico Sun)
 	"""
 	thisNbForecasts = len(forecast)
 	x = np.arange(minVal, maxVal, step) # x-axis
 	cdfVerif = (x > verifValue) * 1
-	cdfForecast = np.sum([(x > f) * 1 / thisNbForecasts for f in forecast], axis = 0)
-
+	if not isRange:
+		cdfForecast = np.sum([(x > f) * 1 / thisNbForecasts for f in forecast], axis = 0)
+	else:
+		cdfForecast = 1 * (x > np.max(forecast)) + (x - np.min(forecast)) / (np.max(forecast) - np.min(forecast)) * (x <= np.max(forecast)) * (x > np.min(forecast))
+	print(cdfForecast)
 	CRPS = np.sum((cdfForecast - cdfVerif) ** 2 * step)
 
 	return x, CRPS
@@ -177,14 +184,19 @@ for obsname in obs:
 
 # Now compute CRPS
 
-CRPS  = np.full(n_sub, np.nan)
+CRPS  = np.full(n_sub + 1, np.nan) # + 1 to accommodate the multi model mean
 
 for j_sub in range(n_sub):
 
   thisList = data[j_sub]
   obsRef = data_obs[0]
 
-  x, thisCRPS = computeCRPS(thisList, obsRef, step = 0.01, minVal = 0.0, maxVal = 100.0)
+  if sub_id[j_sub] == "NicoSun":
+    isRange = True
+  else:
+    isRange = False
+
+  x, thisCRPS = computeCRPS(thisList, obsRef, step = 0.01, minVal = 0.0, maxVal = 100.0, isRange = isRange)
 
   CRPS[j_sub] = thisCRPS
 
@@ -209,6 +221,15 @@ for j_sub in range(n_sub):
   
   fig.savefig("../figs/CDF_" + sub_id[j_sub] + ".png", dpi = 300)
 
+
+# Create the multi-model-mean forecast
+mmForecast = [np.mean(d) for j_sub, d in enumerate(data) if sub_id[j_sub] == "climatology"]
+# Compute CRPS
+_, mmCRPS = computeCRPS(mmForecast, obsRef, step = 0.01, minVal = 0.0, maxVal = 100.0)
+print("MM forecast: " + str(mmCRPS)) 
+CRPS[n_sub] = mmCRPS
+sub_id += ["group forecast"]
+col  += ["blue"]
   
 zipped = zip(sub_id, CRPS, col, sub_id)
 
@@ -219,11 +240,13 @@ zipped_sorted = sorted(zipped, key = lambda x: x[1])
 fig, ax = plt.subplots(1, 1, figsize = (3, 4))
 for j, z in enumerate(zipped_sorted):
     
-    ax.fill_between((0, z[1]), (n_sub - j, n_sub - j), color = z[2], alpha = 1.0)
-    ax.text(z[1], n_sub - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center")
+    ax.fill_between((0, z[1]), (n_sub + 1 - j, n_sub + 1 - j), color = z[2], alpha = 1.0)
+    ax.text(z[1], n_sub + 1 - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center")
 ax.set_xlim(0.0, 2.5)
+ax.set_ylim(-0.05, n_sub + 1)
 ax.set_title("Continuous rank probability score\nfor " + target_period_name + " " + str(myyear[5:]) + " total sea ice area")
 ax.set_xlabel("(Million km$^2$)$^2$")
 ax.set_yticklabels("")
+
 fig.tight_layout()
 fig.savefig("../figs/CRPS.png", dpi = 300)

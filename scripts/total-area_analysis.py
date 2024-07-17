@@ -216,7 +216,7 @@ for j_sub in range(n_sub):
 	                     alpha = 0.2, lw = 0)
 
 # Plot model ensemble median
-plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 2, label = "median forecast")    
+plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 2, label = "group forecast")    
 
 # Plot observations if required
 if plotobs:
@@ -265,7 +265,10 @@ for j_sub in range(n_sub):
         
         kernel = stats.gaussian_kde(monmean)
         
-        pdf = kernel(xpdf).T
+        if sub_id[j_sub] == "NicoSun": # He provides the range
+            pdf = 1.0 * (xpdf > np.min(monmean)) * (xpdf < np.max(monmean)) 
+        else:
+            pdf = kernel(xpdf).T
         
         ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf * scale, 
                  color = col[j_sub], alpha = 0.2, lw = 0)
