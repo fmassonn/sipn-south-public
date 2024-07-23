@@ -21,7 +21,6 @@ info = [
 #    [ "NASA-GSFC",        [1],                "$^{s}$"  ],  \
     [ "NicoSun",          range(1, 3 + 1),   "$^s$"    ], \
 #    [ "SINTEX-F2",       range(1, 24 + 1),   "$^d$"    ],  \
-    [ "SYSU-SML-ConvLSTM",[1],               "$^s$"    ], \
     [ "SYSU-SML-MLM",     [1],               "$^s$"    ], \
     [ "SYSU-SML-KNN",     [1],               "$^s$"    ], \
     [ "ucl",              range(1, 10 + 1),  "$^d$"    ], \
