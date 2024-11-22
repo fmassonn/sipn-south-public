@@ -23,7 +23,9 @@ from   glob import glob
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
 
-myyear = "2022-2023"
+myyear = "2023-2024"
+inidate = myyear[:4] + "1201"
+enddate = myyear[5:] + "0228"
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -71,7 +73,7 @@ areacello = R * np.cos( (lat_out * 2.0 * np.pi / 360.0 )) * \
 # First we create a land-sea mask for that grid, based on NSIDC's mask
 
 print("Creating land-sea mask from NSIDC product")
-f = Dataset("../data/" + myyear + "/netcdf/NSIDC-0081_000_concentration.nc", \
+f = Dataset("../data/" + myyear + "/netcdf/NSIDC-0081_000_" + inidate + "-" + enddate + "_concentration.nc", \
             mode = "r")
 mask_in = f.variables["sftof"][:]
 lat_mask= f.variables["latitude"][:]
@@ -111,7 +113,7 @@ for j_sub in range(n_sub):
   for j_for in list_for[j_sub]:
     # Open native file
     fileroot = "../data/" + myyear + "/netcdf/"
-    filename = sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration.nc"
+    filename = sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_" + inidate + "-" + enddate + "_concentration.nc"
     file = fileroot + filename
 
     f = Dataset(file, mode = "r")

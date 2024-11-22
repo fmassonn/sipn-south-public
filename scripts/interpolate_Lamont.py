@@ -2,7 +2,7 @@
 
 
 # Script to interpolate the monthly sea ice concentration
-# data from monthly to daily (Lamont Forecast, Yuan)
+# data from monthly to daily (Lamont Forecast, Yuan; works with other submissions)
 #
 # For each grid cell, three data points are given for 
 # December, January and February average
@@ -33,7 +33,7 @@
 import numpy as np
 from netCDF4 import Dataset
 
-myyear = "2022-2023"
+myyear = "2023-2024"
 
 def A(t1, t2, nd):
   return 1.0 / 3.0 * (t2 ** 3 - t1 ** 3) / nd
@@ -59,11 +59,10 @@ Btmp = np.array([[A(t11,t12,31), B(t11, t12,31), C(t11,t12,31)], \
 Binv = np.linalg.inv(Btmp)
 
 # Read in the data
-f = Dataset("../data/" + myyear + "/netcdf/Lamont_001_concentration_orig.nc", mode = "r")
+f = Dataset("../data/" + myyear + "/raw/Lamont/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_concentration.nc", mode = "r")
 sic = f.variables["siconc"][:]
 lat = f.variables["latitude"][:]
-# She misspelled "longitude" in 2019
-lon = f.variables["logitude"][:]
+lon = f.variables["longitude"][:]
 
 nt, ny, nx = sic.shape
 f.close()
@@ -103,7 +102,7 @@ for jy in np.arange(ny):
     areacello[jy, jx] = R * np.cos(2.0 * np.pi / 360.0 * lat[jy]) *  2.0 * np.pi / 360.0 * 2.0  * \
                         R *                                         (2.0 * np.pi / 360.0 * 0.5) 
 
-f = Dataset("../data/" + myyear + "/netcdf/Lamont_001_concentration.nc", mode = "w")
+f = Dataset("../data/" + myyear + "/netcdf/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_concentration.nc", mode = "w")
 t_d   = f.createDimension("time", None)
 lon_d = f.createDimension("longitude", len(lon))
 lat_d = f.createDimension("latitude", len(lat))
@@ -139,7 +138,7 @@ import pandas as pd
 # Total area
 # ----------
 # Read the CSV file
-filein = "../data/" + myyear + "/txt/Lamont_001_total-area_orig.txt"
+filein = "../data/" + myyear + "/raw/Lamont/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_total-area.txt"
 csv = pd.read_csv(filein, header = None)
 series = csv.iloc[0][:]
 
@@ -149,17 +148,17 @@ newseries = X[0] * time ** 2 + X[1] * time + X[2]
 
 
 # Write
-with open("../data/" + myyear + "/txt/Lamont_001_total-area.txt", "w") as file:
+with open("../data/" + myyear + "/txt/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_total-area.txt", "w") as file:
   file.write(",".join(["{0:.4f}".format(a) for a in newseries]))  # + 1 as python does not take the last bit
   file.write("\n")
 
 
 # Regional areas
 # --------------
-filein = "../data/" + myyear + "/txt/Lamont_001_regional-area_orig.txt"
+filein = "../data/" + myyear + "/raw/Lamont/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_regional-area.txt"
 
 csv = pd.read_csv(filein, header = None)
-with open("../data/" + myyear + "/txt/Lamont_001_regional-area.txt", "w") as file2:
+with open("../data/" + myyear + "/txt/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_regional-area.txt", "w") as file2:
   for j in np.arange(36):
     series = csv.iloc[j][:]
     D = np.array([[series[0]], [series[1]], [series[2]] ])

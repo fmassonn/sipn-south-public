@@ -20,7 +20,7 @@ from   datetime import datetime
 
 # Script parameters
 
-myyear = "2022-2023"  # label with the year investigated (2017-2018, 2018-2019, ...)
+myyear = "2023-2024"  # label with the year investigated (2017-2018, 2018-2019, ...)
 plotobs = True       # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
@@ -47,6 +47,7 @@ else:
   period_short_name = "Feb" + myyear[5:]
   # Starting and ending time indices (Python conventions)
   t1, t2 = 63 - 1, 63 - 1 + 28
+  enddate = str(int(myyear[:4]) + 1) + "0228"
 
 # Time axis
 time = pd.date_range(pd.to_datetime(inidate, format = "%Y%m%d"), periods = ndays).tolist()
@@ -76,7 +77,7 @@ n_obs = len(obs_labels)
 if plotobs:
   obs = list() # Each item of the list will have one x_array, y_array, SIC for each day
   for j_obs in range(n_obs):
-    f = Dataset("../data/" + myyear + "/netcdf/" + obs_labels[j_obs] + "_000_concentration.nc")
+    f = Dataset("../data/" + myyear + "/netcdf/" + obs_labels[j_obs] + "_000_" + inidate + "-" + enddate + "_concentration.nc")
     sic = f.variables["siconc"][:]
     latitude = f.variables["latitude"][:]
     longitude = f.variables["longitude"][:]
@@ -90,12 +91,13 @@ if plotobs:
 for j_sub in range(n_sub):
   print("Doing " + str(sub_id[j_sub]))
   map = Basemap(projection = "spstere", boundinglat = - 50,lon_0 = 180, resolution = 'l')
+  #map = Basemap(projection = "npstere", boundinglat =  50 ,lon_0 = 180, resolution = 'l')
   map.fillcontinents(color = 'grey', lake_color = 'w')
 
   # Load the data into a big array "data"
   my_index = 0
   for j_for in list_for[j_sub]:
-    filein = "../data/" + myyear + "/netcdf/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_concentration.nc"
+    filein = "../data/" + myyear + "/netcdf/" + sub_id[j_sub] + "_" + str(j_for).zfill(3) + "_" + inidate + "-" +enddate + "_concentration.nc"
 
     if not os.path.exists(filein):
       sys.exit(filein + " not found")
@@ -230,8 +232,8 @@ for j_sub in range(n_sub):
     #for day in [1, 10, 20, 28]:
     #  plt.text(np.linspace(x1, x2, nt)[day - 1], np.linspace(y1, y2, nt)[day - 1], " " + period_name + " " + str(day).zfill(2), rotation = 90, va = "bottom", ha = "center", color = [0.7, 0.7, 0.7])
     plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".png", dpi = 300)
-    plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".pdf", dpi = 300)
-    plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".eps", dpi = 300)
+    #plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".pdf", dpi = 300)
+    #plt.savefig("../figs/" + sub_id[j_sub] + "_prob-15" + "_concentration_" + "d" + str(jt + 1).zfill(2) + ".eps", dpi = 300)
     print("  Probability " + time[jt].strftime('%d %B %Y') + " printed")
     plt.close("fig")
   

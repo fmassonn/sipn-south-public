@@ -26,7 +26,7 @@ from   datetime import datetime
 
 
 # Script parameters
-myyear = "2021-2022"  # label with the year investigated (2017-2018, 2018-2019, ...)
+myyear = "2023-2024"  # label with the year investigated (2017-2018, 2018-2019, ...)
 
 # Load namelist
 exec(open("./namelist_spatial_" + myyear + ".py").read())
@@ -51,6 +51,8 @@ if myyear == "2017-2018":
 else:
   # Initialization date
   inidate = myyear[:4] + "1201"
+  enddate = myyear[5:] + "0228"
+
   # Number of days in the forecast period
   ndays   = 90
   # Label for period that is forecasted
@@ -146,7 +148,7 @@ def iiee(sic_eva, sic_ref, cellarea, mask = 1, threshold = 15.0, lat = None,
 # -----------------------
 
 f = Dataset("../data/" + myyear + "/netcdf/regrid/" + \
-            obs_name + "_000_concentration_2x2.nc")
+            obs_name + "_000_" + inidate + "-" + enddate + "_concentration_2x2.nc")
 sic_obs = f.variables["siconc"][:]
 latitude = f.variables["latitude"][:]
 longitude = f.variables["longitude"][:]
@@ -167,7 +169,7 @@ for j_sub in range(n_sub):
 
   for j_for in list_for[j_sub]:
     filein = "../data/" + myyear + "/netcdf/regrid/" + sub_id[j_sub] + "_" \
-    + str(j_for).zfill(3) + "_concentration_2x2.nc"
+    + str(j_for).zfill(3) + "_" + inidate + "-" + enddate + "_concentration_2x2.nc"
 
     if not os.path.exists(filein):
       print(filein + " not found")
@@ -178,10 +180,13 @@ for j_sub in range(n_sub):
       f = Dataset(filein, mode = "r")
       sic = f.variables["siconc"][:]
       f.close()
+      print(sic.shape)
+      print(sic_obs.shape)
       IIEE, NIIEE, AEE, ME, O, U = iiee(sic, sic_obs, cellarea, mask = 1.0 * \
              (mask_obs == 100.0) * (latitude < 0), threshold = 15.0, 
              lat = latitude, lon = longitude, plot = False)
 
+      stop
       thisIIEE.append(IIEE)
       thisNIIEE.append(NIIEE)
       thisAEE.append(AEE)
@@ -222,7 +227,7 @@ for j_sub in range(n_sub):
   meanAEE = np.mean(np.array(thisAEE), axis = 0)
   ax[2].plot(time, meanAEE, color = col[j_sub], lw = 1.5, label = mylab)
   # Add submission ID
-  ax[2].text(time[0], meanAEE[0], str(j_sub), fontsize = 4)
+  ax[2].text(time[0], meanAEE[0], sub_id[j_sub][0], fontsize = 4)
   # Plot range as shading
   mymaxAEE = np.max(np.array(thisAEE), axis = 0)
   myminAEE = np.min(np.array(thisAEE), axis = 0)

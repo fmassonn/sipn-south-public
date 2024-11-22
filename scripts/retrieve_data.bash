@@ -11,7 +11,7 @@ set -x
 url=https://nextcloud.cism.ucl.ac.be/s/gTL53xhjp4iQMM8
 
 
-for mystring in 2018-2019 2019-2020 2020-2021 2021-2022
+for mystring in 2018-2019 2019-2020 2020-2021 2021-2022 2022-2023 2023-2024
   do
   for file in `cat list_files_${mystring}.txt`
   do

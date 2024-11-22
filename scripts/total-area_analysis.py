@@ -36,7 +36,7 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2022-2023"   
+myyear = "2023-2024"   
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = True
@@ -83,6 +83,7 @@ else:
   inidate = myyear[:4] + "1201"
   # Number of days in the forecast period
   ndays   = 90
+  enddate = str(int(myyear[:4]) + 1) + "0228"
   # Label for period that is forecasted
   period_name = "Dec-Jan-Feb " + myyear[:4] + "-" + myyear[5:]
   # Starting and ending time indices (Python conventions)  
@@ -142,13 +143,13 @@ for j_sub in range(n_sub):
     # conventions
     for j_for in range_for[j_sub]:
       filein = "../data/" + myyear + "/txt/" + sub_id[j_sub] + "_" + \
-               str(j_for).zfill(3) + "_total-area.txt"
+               str(j_for).zfill(3) + "_" + inidate + "-" + enddate + "_total-area.txt"
       # Read the CSV file
       csv = pd.read_csv(filein, header = None)
       series = csv.iloc[0][:]
       # Append that series to the contribution data
       if len(series) != nt:
-        print("WARNING: INPUT SERIES TOO LONG, CROPPING")
+        print(sub_id[j_sub] + " --> WARNING: INPUT SERIES TOO LONG, CROPPING")
         series = series[:nt]
       sub_data[:, j_for - 1] = series
       
@@ -215,7 +216,7 @@ for j_sub in range(n_sub):
 	                     alpha = 0.2, lw = 0)
 
 # Plot model ensemble median
-plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 2, label = "median forecast")    
+plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 2, label = "group forecast")    
 
 # Plot observations if required
 if plotobs:
@@ -264,7 +265,10 @@ for j_sub in range(n_sub):
         
         kernel = stats.gaussian_kde(monmean)
         
-        pdf = kernel(xpdf).T
+        if sub_id[j_sub] == "NicoSun": # He provides the range
+            pdf = 1.0 * (xpdf > np.min(monmean)) * (xpdf < np.max(monmean)) 
+        else:
+            pdf = kernel(xpdf).T
         
         ax.fill_between(xpdf, n_sub - j_sub , n_sub - j_sub + 0.5 * pdf * scale, 
                  color = col[j_sub], alpha = 0.2, lw = 0)
