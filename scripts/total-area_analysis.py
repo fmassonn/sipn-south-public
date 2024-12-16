@@ -36,13 +36,19 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2023-2024"   
+myyear = "2024-2025"   
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = True
+postseason = False
+
+if not postseason:
+  obsEndDate="20241213" # Last date for which the obs are available (to find the right tag)  
+else:
+  obsEndDate="20250228"
+
 
 # Name of observational products      
 obs = ["NSIDC-0081", "OSI-401-b"]
@@ -89,6 +95,7 @@ else:
   # Starting and ending time indices (Python conventions)  
   t1, t2 = 63 - 1, 63 - 1 + 28
   target_period_name = "February"
+
 
 
 # Load namelist
@@ -172,21 +179,24 @@ if plotobs:
     
     for obsname in obs:
         filein = "../data/" + myyear + "/txt/" + obsname + \
-        "_000_total-area.txt"
+        "_000_" + inidate + "-" + obsEndDate + "_total-area.txt"
         # Read the CSV file
         csv = pd.read_csv(filein, header = None)
         series = csv.iloc[0][:]
-        # It might be that the obs is not as long as the forecast, 
-        # when the verification period is not over yet
-        # --> complete the data with NaNs
-        obscomplete = (nt == np.sum((1 - np.isnan(series)) * 1))
-        if not obscomplete:
-            series = series.append(pd.Series([np.nan for i in \
-                     range(nt - len(series))]), ignore_index = True)
+
+#        This should no longer be happening since now obs has the right length
+
+#        # It might be that the obs is not as long as the forecast, 
+#        # when the verification period is not over yet
+#        # --> complete the data with NaNs
+#        obscomplete = (nt == np.sum((1 - np.isnan(series)) * 1))
+#        if not obscomplete:
+#            series = series.append(pd.Series([np.nan for i in \
+#                     range(nt - len(series))]), ignore_index = True)
     
         data_obs.append(series)
         
-        del series, csv, obscomplete
+        del series, csv
         
 # Process the raw data to produce diagnostics
 # and plot them
@@ -203,8 +213,15 @@ for j_sub in range(n_sub):
     else:
       zorder = 0
 
+    # Special request of Q. Yang to use / instead of - to render the collaboration between the two institutes
+    if info[j_sub][0][:8] == "SYSU-SML":
+      label="SYSU/SML" + info[j_sub][0][8:]
+    else:
+      label=info[j_sub][0]
+
+
     plt.plot(time, mean, color = col[j_sub], lw = 1.0, 
-             label = info[j_sub][0] + " " + info[j_sub][2], zorder = zorder)
+             label = label + " " + info[j_sub][2], zorder = zorder)
     
     # Plot range as shading
     mymax = np.nanmax(data[j_sub], axis = 1)
@@ -221,7 +238,7 @@ plt.plot(time, np.median(mmef, axis = 0), color = "blue", linestyle = "--",lw = 
 # Plot observations if required
 if plotobs:
     for j_obs, obsname in enumerate(obs):
-        plt.plot(time, data_obs[j_obs], color = [0.1, 0.1, 0.1], lw = 1.5, \
+        plt.plot(time[:len(data_obs[j_obs])], data_obs[j_obs], color = [0.1, 0.1, 0.1], lw = 1.5, \
                  linestyle = lst[j_obs], label = "OBS " + obsname)
 # Figure polishing
 plt.title(period_name + " Antarctic sea ice area")
@@ -252,9 +269,14 @@ for j_sub in range(n_sub):
        stop()
     monmean = np.nanmean(data[j_sub][t1:t2, :], axis = 0)
     
+    # Special request of Q. Yang to use / instead of - to render the collaboration between the two institutes
+    if info[j_sub][0][:8] == "SYSU-SML":
+      label="SYSU/SML" + info[j_sub][0][8:]
+    else:
+      label=info[j_sub][0]
     ax.scatter(monmean, np.full(n_for[j_sub], n_sub - j_sub), 
                15, color = col[j_sub], 
-               label = info[j_sub][0] + " " + info[j_sub][2],
+               label = label + " " + info[j_sub][2],
                edgecolor = "white", lw = 0.2)
         
     # Plot associated PDF
@@ -303,7 +325,7 @@ ax.set_axisbelow(True)
 ax.set_title(str(myyear[5:]) + " " + target_period_name + " mean Antarctic sea ice area")
 ax.legend(loc = "upper center", ncol = 4, fontsize = 6)
 ax.set_xlabel("Million km$^2$")
-ax.set_xlim(0, 4)
+ax.set_xlim(0, 6)
 ax.set_ylim(-1.0, n_sub + 6)
 ax.grid()
 ax.set_yticks([])
