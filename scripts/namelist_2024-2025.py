@@ -13,7 +13,7 @@ info = [
 #####    [ "ecmwf",            range(1, 51 + 1),  "$^d$"    ], \
      [ "emc",              range(1, 10 + 1),  "$^d$"    ], \
 #####    [ "FIO-ESM",          range(1, 10 + 1),  "$^d$"    ], \
-#####    [ "gfdl",             range(1, 30 + 1),  "$^d$"    ], \
+     [ "gfdl",             range(1, 30 + 1),  "$^d$"    ], \
      ["IOCAS-SIPNet",      [1],               "$^s$"    ], \
      [ "Lamont",           [1],               "$^{s,i}$"], \
 #####    [ "Meier-NSIDC",      [1],               "$^s$"    ], \
