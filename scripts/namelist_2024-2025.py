@@ -6,6 +6,7 @@ info = [
      [ "AWI-CPS",          range(1, 30 + 1) ,                 "$^{d}$",  18.8333     ], \
 #####    [ "barreiraOrig",     range(1, 2  + 1),  "$^{s}$"  ], \
 #####    [ "barreiraNew",      range(1, 2  + 1),  "$^{s}$"  ], \
+     [ "BAS"    ,          range(1, 10 + 1), "$^{s}$"], \
 #####    [ "BSC",              range(1, 50 + 1),  "$^d$"    ], \
 #####     [ "CanSIPSv2",        range(1, 20 + 1),  "$^d$",   20.24169    ], \
      [ "cmcc",             range(1, 50 + 1),  "$^d$"    ], \
