@@ -45,7 +45,7 @@ plotobs = True
 postseason = False
 
 if not postseason:
-  obsEndDate="20241213" # Last date for which the obs are available (to find the right tag)  
+  obsEndDate="20250104" # Last date for which the obs are available (to find the right tag)  
 else:
   obsEndDate="20250228"
 

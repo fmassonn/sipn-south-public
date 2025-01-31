@@ -22,7 +22,7 @@ fi
 # Very important to be consistent here!!!
 target="2024-2025"
 dateStart=20241201
-dateEnd=20241221
+dateEnd=20250104
 
 # Step 1 : Retrieving the raw data
 

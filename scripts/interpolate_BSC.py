@@ -34,8 +34,8 @@ import numpy as np
 from netCDF4 import Dataset
 
 
-thisSeason = "2023-2024" ; yearStart = thisSeason[:4]
-period= myyear[:4] + "1201-" + myyear[5:] + "0228"
+thisSeason = "2024-2025" ; yearStart = thisSeason[:4]
+period= thisSeason[:4] + "1201-" + thisSeason[5:] + "0228"
 subId = "BSC"
 nMemb = 50
 

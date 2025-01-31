@@ -7,7 +7,7 @@
 set -o nounset
 set -o errexit
 set -x
-yearb=2023
+yearb=2024
 yeare=$(( $yearb + 1 ))
 forecastingSeason=${yearb}-${yeare}
 
@@ -30,7 +30,8 @@ refGridFile=/Users/massonnetf/CLIMDATA/grid/mesh_mask_nemo.N3.6_ORCA1L75.nc
 for imemb in `seq 1 $nmemb`
 do
   iXXX=$(printf "%03d" $imemb)
-  inFile=$indir/siconc_SImon_EC-Earth3_dcppB-forecast_s${yearb}-r${imemb}i4p1f1_gn_${yearb}${monb}-${yeare}${mone}.nc
+  inFile=$indir/siconc_SImon_EC-Earth3_dcppB-forecast_s${yearb}${monb}01-r${imemb}i4p1f1_gn_${yearb}${monb}-${yeare}${mone}.nc
+#                siconc_SImon_EC-Earth3_dcppB-forecast_s20241101-r33i4p1f1_gn_202411-202510.nc
   outFile=${modName}_${iXXX}_concentration_monthly.nc
 
   # Extract months December to Feb and dump in file; also ignore the variables and dimensions of no interest 
