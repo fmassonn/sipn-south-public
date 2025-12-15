@@ -42,7 +42,7 @@ do
   rootaddress="ftp://osisaf.met.no/archive/ice/conc/"
   url=$rootaddress/$thisYear/$thisMonth/ice_conc_sh_polstere-100_multi_${thisYear}${thisMonth}${thisDay}1200.nc
 
-  if wget -q $url > /dev/null ; then 
+  if curl -s --fail  $url > /dev/null ; then # have to use curl for ftp servers, otherwise it downloads the file
     echo "File found" 
     wget -N -c $url -P $outdir 
   else
