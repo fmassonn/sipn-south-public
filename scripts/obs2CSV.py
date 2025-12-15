@@ -8,7 +8,7 @@
 # Date   - March 5, 2018
 
 
-def convert(target):
+def convert(target, dateStart, dateEnd):
   """
   expName = "2021-2022", or "TOP2022", ...
   """
@@ -68,7 +68,7 @@ def convert(target):
   for j_obs in range(len(obs)):
       print(obs[j_obs][0])
       # Input file, following CMIP conventions
-      filein = obs[j_obs][1] + obs[j_obs][0] + "_000_concentration.nc"
+      filein = obs[j_obs][1] + obs[j_obs][0] + "_000_" + str(dateStart) + "-" + str(dateEnd) + "_concentration.nc"
       print(filein)
   
       f = Dataset(filein, mode = "r")
@@ -89,12 +89,12 @@ def convert(target):
       # Save as CSV file
       # ----------------
       # Total area
-      with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_total-area.txt", "w") as file:
+      with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000_" + str(dateStart) + "-" + str(dateEnd) + "_total-area.txt", "w") as file:
           file.write(",".join(["{0:.4f}".format(a) for a in areatot]))  
           file.write("\n")
       
       # Per longitude
-      with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000" + "_regional-area.txt", "w") as file:
+      with open("../data/" + target + "/txt/" + obs[j_obs][0] + "_000_" + str(dateStart) + "-" + str(dateEnd) + "_regional-area.txt", "w") as file:
           # Per longitude bin
           for j_bin in np.arange(36):
             print(j_bin)
@@ -109,10 +109,12 @@ def convert(target):
 
 if __name__ == "__main__":
   import sys
-  if len(sys.argv) != (1 + 1):
+  if len(sys.argv) != (1 + 3):
     print("No argument given")
     sys.exit
   else:
     target = sys.argv[1]
+    dateStart = sys.argv[2]
+    dateEnd   = sys.argv[3]
 
-    convert(target)
+    convert(target, dateStart, dateEnd)

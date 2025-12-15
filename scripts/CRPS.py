@@ -32,7 +32,7 @@ matplotlib.rcParams['font.family'] = "Arial Narrow"
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2023-2024"   
+myyear = "2024-2025"   
 stringPeriod=myyear[:4] + "1201-" + myyear[5:9] + "0228"
 
 
@@ -172,7 +172,7 @@ data_obs= list()
 
 for obsname in obs:
     filein = "../data/" + myyear + "/txt/" + obsname + \
-    "_000_total-area.txt"
+    "_000_" + stringPeriod + "_total-area.txt"
     # Read the CSV file
     csv = pd.read_csv(filein, header = None)
     series = csv.iloc[0][:]
@@ -215,7 +215,7 @@ for j_sub in range(n_sub):
   # Plot obs
   ax.plot((obsRef, obsRef), (-1000, 1000), "r-")
   ax.set_ylim(-0.05, 1.05)
-  ax.set_xlim(-0.05, 2.5)
+  ax.set_xlim(-0.05, 3.5)
   
   ax.set_title(sub_id[j_sub])
   
@@ -241,12 +241,14 @@ fig, ax = plt.subplots(1, 1, figsize = (3, 4))
 for j, z in enumerate(zipped_sorted):
     
     ax.fill_between((0, z[1]), (n_sub + 1 - j, n_sub + 1 - j), color = z[2], alpha = 1.0)
-    ax.text(z[1], n_sub + 1 - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center")
-ax.set_xlim(0.0, 2.5)
+    ax.text(z[1], n_sub + 1 - j - 0.5, "  " + z[3], color = z[2], ha = 'left', va = "center", fontsize = 8)
+ax.set_xlim(0.0, 4.5)
 ax.set_ylim(-0.05, n_sub + 1)
 ax.set_title("Continuous rank probability score\nfor " + target_period_name + " " + str(myyear[5:]) + " total sea ice area")
 ax.set_xlabel("(Million km$^2$)$^2$")
 ax.set_yticklabels("")
 
 fig.tight_layout()
-fig.savefig("../figs/CRPS.png", dpi = 300)
+figName = "../figs/CRPS.png"
+fig.savefig(figName, dpi = 300)
+print("Figure " + figName + " produced")

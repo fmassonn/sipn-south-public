@@ -26,7 +26,8 @@ rootdir = "ftp://sidads.colorado.edu/DATASETS/NOAA/G02135/" + hemi +"/monthly/da
 file    = hemi[0].upper() + "_" + str(month).zfill(2) + "_extent_v3.0.csv"
 
 if os.path.exists(file):
-    print("File already exists")
+    print("File already exists: " + file)
+    print("If you want to update the analysis, delete it and re-run the script")
 else:
     wget.download(rootdir + file)
 
@@ -72,5 +73,7 @@ sorted_data = [x for x in sorted(zip(sie,time))]
 print(sorted_data)
 
 plt.tight_layout()
-plt.savefig("../figs/figTimeSeries.png", dpi = 400)
+figName = "../figs/figTimeSeries.png"
+plt.savefig(figName, dpi = 400)
+print(figName + " printed")
 

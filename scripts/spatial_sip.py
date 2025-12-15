@@ -20,7 +20,7 @@ from   datetime import datetime
 
 # Script parameters
 
-myyear = "2023-2024"  # label with the year investigated (2017-2018, 2018-2019, ...)
+myyear = "2024-2025"  # label with the year investigated (2017-2018, 2018-2019, ...)
 plotobs = True       # Add obs as reference or not (False if forecast mode)
 
 # Load namelist
