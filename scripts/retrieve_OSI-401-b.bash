@@ -14,7 +14,7 @@
 
 set -o nounset
 set -o errexit
-set -x
+#set -x
 
 if [[ $# -ne 2 ]]
 then
@@ -42,7 +42,12 @@ do
   rootaddress="ftp://osisaf.met.no/archive/ice/conc/"
   url=$rootaddress/$thisYear/$thisMonth/ice_conc_sh_polstere-100_multi_${thisYear}${thisMonth}${thisDay}1200.nc
 
-  wget -N -c $url -P $outdir 
+  if wget -q $url > /dev/null ; then 
+    echo "File found" 
+    wget -N -c $url -P $outdir 
+  else
+    echo "File not found , skipping: $url"
+  fi
 
   # Increment
   currentDate=`date -j -v+1d -f "%Y%m%d" $currentDate "+%Y%m%d"`

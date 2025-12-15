@@ -39,9 +39,15 @@ do
   thisMonth=`date -j -f "%Y%m%d" $currentDate "+%m"`
   thisDay=`date   -j -f "%Y%m%d" $currentDate "+%d"`
 
-  url=https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.002/${thisYear}.${thisMonth}.${thisDay}/NSIDC0081_SEAICE_PS_S25km_${currentDate}_v2.0.nc
 
-  wget -ncd --save-cookies ~/.urs_cookies --keep-session-cookies --no-check-certificate --auth-no-challenge=on -r --reject "index.html*" -np -e robots=off $url -P $outdir
+  # Check file existence
+  url=https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.002/${thisYear}.${thisMonth}.${thisDay}/NSIDC0081_SEAICE_PS_S25km_${currentDate}_v2.0.nc
+  
+  if wget -q --spider $url ; then
+    wget -ncd --save-cookies ~/.urs_cookies --keep-session-cookies --no-check-certificate --auth-no-challenge=on -r --reject "index.html*" -np -e robots=off $url -P $outdir
+  else
+    echo "File not found (404) , skipping: $url"
+  fi
 
   # Increment
   currentDate=`date -j -v+1d -f "%Y%m%d" $currentDate "+%Y%m%d"`
