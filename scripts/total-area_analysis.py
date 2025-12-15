@@ -42,7 +42,7 @@ myyear = "2024-2025"
 plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = False
+postseason = True
 
 if not postseason:
   obsEndDate="20250104" # Last date for which the obs are available (to find the right tag)  
@@ -278,6 +278,7 @@ for j_sub in range(n_sub):
                15, color = col[j_sub], 
                label = label + " " + info[j_sub][2],
                edgecolor = "white", lw = 0.2)
+    print("  --> " + label + " ensemble mean: " + str(np.round(np.mean(monmean), 3)) + " million km$^2$")
         
     # Plot associated PDF
     scale = 1.0
@@ -304,6 +305,8 @@ ax.scatter(mmef_monmean, np.full(len(mmef_monmean), 0), 15, color = "blue", \
            label = "model ensemble", lw = 0.2, edgecolor = "white")
 ax.fill_between(xpdf, 0 , 0 + 0.5 * pdf * scale,
                  color = "blue", alpha = 0.4, lw = 0)
+print("Group forecast")
+print("  --> Group forecast median value: " + str(np.round(np.median(mmef_monmean), 3)) + " million km$^2$")
 
 # Plot observations if required
 if plotobs and postseason:
