@@ -1,6 +1,7 @@
 # Folders
 data/*/netcdf
 data/*/raw
+data/obs
 scripts/__pycache__
 figs
 
@@ -25,6 +26,8 @@ bin-release/
 # information for Eclipse / Flash Builder.
 *.db
 *.db:encryptable
+
+scripts/S_02_extent_v3.0.csv
 
 # Other files
 *.nc
