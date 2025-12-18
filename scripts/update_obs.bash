@@ -24,9 +24,9 @@ fi
 # It is very important to be consistent here (i.e., to ensure that the three variables target, dateStart, dateEnd, correspond to the same period).
 # These strings will be used to define the text files containing the data, and will be placed in the folder with the same name.
 
-target="2024-2025"
-dateStart=20241201
-dateEnd=20250228
+target="2025-2026"
+dateStart=20251201
+dateEnd=20260228 # This can be a date later than today. The download will just not happen if that data does not exist.
 
 
 # Step 1 : Retrieving the raw data

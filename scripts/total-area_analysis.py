@@ -36,18 +36,15 @@ plt.close("all")
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2024-2025"   
+myyear = "2025-2026"   
 
 # Add obs as reference or not (False if forecast mode)
 plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = True
+postseason = False
 
-if not postseason:
-  obsEndDate="20250104" # Last date for which the obs are available (to find the right tag)  
-else:
-  obsEndDate="20250228"
+obsEndDate="20260228"
 
 
 # Name of observational products      
