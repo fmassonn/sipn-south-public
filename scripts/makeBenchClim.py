@@ -47,12 +47,13 @@ def compute_area(concentration, cellarea, mask = 1):
 climDir = "/Users/massonnetf/CLIMDATA/"
 
 # Year of the 1st of December starting the summer season
-# Last year to be processed. That's the year of the forecast minus one
+# Here the user has to specifiy the *last* year to be processed to build the climatology.
+# That's the year of the forecast minus one
 #
 # !!! ATTENTION !!!!
 # The year is referenced to the 1st of December of the summer season, so
-# 2020 --> 2020-2021 = the last season before 2021-2022
-target = "2024-2025"
+# 2020 means 2020-2021 = the last season before 2021-2022
+target = "2025-2026"
 yeare = int(target[:4]) - 1
 
 # Year to start the collection of climatology. ATTENTION to the convention
