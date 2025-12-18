@@ -97,7 +97,7 @@ ax1.set_xticks(startYears)
 ax1.set_xticklabels(nameSeasons, rotation = 20)
 
 
-ax2.set_xlim(2016, 2024)
+ax2.set_xlim(2016, 2026)
 
 ax1.set_title("Evolution of input statistics to SIPN South")
 ax1.grid(axis = "y")
@@ -106,6 +106,8 @@ fig.legend(ncol = 1, bbox_to_anchor=(0.04, 0.78, 0.5, .102))
 
 # Legend
 fig.tight_layout()
-fig.savefig("../figs/fig2_paper.png", dpi = 300)
-fig.savefig("../figs/fig2_paper.JPEG", dpi = 300)
-fig.savefig("../figs/fig2_paper.png", dpi = 300)
+figName = "../figs/fig2_paper"
+for ext in [".png", ".pdf", ".JPEG"]:
+  fig.savefig(figName + ext, dpi = 300)
+  print("Figure " + figName  + ext + " printed")
+
