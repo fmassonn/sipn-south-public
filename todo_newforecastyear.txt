@@ -1,0 +1,4 @@
+1. Clean the previous year's branch (e.g. develop_2023-2024)
+2. Merge/pull request the previous year's branch into master
+3. Update master "namelist.py" 
+4. Create a new branch for this year (e.g. develop_2024-2025)
