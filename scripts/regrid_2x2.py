@@ -23,7 +23,7 @@ from   glob import glob
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
 
-myyear = "2023-2024"
+myyear = "2025-2026"
 inidate = myyear[:4] + "1201"
 enddate = myyear[5:] + "0228"
 

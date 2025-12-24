@@ -33,7 +33,7 @@
 import numpy as np
 from netCDF4 import Dataset
 
-myyear = "2024-2025"
+myyear = "2025-2026"
 
 def A(t1, t2, nd):
   return 1.0 / 3.0 * (t2 ** 3 - t1 ** 3) / nd
@@ -101,8 +101,9 @@ for jy in np.arange(ny):
 
     areacello[jy, jx] = R * np.cos(2.0 * np.pi / 360.0 * lat[jy]) *  2.0 * np.pi / 360.0 * 2.0  * \
                         R *                                         (2.0 * np.pi / 360.0 * 0.5) 
+fileout = "../data/" + myyear + "/netcdf/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_concentration.nc"
 
-f = Dataset("../data/" + myyear + "/netcdf/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_concentration.nc", mode = "w")
+f = Dataset(fileout, mode = "w")
 t_d   = f.createDimension("time", None)
 lon_d = f.createDimension("longitude", len(lon))
 lat_d = f.createDimension("latitude", len(lat))
@@ -130,6 +131,7 @@ myarea[:]  = areacello[:]
 
 f.close()
 
+print("File " + fileout + " written")
 
 
 # Interpolation of areas calculated by X. Yuan herself (text files).
@@ -148,17 +150,23 @@ newseries = X[0] * time ** 2 + X[1] * time + X[2]
 
 
 # Write
-with open("../data/" + myyear + "/txt/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_total-area.txt", "w") as file:
+fileout = "../data/" + myyear + "/txt/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_total-area.txt"
+
+with open(fileout , "w") as file:
   file.write(",".join(["{0:.4f}".format(a) for a in newseries]))  # + 1 as python does not take the last bit
   file.write("\n")
 
+print("File " + fileout + " written")
 
 # Regional areas
 # --------------
 filein = "../data/" + myyear + "/raw/Lamont/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_regional-area.txt"
 
 csv = pd.read_csv(filein, header = None)
-with open("../data/" + myyear + "/txt/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_regional-area.txt", "w") as file2:
+
+fileout = "../data/" + myyear + "/txt/Lamont_001_" + myyear[:4] + "1201-" + myyear[5:] + "0228_regional-area.txt"
+
+with open(fileout, "w") as file2:
   for j in np.arange(36):
     series = csv.iloc[j][:]
     D = np.array([[series[0]], [series[1]], [series[2]] ])
@@ -167,4 +175,7 @@ with open("../data/" + myyear + "/txt/Lamont_001_" + myyear[:4] + "1201-" + myye
   
     file2.write(",".join(["{0:.4f}".format(a) for a in newseries]))  # + 1 as python does not take the last bit
     file2.write("\n")
+
+
+print("File" + fileout + " written")
 
