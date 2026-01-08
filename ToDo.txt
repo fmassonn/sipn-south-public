@@ -2,3 +2,5 @@
 - Build consensus probabilistic forecast
 - Rename files to have time stamp in it, or resolve issues that from 2022-2023, files might have different lengths
 - Fix the year issue in update obs dependent scripts
+- Switch to NSIDC 0803: https://nsidc.org/data/nsidc-0803/versions/2
+
