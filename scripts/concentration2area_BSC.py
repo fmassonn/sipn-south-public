@@ -7,7 +7,7 @@ import numpy as np
 # sea ice areas (circumpolar + regional) text files
 
 subId = "BSC"
-myyear = "2024-2025"
+myyear = "2025-2026"
 period= myyear[:4] + "1201-" + myyear[5:] + "0228"
 nmemb = 50
 

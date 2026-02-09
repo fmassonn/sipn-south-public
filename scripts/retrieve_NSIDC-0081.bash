@@ -41,8 +41,11 @@ do
 
 
   # Check file existence
-  url=https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.002/${thisYear}.${thisMonth}.${thisDay}/NSIDC0081_SEAICE_PS_S25km_${currentDate}_v2.0.nc
-  
+  # Old, before 2026 and the decommissioning
+  #url=https://n5eil01u.ecs.nsidc.org/PM/NSIDC-0081.002/${thisYear}.${thisMonth}.${thisDay}/NSIDC0081_SEAICE_PS_S25km_${currentDate}_v2.0.nc
+
+  url=https://cmr.earthdata.nasa.gov/virtual-directory/collections/C3177838875-NSIDC_CPRD/temporal/${thisYear}/${thisMonth}/${thisDay}/NSIDC0081_SEAICE_PS_S25km_${thisYear}${thisMonth}${thisDay}_v2.0.nc 
+ 
   if wget -q --spider $url ; then
     wget -ncd --save-cookies ~/.urs_cookies --keep-session-cookies --no-check-certificate --auth-no-challenge=on -r --reject "index.html*" -np -e robots=off $url -P $outdir
   else

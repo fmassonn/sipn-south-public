@@ -1,6 +1,3 @@
-#!/usr/bin/python
-
-
 # !!!!
 # Run this script after format_BSC.bash
 # !!!
@@ -34,7 +31,7 @@ import numpy as np
 from netCDF4 import Dataset
 
 
-thisSeason = "2024-2025" ; yearStart = thisSeason[:4]
+thisSeason = "2025-2026" ; yearStart = thisSeason[:4]
 period= thisSeason[:4] + "1201-" + thisSeason[5:] + "0228"
 subId = "BSC"
 nMemb = 50
