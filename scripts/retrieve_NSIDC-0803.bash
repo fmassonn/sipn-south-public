@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # F. Massonnet
-# Downloads sea ice concentration of NASA AMSR2 polar gridded sea ice concentrations
+# Downloads sea ice concentration of NSIDC-0803 (v2) :  NASA AMSR2 polar gridded sea ice concentrations
 # (replacement of SSMIS-based products, expected to cease on 31 July 2025)
 # https://nsidc.org/data/user-resources/help-center/guide-nsidc-0802-and-nsidc-0803
 
@@ -44,19 +44,31 @@ do
 
   options='--keep-session-cookies --no-check-certificate --auth-no-challenge=on --no-clobber'
 
-  wget $options $url -P $outdir
+  # Get status (file availability)
+  status=$(curl -L -s -o /dev/null -w "%{http_code}" \
+  -b ~/.urs_cookies -c ~/.urs_cookies \
+  -n "$url")
+
+  if [ "$status" = "200" ]; then
+    wget $options $url -P $outdir
+  else
+    echo "File absent: $url"
+  fi
 
   # Increment
   currentDate=`date -j -v+1d -f "%Y%m%d" $currentDate "+%Y%m%d"`
 done
 
 # Download grid files
+productSpec=nsidc0771_polarstereo_anc_grid_info/
 
-#wget -nc ftp://sidads.colorado.edu/pub/DATASETS/brightness-temperatures/polar-stereo/tools/geo-coord/grid/psn25lats_v3.dat -P ${outdir}
-#wget -nc ftp://sidads.colorado.edu/pub/DATASETS/brightness-temperatures/polar-stereo/tools/geo-coord/grid/psn25lons_v3.dat -P ${outdir}
-#wget -nc ftp://sidads.colorado.edu/pub/DATASETS/brightness-temperatures/polar-stereo/tools/geo-coord/grid/psn25area_v3.dat -P ${outdir}
+# LatLon
+fileName=NSIDC0771_LatLon_P${hemisphere}_${hemisphere}25km_v1.1.nc
+url=${urlRoot}/$productSpec/$fileName
 
+wget $options $url -P $outdir
 
-#wget -nc ftp://sidads.colorado.edu/pub/DATASETS/brightness-temperatures/polar-stereo/tools/geo-coord/grid/pss25lats_v3.dat -P ${outdir}
-#wget -nc ftp://sidads.colorado.edu/pub/DATASETS/brightness-temperatures/polar-stereo/tools/geo-coord/grid/pss25lons_v3.dat -P ${outdir}
-#wget -nc ftp://sidads.colorado.edu/pub/DATASETS/brightness-temperatures/polar-stereo/tools/geo-coord/grid/pss25area_v3.dat -P ${outdir}
+# CellArea
+fileName=NSIDC0771_CellArea_P${hemisphere}_${hemisphere}25km_v1.1.nc
+url=${urlRoot}/$productSpec/$fileName
+wget $options $url -P $outdir
