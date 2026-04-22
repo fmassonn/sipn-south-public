@@ -30,7 +30,7 @@ dateEnd=20260228 # This can be a date later than today. The download will just n
 
 
 # Step 1 : Retrieving the raw data
-./retrieve_NSIDC-0081.bash $dateStart $dateEnd
+./retrieve_NSIDC-0803.bash $dateStart $dateEnd
 ./retrieve_OSI-401-b.bash  $dateStart $dateEnd
 
 
@@ -41,7 +41,7 @@ $python3 ./format_OSI-401-b.py  $dateStart $dateEnd
 
 mkdir -p ../data/${target}/netcdf
 
-cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/NSIDC/NSIDC-0081/processed/native/siconc_SIday_NSIDC-0081_r1i1p1_${dateStart}-${dateEnd}_sh.nc ../data/${target}/netcdf/NSIDC-0081_000_${dateStart}-${dateEnd}_concentration.nc
+cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/NSIDC/NSIDC-0803/processed/native/siconc_SIday_NSIDC-0803_r1i1p1_${dateStart}-${dateEnd}_sh.nc ../data/${target}/netcdf/NSIDC-0803_000_${dateStart}-${dateEnd}_concentration.nc
 
 cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/siconc_SIday_OSI-401-b_r1i1p1_${dateStart}-${dateEnd}_sh.nc ../data/${target}/netcdf/OSI-401-b_000_${dateStart}-${dateEnd}_concentration.nc
 
