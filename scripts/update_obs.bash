@@ -36,7 +36,7 @@ dateEnd=20260228 # This can be a date later than today. The download will just n
 
 # Step 2: Formatting to ELIC compliant format
 
-$python3 ./format_NSIDC-0081.py $dateStart $dateEnd
+$python3 ./format_NSIDC-0803.py $dateStart $dateEnd
 $python3 ./format_OSI-401-b.py  $dateStart $dateEnd
 
 mkdir -p ../data/${target}/netcdf

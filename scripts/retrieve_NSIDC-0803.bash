@@ -8,7 +8,7 @@
 
 set -o nounset
 set -o errexit
-#set -x 
+set -x 
 
 if [[ $# -ne 2 ]]
 then
@@ -71,4 +71,11 @@ wget $options $url -P $outdir
 # CellArea
 fileName=NSIDC0771_CellArea_P${hemisphere}_${hemisphere}25km_v1.1.nc
 url=${urlRoot}/$productSpec/$fileName
+wget $options $url -P $outdir
+
+# Mask
+productSpec=nsidc0780_seaice_masks_v1/netcdf/
+fileName=NSIDC-0780_SeaIceRegions_P${hemisphere}-${hemisphere}25km_v1.0.nc
+url=${urlRoot}/$productSpec/$fileName
+
 wget $options $url -P $outdir
