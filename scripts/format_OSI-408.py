@@ -94,6 +94,7 @@ def formatData(dateStart, dateEnd):
               mask[:] = 100.0 * (msk < 100.0)
 
               # Read the geometric file with file area
+              fileareain = rootdir + "/" + "lmask_sh_stere_100.nc"
               f2 = Dataset(fileareain, mode = "r")
               area_sf = f2.variables["area_sf"][:] # Area scale factor
 
