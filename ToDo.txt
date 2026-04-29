@@ -3,4 +3,4 @@
 - Rename files to have time stamp in it, or resolve issues that from 2022-2023, files might have different lengths
 - Fix the year issue in update obs dependent scripts
 - Switch to NSIDC 0803: https://nsidc.org/data/nsidc-0803/versions/2
-
+- Swith to another OSISAF data. See e-mail of Thomas Lavergne from 27 March 2026

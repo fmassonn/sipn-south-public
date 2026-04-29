@@ -31,19 +31,19 @@ dateEnd=20260228 # This can be a date later than today. The download will just n
 
 # Step 1 : Retrieving the raw data
 ./retrieve_NSIDC-0803.bash $dateStart $dateEnd
-./retrieve_OSI-401-b.bash  $dateStart $dateEnd
+./retrieve_OSI-408.bash  $dateStart $dateEnd
 
 
 # Step 2: Formatting to ELIC compliant format
 
 $python3 ./format_NSIDC-0803.py $dateStart $dateEnd
-$python3 ./format_OSI-401-b.py  $dateStart $dateEnd
+$python3 ./format_OSI-408.py  $dateStart $dateEnd
 
 mkdir -p ../data/${target}/netcdf
 
 cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/NSIDC/NSIDC-0803/processed/native/siconc_SIday_NSIDC-0803_r1i1p1_${dateStart}-${dateEnd}_sh.nc ../data/${target}/netcdf/NSIDC-0803_000_${dateStart}-${dateEnd}_concentration.nc
 
-cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/OSI-SAF/OSI-401-b/processed/native/siconc_SIday_OSI-401-b_r1i1p1_${dateStart}-${dateEnd}_sh.nc ../data/${target}/netcdf/OSI-401-b_000_${dateStart}-${dateEnd}_concentration.nc
+cp $TECLIM_CLIMATE_DATA/obs/ice/siconc/OSI-SAF/OSI-408/processed/native/siconc_SIday_OSI-408_r1i1p1_${dateStart}-${dateEnd}_sh.nc ../data/${target}/netcdf/OSI-408_000_${dateStart}-${dateEnd}_concentration.nc
 
 $python3 obs2CSV.py $target $dateStart $dateEnd
 

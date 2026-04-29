@@ -42,13 +42,13 @@ myyear = "2025-2026"
 plotobs = True
 
 # Are we after the period to be forecasted? (to know if need to plot verif)
-postseason = False
+postseason = True
 
 obsEndDate="20260228"
 
 
 # Name of observational products      
-obs = ["NSIDC-0081", "OSI-401-b"]
+obs = ["NSIDC-0803", "OSI-408"]
 # line styles to be used
 lst = ["--",         ":"]
 

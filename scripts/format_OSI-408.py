@@ -2,8 +2,8 @@
 #
 # Francois Massonnet francois.massonnet@uclouvain.be
 # 
-# Converts near-real time NSIDC-0803 sea ice concentration data
-# to TECLIM compliant format
+# Converts near-real time OSISAF sea ice concentration data
+# (osi-408) to TECLIM compliant format
 #
 
 def formatData(dateStart, dateEnd):
@@ -27,9 +27,9 @@ def formatData(dateStart, dateEnd):
   hemi="sh"    # Hemisphere to proces ("nh" or "sh")
   
   # Where to read the data from
-  rootdir = data_dir + "/obs/ice/siconc/NSIDC/NSIDC-0803/raw/"
+  rootdir = data_dir + "/obs/ice/siconc/OSI-SAF/OSI-408/raw/"
   # Where to write the data to
-  outdir =  data_dir + "/obs/ice/siconc/NSIDC/NSIDC-0803/processed/native/"
+  outdir =  data_dir + "/obs/ice/siconc/OSI-SAF/OSI-408/processed/native/"
   
   
   # Check existence of paths
@@ -42,15 +42,12 @@ def formatData(dateStart, dateEnd):
   # ========
   # Input grid dimensions
   if hemi == "sh":
-      ny, nx = 332, 316
+      ny, nx = 830, 790
   elif hemi == "nh":
       pass
   else:
       sys.exit("Hemishpere unknown")
-
-  # Fill Value
-  fillval = 1e36 
- 
+  
   # Create time axis
   d1 = datetime.strptime(dateStart, "%Y%m%d")
   d2 = datetime.strptime(dateEnd  , "%Y%m%d")
@@ -78,41 +75,30 @@ def formatData(dateStart, dateEnd):
   for day in daterange:
       print(day)
       # Check file existence
-      filein = rootdir + "/NSIDC-0803_SEAICE_AMSR2_" + hemi[0].upper() + "_" + day.strftime("%Y%m%d") + "_v2.0.nc"
+      filein = rootdir + "/ice_conc_" + hemi + "_polstere-100_amsr2_" + day.strftime("%Y%m%d") + "1200.nc"
       if not os.path.exists(filein):
           print("File " + filein + " not found")
       else:
           f = Dataset(filein, mode = "r")
-          sic = f.variables["ICECON"][:]
-          # Set values exceeding 1 to Nan as sometimes missing data is recorded that way
-          sic[sic > 1.0] = np.nan
-          sic[sic < 0.0] = np.nan
-          siconc[jt, :, :] = sic[:] * 100.0 # since data is provided as 0-1
+          sic = f.variables["ice_conc"][:]
+          siconc[jt, :, :] = sic[:]
   
           if read_geom:
-              fileLonLat = rootdir + "/NSIDC0771_LatLon_P" + hemi[0].upper() + "_" + hemi[0].upper() + "25km_v1.1.nc"
-              fLL= Dataset(fileLonLat, mode = "r")
-              lat = fLL.variables["latitude"][:]
-              lon = fLL.variables["longitude"][:]
+              lat = f.variables["lat"][:]
+              lon = f.variables["lon"][:]
+              msk = f.variables["status_flag"][:]
+              fillval = f.variables["ice_conc"]._FillValue
+  
               latitude[:] = lat
               longitude[:] = lon
-              fLL.close()
+              mask[:] = 100.0 * (msk < 100.0)
 
-              # Mask
-              fileMask = rootdir + "/NSIDC-0780_SeaIceRegions_P" + hemi[0].upper() + "-" + hemi[0].upper() + "25km_v1.0.nc"
-              fM = Dataset(fileMask, mode = "r")
-              msk = fM.variables["sea_ice_region_RH_surface_mask"][:]
+              # Read the geometric file with file area
+              f2 = Dataset(fileareain, mode = "r")
+              area_sf = f2.variables["area_sf"][:] # Area scale factor
 
-              mask[:] = 100.0 * (msk >= 0.0) * (msk <= 10)
-              fM.close()
-
-              # Cell Area
-              fileArea = rootdir + "/NSIDC0771_CellArea_P" + hemi[0].upper() + "_" + hemi[0].upper() + "25km_v1.1.nc"
-              fA = Dataset(fileArea, mode = "r")
-              are = fA.variables["cell_area"][:]
-        
-              cellarea[:] = are
-
+              # E-mail of Thomas Lavergne, 28 April 15:39
+              cellarea[:] = 1.0 / area_sf * 10.0 * 1000.0 * 10.0 * 1000.0 # grid resolution is 10km by 10km
               read_geom = False
           f.close()
       jt += 1
@@ -125,7 +111,7 @@ def formatData(dateStart, dateEnd):
   # -----------------
   date_ref =  datetime(1850, 1, 1) # zero-time reference
   
-  fileout = outdir + "siconc_SIday_NSIDC-0803_r1i1p1_" + dateStart + "-" + dateEnd + "_" + hemi + ".nc"
+  fileout = outdir + "siconc_SIday_OSI-408_r1i1p1_" + dateStart + "-" + dateEnd + "_" + hemi + ".nc"
   # Create file
   f = Dataset(fileout, mode = "w")
   # Create dimensions
@@ -169,7 +155,7 @@ if __name__ == "__main__":
 
   # If not two arguments are passed
   if len(sys.argv) != (2 + 1):
-    sys.exit("format_NSIDC-0803.py: No argument given, two expected.")
+    sys.exit("format_OSI-408.py: No argument given, two expected.")
   else:
     dateStart = sys.argv[1]
     dateEnd   = sys.argv[2]

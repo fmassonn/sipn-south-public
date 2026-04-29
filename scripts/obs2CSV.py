@@ -2,10 +2,11 @@
 #
 # Script to convert NetCDF observational references of SIC to
 # SIPN South compliant format (CSV)
-# NSIDC 0081 and OSI-401-b
+# NSIDC 0803 and OSI-401-b
 #
 # Author - F. Massonnet
 # Date   - March 5, 2018
+# Update 22 April 2026 for NSIDC 0803
 
 
 def convert(target, dateStart, dateEnd):
@@ -26,8 +27,8 @@ def convert(target, dateStart, dateEnd):
   # Name of obs to process
   #        OBS LABEL      OBS DIRECTORY
   obs = [ 
-          ["OSI-401-b" , "../data/" + target +  "/netcdf/"], \
-          ["NSIDC-0081", "../data/" + target +  "/netcdf/"], \
+          ["OSI-408" , "../data/" + target +  "/netcdf/"], \
+          ["NSIDC-0803", "../data/" + target +  "/netcdf/"], \
         ]
   
   # ========================================
@@ -84,7 +85,7 @@ def convert(target, dateStart, dateEnd):
       
       # Compute sea ice area for that period
       # ------------------------------------
-      areatot = compute_area(siconc[:, :, :], cellarea, mask = 1.0 * (lat < 0.0)) # + 1 because of Python indexing convention
+      areatot = compute_area(siconc[:, :, :], cellarea, mask = 1.0 * (lat < 0.0) * (sftof == 100.0)) # + 1 because of Python indexing convention
       print(areatot)
       # Save as CSV file
       # ----------------

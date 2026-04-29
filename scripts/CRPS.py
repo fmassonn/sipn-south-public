@@ -32,12 +32,12 @@ matplotlib.rcParams['font.family'] = "Arial Narrow"
 # -----------------
 
 # label with the year investigated (2017-2018, 2018-2019, ...)
-myyear = "2024-2025"   
+myyear = "2025-2026"   
 stringPeriod=myyear[:4] + "1201-" + myyear[5:9] + "0228"
 
 
 # Name of observational products. Evaluation will be done with dataset 1   
-obs = ["NSIDC-0081", "OSI-401-b"]
+obs = ["NSIDC-0803", "OSI-408"]
 
 # Resolution for saving figures
 dpi = 300
